@@ -6,6 +6,7 @@ import json
 from typing import Dict, Any, Optional, Tuple
 from datetime import datetime, timedelta
 import logging
+import razorpay
 
 logger = logging.getLogger(__name__)
 
@@ -21,8 +22,11 @@ class RazorpayService:
         self.key_secret = os.getenv("RAZORPAY_KEY_SECRET")
         self.webhook_secret = os.getenv("RAZORPAY_WEBHOOK_SECRET")
         self.base_url = "https://api.razorpay.com/v1"
-        
-        if not self.key_id or not self.key_secret:
+
+        if self.key_id and self.key_secret:
+            self.client = razorpay.Client(auth=(self.key_id, self.key_secret))
+        else:
+            self.client = None
             logger.warning("Razorpay credentials not configured")
     
     def create_order(
@@ -34,30 +38,19 @@ class RazorpayService:
     ) -> Dict[str, Any]:
         """Create a Razorpay order"""
         try:
-            url = f"{self.base_url}/orders"
-            
             data = {
                 "amount": int(amount * 100),  # Amount in paise
                 "currency": currency,
                 "receipt": receipt or f"rcpt_{datetime.now().strftime('%Y%m%d_%H%M%S')}",
                 "notes": notes or {}
             }
-            
-            response = requests.post(
-                url,
-                json=data,
-                auth=(self.key_id, self.key_secret),
-                headers={"Content-Type": "application/json"}
-            )
-            
-            if response.status_code == 200:
-                return response.json()
-            else:
-                error_msg = f"Razorpay order creation failed: {response.text}"
-                logger.error(error_msg)
-                raise PaymentGatewayError(error_msg)
-                
-        except requests.RequestException as e:
+
+            if not self.client:
+                raise PaymentGatewayError("Razorpay client not configured")
+
+            return self.client.order.create(data=data)
+
+        except Exception as e:
             error_msg = f"Razorpay API request failed: {str(e)}"
             logger.error(error_msg)
             raise PaymentGatewayError(error_msg)
@@ -86,21 +79,12 @@ class RazorpayService:
     def get_payment(self, payment_id: str) -> Dict[str, Any]:
         """Get payment details from Razorpay"""
         try:
-            url = f"{self.base_url}/payments/{payment_id}"
-            
-            response = requests.get(
-                url,
-                auth=(self.key_id, self.key_secret)
-            )
-            
-            if response.status_code == 200:
-                return response.json()
-            else:
-                error_msg = f"Failed to fetch payment: {response.text}"
-                logger.error(error_msg)
-                raise PaymentGatewayError(error_msg)
-                
-        except requests.RequestException as e:
+            if not self.client:
+                raise PaymentGatewayError("Razorpay client not configured")
+
+            return self.client.payment.fetch(payment_id)
+
+        except Exception as e:
             error_msg = f"Razorpay API request failed: {str(e)}"
             logger.error(error_msg)
             raise PaymentGatewayError(error_msg)
@@ -113,30 +97,16 @@ class RazorpayService:
     ) -> Dict[str, Any]:
         """Create a refund for a payment"""
         try:
-            url = f"{self.base_url}/payments/{payment_id}/refund"
-            
-            data = {
-                "notes": notes or {}
-            }
-            
+            if not self.client:
+                raise PaymentGatewayError("Razorpay client not configured")
+
+            data = {"notes": notes or {}}
             if amount:
                 data["amount"] = int(amount * 100)  # Amount in paise
-            
-            response = requests.post(
-                url,
-                json=data,
-                auth=(self.key_id, self.key_secret),
-                headers={"Content-Type": "application/json"}
-            )
-            
-            if response.status_code == 200:
-                return response.json()
-            else:
-                error_msg = f"Razorpay refund failed: {response.text}"
-                logger.error(error_msg)
-                raise PaymentGatewayError(error_msg)
-                
-        except requests.RequestException as e:
+
+            return self.client.payment.refund(payment_id, data)
+
+        except Exception as e:
             error_msg = f"Razorpay API request failed: {str(e)}"
             logger.error(error_msg)
             raise PaymentGatewayError(error_msg)

@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 import csv
 import io
 import uuid
+import multipart  # noqa: F401 - ensure python-multipart is installed for file uploads
 
 from ..crud.inventory import InventoryCRUD
 from ..schemas.inventory import (
@@ -351,8 +352,8 @@ async def get_inventory_stats(
 
 @router.post("/bulk/import")
 async def bulk_import_inventory(
-    file: UploadFile = File(...),
     background_tasks: BackgroundTasks,
+    file: UploadFile = File(...),
     db: Session = Depends(get_db),
     current_user = Depends(get_current_user)
 ):

@@ -11,6 +11,7 @@ import boto3
 from botocore.exceptions import ClientError
 import trimesh
 import numpy as np
+import multipart  # noqa: F401 - ensure python-multipart is installed for UploadFile support
 from app.schemas import MessageResponse
 from app.core.db import get_db
 from app.core.security import get_current_user
