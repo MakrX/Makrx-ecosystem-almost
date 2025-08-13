@@ -6,6 +6,7 @@ Uses Pydantic BaseSettings for environment variable management
 from pydantic import BaseSettings, Field, validator
 from typing import List, Optional
 import secrets
+import asyncpg  # noqa: F401 - ensure asyncpg is installed
 
 class Settings(BaseSettings):
     """Application settings with environment variable support"""

@@ -14,6 +14,7 @@ from reportlab.graphics.charts.piecharts import Pie
 from reportlab.graphics.charts.barcharts import VerticalBarChart
 from reportlab.graphics.widgetbase import Widget
 from sqlalchemy.orm import Session
+import openpyxl  # noqa: F401 - required for Excel export engine
 
 class ReportGenerator:
     def __init__(self, db: Session):

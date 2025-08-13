@@ -5,6 +5,7 @@ Adds support for hierarchical categories, brands, collections, tags, and variant
 
 from sqlalchemy import text
 from app.core.db import engine
+import alembic  # noqa: F401 - required for alembic migration tooling
 
 
 def upgrade():
