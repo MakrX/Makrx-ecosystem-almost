@@ -1,0 +1,325 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Exo:wght@300;400;500;600;700;800;900&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Smooth scrolling for anchor links */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Animation delay utilities */
+.animation-delay-500 {
+  animation-delay: 0.5s;
+}
+.animation-delay-1000 {
+  animation-delay: 1s;
+}
+.animation-delay-1500 {
+  animation-delay: 1.5s;
+}
+.animation-delay-2000 {
+  animation-delay: 2s;
+}
+
+/* Glitch animation effects */
+@keyframes glitch {
+  0% { transform: translate(0); }
+  20% { transform: translate(-2px, 2px); }
+  40% { transform: translate(-2px, -2px); }
+  60% { transform: translate(2px, 2px); }
+  80% { transform: translate(2px, -2px); }
+  100% { transform: translate(0); }
+}
+
+.glitch-effect {
+  animation: glitch 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+
+/* Sparks animation */
+@keyframes sparks {
+  0% { opacity: 0; transform: scale(0) rotate(0deg); }
+  50% { opacity: 1; transform: scale(1) rotate(180deg); }
+  100% { opacity: 0; transform: scale(0) rotate(360deg); }
+}
+
+.sparks {
+  animation: sparks 0.6s ease-in-out infinite;
+}
+
+/* Screen flicker effect */
+@keyframes flicker {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.8; }
+}
+
+.screen-flicker {
+  animation: flicker 0.15s ease-in-out infinite;
+}
+
+/* Radial gradient for map oceans */
+.bg-gradient-radial {
+  background: radial-gradient(circle, var(--tw-gradient-stops));
+}
+
+/* Enhanced map marker glow effects */
+.map-marker-glow {
+  box-shadow: 0 0 20px rgba(34, 197, 94, 0.6), 0 0 40px rgba(34, 197, 94, 0.4);
+}
+
+.map-marker-featured {
+  box-shadow: 0 0 25px rgba(251, 191, 36, 0.8), 0 0 50px rgba(251, 191, 36, 0.5);
+}
+
+/* Responsive utilities */
+@media (max-width: 640px) {
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  /* Ensure text doesn't break awkwardly on mobile */
+  .text-responsive {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+
+  /* Mobile-first button sizing */
+  .btn-mobile {
+    min-height: 44px; /* iOS touch target size */
+    padding: 0.75rem 1rem;
+  }
+}
+
+/* Tablet responsive adjustments */
+@media (min-width: 641px) and (max-width: 1024px) {
+  .grid-responsive {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  }
+}
+
+/* Desktop enhancements */
+@media (min-width: 1025px) {
+  .hover-scale:hover {
+    transform: scale(1.05);
+    transition: transform 0.2s ease-in-out;
+  }
+}
+
+@layer base {
+  :root {
+    /* Light Theme - Soft, Eye-friendly */
+    --background: 255 255 255; /* #FFFFFF - Pure white background */
+    --foreground: 30 30 30; /* #1E1E1E */
+
+    --card: 0 0% 100%;
+    --card-foreground: 30 30 30;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 30 30 30;
+
+    --primary: 222 49% 23%; /* MakrX Blue #1A3D7C */
+    --primary-foreground: 0 0% 98%;
+
+    --secondary: 158 64% 52%; /* MakrX Teal #10B981 */
+    --secondary-foreground: 0 0% 98%;
+
+    --muted: 220 13% 97.5%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+
+    --accent: 158 64% 52%; /* MakrX Teal */
+    --accent-foreground: 0 0% 98%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 220 13% 93%;
+    --input: 220 13% 93%;
+    --ring: 222 49% 23%; /* MakrX Blue */
+
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    /* Dark Theme for MakrCave */
+    --background: 18 18 18; /* #121212 */
+    --foreground: 224 224 224; /* #E0E0E0 */
+
+    --card: 26 26 26;
+    --card-foreground: 224 224 224;
+
+    --popover: 26 26 26;
+    --popover-foreground: 224 224 224;
+
+    --primary: 158 64% 52%; /* MakrX Teal for dark mode */
+    --primary-foreground: 18 18 18;
+
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 224 224 224;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 158 64% 52%; /* MakrX Teal */
+    --accent-foreground: 18 18 18;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 224 224 224;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 158 64% 52%; /* MakrX Teal ring in dark mode */
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-bold;
+    font-family: 'Exo', 'Inter', system-ui, sans-serif;
+  }
+}
+
+@layer components {
+  /* MakrCave specific components */
+  .makrcave-sidebar {
+    @apply bg-card border-r border-border h-screen w-64 fixed left-0 top-0 z-40 flex flex-col overflow-hidden;
+  }
+
+  .makrcave-main {
+    @apply ml-64 min-h-screen bg-background transition-all duration-300;
+  }
+
+  .makrcave-header {
+    @apply bg-card border-b border-border px-6 py-4 flex items-center justify-between;
+  }
+
+  .makrcave-card {
+    @apply bg-card border border-border rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow;
+  }
+
+  .makrcave-btn-primary {
+    @apply bg-makrx-blue text-white px-4 py-2.5 rounded-lg font-medium hover:bg-makrx-blue/90 transition-colors inline-flex items-center justify-center gap-2 text-sm;
+  }
+
+  @media (max-width: 640px) {
+    .makrcave-btn-primary, .makrcave-btn-secondary, .makrcave-btn-outline {
+      @apply px-3 py-2 text-xs;
+    }
+  }
+
+  .makrcave-btn-secondary {
+    @apply bg-makrx-teal text-white px-4 py-2.5 rounded-lg font-medium hover:bg-makrx-teal-light transition-colors inline-flex items-center justify-center gap-2 text-sm;
+  }
+
+  .makrcave-btn-outline {
+    @apply border border-border bg-background text-foreground px-4 py-2.5 rounded-lg font-medium hover:bg-accent transition-colors inline-flex items-center justify-center gap-2 text-sm;
+  }
+
+  .makrcave-btn-ghost {
+    @apply text-foreground px-3 py-2 rounded-lg font-medium hover:bg-accent transition-colors inline-flex items-center justify-center gap-2 text-sm;
+  }
+
+  .makrcave-btn-sm {
+    @apply px-3 py-1.5 text-xs;
+  }
+
+  .makrcave-btn-lg {
+    @apply px-6 py-3 text-base;
+  }
+
+  .makrcave-status-available {
+    @apply bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 px-2 py-1 rounded-full text-xs font-medium;
+  }
+
+  .makrcave-status-in-use {
+    @apply bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200 px-2 py-1 rounded-full text-xs font-medium;
+  }
+
+  .makrcave-status-maintenance {
+    @apply bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200 px-2 py-1 rounded-full text-xs font-medium;
+  }
+
+  .makrcave-status-offline {
+    @apply bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 px-2 py-1 rounded-full text-xs font-medium;
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  .makrcave-sidebar {
+    @apply w-64 transform -translate-x-full transition-transform duration-300 ease-in-out shadow-xl;
+  }
+
+  .makrcave-sidebar.open {
+    @apply translate-x-0;
+  }
+
+  .makrcave-main {
+    @apply ml-0;
+  }
+
+  /* Overlay for mobile sidebar */
+  .makrcave-sidebar-overlay {
+    @apply fixed inset-0 bg-black bg-opacity-50 z-30 lg:hidden;
+  }
+}
+
+@media (max-width: 768px) {
+  .makrcave-sidebar {
+    @apply w-full max-w-xs;
+  }
+
+  .makrcave-header {
+    @apply px-4 py-3;
+  }
+
+  .makrcave-main main {
+    @apply p-4;
+  }
+}
+
+@media (max-width: 640px) {
+  .makrcave-header {
+    @apply px-3 py-2;
+  }
+
+  .makrcave-main main {
+    @apply p-3;
+  }
+
+  .makrcave-card {
+    @apply p-4;
+  }
+}
+
+/* Mobile-first responsive utilities */
+@media (max-width: 480px) {
+  .makrcave-main main {
+    @apply p-2;
+  }
+
+  .makrcave-card {
+    @apply p-3;
+  }
+
+  h1 {
+    @apply text-xl;
+  }
+
+  h2 {
+    @apply text-lg;
+  }
+
+  h3 {
+    @apply text-base;
+  }
+}

@@ -1,0 +1,166 @@
+{
+  "realm": "makrx",
+  "displayName": "MakrX Ecosystem",
+  "displayNameHtml": "<strong>Makr</strong><span style=\"color: #FFC107;\">X</span> Ecosystem",
+  "enabled": true,
+  "registrationAllowed": true,
+  "registrationEmailAsUsername": true,
+  "rememberMe": true,
+  "verifyEmail": false,
+  "loginWithEmailAllowed": true,
+  "duplicateEmailsAllowed": false,
+  "resetPasswordAllowed": true,
+  "editUsernameAllowed": false,
+  "bruteForceProtected": true,
+  "loginTheme": "makrx-login",
+  "adminTheme": "keycloak",
+  "emailTheme": "makrx-login",
+  "accountTheme": "keycloak.v3",
+  "internationalizationEnabled": true,
+  "supportedLocales": ["en"],
+  "defaultLocale": "en",
+  "smtpServer": {},
+  "clients": [
+    {
+      "clientId": "gateway-frontend",
+      "name": "MakrX Gateway Frontend",
+      "description": "Main MakrX gateway application",
+      "enabled": true,
+      "publicClient": true,
+      "redirectUris": [
+        "http://localhost:5173/*",
+        "http://localhost:3000/*",
+        "https://makrx.org/*",
+        "https://*.makrx.org/*"
+      ],
+      "webOrigins": [
+        "http://localhost:5173",
+        "http://localhost:3000",
+        "https://makrx.org",
+        "https://*.makrx.org"
+      ],
+      "protocol": "openid-connect",
+      "fullScopeAllowed": true,
+      "attributes": {
+        "pkce.code.challenge.method": "S256"
+      }
+    },
+    {
+      "clientId": "makrcave-frontend",
+      "name": "MakrCave Frontend",
+      "description": "Makerspace management portal",
+      "enabled": true,
+      "publicClient": true,
+      "redirectUris": [
+        "http://localhost:5174/*",
+        "https://cave.makrx.org/*"
+      ],
+      "webOrigins": [
+        "http://localhost:5174",
+        "https://cave.makrx.org"
+      ],
+      "protocol": "openid-connect"
+    },
+    {
+      "clientId": "makrx-store-frontend",
+      "name": "MakrX Store Frontend",
+      "description": "Ecommerce and 3D printing platform",
+      "enabled": true,
+      "publicClient": true,
+      "redirectUris": [
+        "http://localhost:5175/*",
+        "https://store.makrx.org/*"
+      ],
+      "webOrigins": [
+        "http://localhost:5175",
+        "https://store.makrx.org"
+      ],
+      "protocol": "openid-connect"
+    },
+    {
+      "clientId": "auth-service",
+      "name": "Auth Service Backend",
+      "description": "Authentication microservice",
+      "enabled": true,
+      "serviceAccountsEnabled": true,
+      "publicClient": false,
+      "protocol": "openid-connect",
+      "secret": "makrx-auth-service-secret-2024"
+    }
+  ],
+  "roles": {
+    "realm": [
+      {
+        "name": "super_admin",
+        "description": "Super administrator with full system access"
+      },
+      {
+        "name": "admin",
+        "description": "Administrator with elevated permissions"
+      },
+      {
+        "name": "makerspace_admin",
+        "description": "Makerspace administrator"
+      },
+      {
+        "name": "maker",
+        "description": "Standard maker user"
+      },
+      {
+        "name": "service_provider",
+        "description": "Service provider for manufacturing and fulfillment"
+      }
+    ]
+  },
+  "users": [
+    {
+      "username": "admin",
+      "email": "admin@makrx.org",
+      "firstName": "MakrX",
+      "lastName": "Admin",
+      "enabled": true,
+      "emailVerified": true,
+      "credentials": [
+        {
+          "type": "password",
+          "value": "makrx-admin-2024",
+          "temporary": false
+        }
+      ],
+      "realmRoles": ["super_admin", "admin"]
+    },
+    {
+      "username": "demo",
+      "email": "demo@makrx.org",
+      "firstName": "Demo",
+      "lastName": "User",
+      "enabled": true,
+      "emailVerified": true,
+      "credentials": [
+        {
+          "type": "password",
+          "value": "makrx2024",
+          "temporary": false
+        }
+      ],
+      "realmRoles": ["maker"]
+    }
+  ],
+  "groups": [
+    {
+      "name": "Administrators",
+      "path": "/Administrators",
+      "realmRoles": ["admin", "super_admin"]
+    },
+    {
+      "name": "Makers",
+      "path": "/Makers", 
+      "realmRoles": ["maker"]
+    },
+    {
+      "name": "Service Providers",
+      "path": "/Service Providers",
+      "realmRoles": ["service_provider"]
+    }
+  ]
+}

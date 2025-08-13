@@ -1,0 +1,29 @@
+User-agent: *
+Allow: /
+
+# Block admin and internal pages
+Disallow: /admin/
+Disallow: /auth/
+Disallow: /_*
+Disallow: /api/
+Disallow: /debug/
+
+# Allow important pages
+Allow: /
+Allow: /ecosystem
+Allow: /makrcave
+Allow: /store
+Allow: /learn
+Allow: /events
+Allow: /blog
+Allow: /docs
+Allow: /support
+Allow: /about
+Allow: /contact
+Allow: /careers
+
+# Sitemap location
+Sitemap: https://makrx.org/sitemap.xml
+
+# Crawl-delay for respectful crawling
+Crawl-delay: 1

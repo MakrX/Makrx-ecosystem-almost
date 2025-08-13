@@ -1,0 +1,65 @@
+Contact: mailto:security@yourdomain.com
+Contact: https://yourdomain.com/security
+Expires: 2025-12-31T23:59:59.000Z
+Acknowledgments: https://yourdomain.com/security/hall-of-fame
+Preferred-Languages: en
+Canonical: https://yourdomain.com/.well-known/security.txt
+Policy: https://yourdomain.com/security/policy
+
+# Security Policy
+
+Thank you for helping keep MakrX and our users safe!
+
+## Reporting Security Issues
+
+We take security seriously. If you discover a security vulnerability, please:
+
+1. Email us at security@yourdomain.com
+2. Include a detailed description of the vulnerability
+3. Provide steps to reproduce the issue
+4. Allow us reasonable time to fix the issue before public disclosure
+
+## What to Report
+
+- Authentication bypasses
+- Data exposure issues  
+- Cross-site scripting (XSS)
+- SQL injection
+- Cross-site request forgery (CSRF)
+- Server-side request forgery (SSRF)
+- Remote code execution
+- Privilege escalation
+
+## What NOT to Report
+
+- Missing security headers on non-sensitive pages
+- Lack of rate limiting on non-authentication endpoints
+- Reports from automated scanners without validation
+- Social engineering attacks
+- Physical attacks
+- Denial of service attacks
+
+## Responsible Disclosure
+
+We follow a responsible disclosure process:
+
+1. Report received and acknowledged within 24 hours
+2. Initial assessment within 3 business days
+3. Regular updates on fix progress
+4. Credit given upon request after fix deployment
+5. Public disclosure coordinated with reporter
+
+## Security Hall of Fame
+
+We maintain a hall of fame for security researchers who help us improve our security:
+https://yourdomain.com/security/hall-of-fame
+
+## Bug Bounty
+
+We offer rewards for qualifying security vulnerabilities:
+- Critical: $500-$2000
+- High: $200-$500  
+- Medium: $50-$200
+- Low: Recognition
+
+For more information, visit: https://yourdomain.com/security/bounty

@@ -1,0 +1,24 @@
+# Add these configuration variables to your existing config.py files
+
+# For makrx-store-backend/app/core/config.py:
+
+# MakrCave Integration
+MAKRCAVE_API_URL: str = "http://localhost:8001"  # MakrCave backend URL
+MAKRCAVE_API_KEY: str = "store-to-cave-api-key"  # Service-to-service auth key
+
+# Payment Webhook Secrets
+STRIPE_WEBHOOK_SECRET: str = "whsec_your_stripe_webhook_secret"
+RAZORPAY_WEBHOOK_SECRET: str = "your_razorpay_webhook_secret"
+
+# ==========================================
+
+# For makrcave-backend/core/config.py:
+
+# Store Integration  
+STORE_API_URL: str = "http://localhost:8000"  # Store backend URL
+STORE_API_KEY: str = "cave-to-store-api-key"  # Service-to-service auth key
+
+# Service Job Processing
+AUTO_ASSIGN_JOBS: bool = True
+DEFAULT_JOB_PRIORITY: str = "normal"
+JOB_TIMEOUT_HOURS: int = 72

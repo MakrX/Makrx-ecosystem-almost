@@ -1,0 +1,33 @@
+{
+  "name": "makrcave-backend",
+  "version": "1.0.0",
+  "description": "Backend API for MakrCave Inventory Management System",
+  "main": "main.py",
+  "scripts": {
+    "start": "python start.py",
+    "dev": "python start.py",
+    "init-db": "python init_db.py",
+    "reset-db": "python init_db.py --reset",
+    "sample-data": "python init_db.py --reset --sample",
+    "test": "pytest",
+    "install": "pip install -r requirements.txt"
+  },
+  "keywords": [
+    "fastapi",
+    "inventory",
+    "management",
+    "makrspace",
+    "api"
+  ],
+  "author": "MakrCave Team",
+  "license": "MIT",
+  "dependencies": {
+    "fastapi": "^0.104.1",
+    "uvicorn": "^0.24.0",
+    "sqlalchemy": "^2.0.23",
+    "pydantic": "^2.5.0"
+  },
+  "python": {
+    "version": ">=3.8"
+  }
+}

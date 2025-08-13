@@ -1,0 +1,176 @@
+/* MakrX Keycloak Theme */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Exo:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --makrx-blue: #1A3D7C;
+  --makrx-yellow: #FFC107;
+  --makrx-brown: #A25B12;
+}
+
+/* Background */
+body {
+  background: linear-gradient(135deg, var(--makrx-blue) 0%, rgba(26, 61, 124, 0.95) 50%, rgba(26, 61, 124, 0.9) 100%);
+  min-height: 100vh;
+  font-family: 'Inter', sans-serif;
+}
+
+/* Login container */
+.login-pf-page {
+  background: transparent;
+}
+
+.card-pf {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.card-pf h1 {
+  color: white;
+  font-family: 'Exo', sans-serif;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.card-pf h1 .kc-logo-text {
+  color: var(--makrx-yellow);
+}
+
+/* Form styling */
+.form-group label {
+  color: white;
+  font-weight: 500;
+}
+
+.form-control {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  color: white;
+  padding: 12px;
+}
+
+.form-control:focus {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: var(--makrx-yellow);
+  box-shadow: 0 0 0 2px rgba(255, 193, 7, 0.2);
+  color: white;
+}
+
+.form-control::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* Buttons */
+.btn-primary {
+  background: var(--makrx-yellow);
+  border: none;
+  color: var(--makrx-blue);
+  font-weight: 600;
+  padding: 12px 24px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+  background: #e6ac00;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(255, 193, 7, 0.3);
+}
+
+/* Links */
+a {
+  color: var(--makrx-yellow);
+}
+
+a:hover {
+  color: #e6ac00;
+  text-decoration: none;
+}
+
+/* Alert messages */
+.alert {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  border-radius: 8px;
+}
+
+.alert-error {
+  background: rgba(220, 53, 69, 0.2);
+  border-color: rgba(220, 53, 69, 0.3);
+}
+
+.alert-success {
+  background: rgba(40, 167, 69, 0.2);
+  border-color: rgba(40, 167, 69, 0.3);
+}
+
+/* Logo container */
+.kc-logo {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.kc-logo img {
+  max-width: 80px;
+  height: auto;
+}
+
+/* Social providers */
+.kc-social-providers {
+  margin-top: 1rem;
+}
+
+.kc-social-providers .kc-social-provider-name {
+  color: white;
+}
+
+/* Checkbox and radio styling */
+.checkbox label,
+.radio label {
+  color: white;
+}
+
+/* Remember me */
+.login-pf-settings {
+  color: white;
+}
+
+.login-pf-settings label {
+  color: white;
+}
+
+/* Footer */
+.login-pf-page .login-pf-signup {
+  text-align: center;
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .card-pf {
+    margin: 1rem;
+    padding: 1.5rem;
+  }
+}
+
+/* Circuit pattern background */
+.login-pf-page::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    radial-gradient(circle at 25% 25%, rgba(255, 193, 7, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 75% 75%, rgba(26, 61, 124, 0.1) 0%, transparent 50%);
+  opacity: 0.3;
+  z-index: -1;
+}

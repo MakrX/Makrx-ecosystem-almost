@@ -1,0 +1,13 @@
+{
+  "name": "@makrx/types",
+  "version": "1.0.0",
+  "description": "MakrX Shared TypeScript Types",
+  "main": "index.ts",
+  "types": "index.ts",
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.3"
+  }
+}

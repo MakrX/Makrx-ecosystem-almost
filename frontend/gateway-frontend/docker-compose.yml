@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  makrx-gateway:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    container_name: makrx-gateway
+    restart: unless-stopped
+    ports:
+      - "80:8080"
+    environment:
+      - NODE_ENV=production
+    volumes:
+      - ./logs:/var/log/nginx
+    networks:
+      - makrx-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.makrx-gateway.rule=Host(`yourdomain.com`)"
+      - "traefik.http.routers.makrx-gateway.tls=true"
+      - "traefik.http.routers.makrx-gateway.tls.certresolver=letsencrypt"
+
+networks:
+  makrx-network:
+    driver: bridge
+
+volumes:
+  nginx-logs:

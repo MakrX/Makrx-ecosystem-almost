@@ -1,0 +1,101 @@
+{
+  "name": "MakrX - Your Creative Ecosystem",
+  "short_name": "MakrX",
+  "description": "Access world-class makerspaces, shop cutting-edge tools, and learn new skills in the MakrX ecosystem",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1e40af",
+  "theme_color": "#1e40af",
+  "orientation": "portrait-primary",
+  "categories": ["education", "productivity", "business", "maker"],
+  "lang": "en-IN",
+  "dir": "ltr",
+  "scope": "/",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "16x16 32x32 48x48",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Book Makerspace",
+      "short_name": "Book",
+      "description": "Quick access to makerspace booking",
+      "url": "/makrcave?utm_source=pwa&utm_medium=shortcut",
+      "icons": [
+        {
+          "src": "/shortcut-book.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Shop Tools",
+      "short_name": "Shop",
+      "description": "Browse and buy maker tools",
+      "url": "/store?utm_source=pwa&utm_medium=shortcut",
+      "icons": [
+        {
+          "src": "/shortcut-shop.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Learn Skills",
+      "short_name": "Learn",
+      "description": "Access educational resources",
+      "url": "/learn?utm_source=pwa&utm_medium=shortcut",
+      "icons": [
+        {
+          "src": "/shortcut-learn.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshot-wide.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide"
+    },
+    {
+      "src": "/screenshot-narrow.png",
+      "sizes": "720x1280",
+      "type": "image/png",
+      "form_factor": "narrow"
+    }
+  ],
+  "related_applications": [
+    {
+      "platform": "play",
+      "url": "https://play.google.com/store/apps/details?id=com.makrx.app",
+      "id": "com.makrx.app"
+    }
+  ],
+  "prefer_related_applications": false
+}

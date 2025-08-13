@@ -1,0 +1,122 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:13-alpine
+    container_name: makrcave-postgres
+    environment:
+      POSTGRES_DB: makrcave_db
+      POSTGRES_USER: makrcave_user
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_INITDB_ARGS: "--encoding=UTF-8"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./backups:/backups
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U makrcave_user -d makrcave_db"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - makrcave-network
+
+  # Backend API
+  backend:
+    build:
+      context: ./makrcave-backend
+      dockerfile: Dockerfile
+    container_name: makrcave-backend
+    environment:
+      DATABASE_URL: postgresql://makrcave_user:${POSTGRES_PASSWORD}@postgres:5432/makrcave_db
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+      ENVIRONMENT: production
+      DEBUG: "False"
+    env_file:
+      - ./makrcave-backend/.env.production
+    volumes:
+      - ./uploads:/app/uploads
+      - ./logs:/app/logs
+      - ./reports:/app/reports
+      - ./invoices:/app/invoices
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - makrcave-network
+
+  # Frontend
+  frontend:
+    build:
+      context: ./frontend/makrcave-frontend
+      dockerfile: Dockerfile
+    container_name: makrcave-frontend
+    ports:
+      - "3000:80"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - makrcave-network
+
+  # Nginx Reverse Proxy
+  nginx:
+    image: nginx:alpine
+    container_name: makrcave-nginx
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./ssl:/etc/nginx/ssl:ro
+      - ./logs/nginx:/var/log/nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - backend
+      - frontend
+    restart: unless-stopped
+    networks:
+      - makrcave-network
+
+  # Redis (for caching and background tasks)
+  redis:
+    image: redis:6-alpine
+    container_name: makrcave-redis
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD}
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - makrcave-network
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+
+networks:
+  makrcave-network:
+    driver: bridge

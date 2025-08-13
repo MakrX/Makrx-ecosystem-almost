@@ -1,0 +1,16 @@
+{
+  "name": "@makrx/utils",
+  "version": "1.0.0",
+  "description": "MakrX Shared Utility Functions",
+  "main": "index.ts",
+  "types": "index.ts",
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@makrx/types": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.3"
+  }
+}
