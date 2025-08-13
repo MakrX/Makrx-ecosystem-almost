@@ -5,10 +5,13 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "tsc",
     "dev": "tsc --watch",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "lint": "eslint src --ext .ts,.tsx",
+    "lint:fix": "eslint src --ext .ts,.tsx --fix",
     "test": "jest",
-    "lint": "eslint src --ext .ts,.tsx"
+    "typecheck": "tsc --noEmit"
   },
   "keywords": [
     "feature-flags",

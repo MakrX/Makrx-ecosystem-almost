@@ -4,12 +4,16 @@
   "description": "Backend API for MakrCave Inventory Management System",
   "main": "main.py",
   "scripts": {
-    "start": "python start.py",
     "dev": "python start.py",
+    "build": "echo \"no build step\"",
+    "start": "python start.py",
+    "lint": "echo \"no lint step\"",
+    "lint:fix": "echo \"no lint fix step\"",
+    "test": "pytest",
+    "typecheck": "echo \"no typecheck step\"",
     "init-db": "python init_db.py",
     "reset-db": "python init_db.py --reset",
     "sample-data": "python init_db.py --reset --sample",
-    "test": "pytest",
     "install": "pip install -r requirements.txt"
   },
   "keywords": [
