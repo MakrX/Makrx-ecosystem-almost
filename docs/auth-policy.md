@@ -22,3 +22,8 @@ MakrX uses Keycloak for single sign-on across all applications. This policy defi
 - Logging out from any MakrX application triggers a Keycloak global logout.
 - All access, refresh, remember-me, and offline tokens are revoked.
 - Users must authenticate again to regain access to any MakrX service.
+
+## SSO Cookie Scope
+
+- **Cookie Domain**: `.makrx.org`
+- **Hostnames**: `auth.makrx.org`, `makrx.org`, `cave.makrx.org`, `store.makrx.org`, `providers.makrx.org`
