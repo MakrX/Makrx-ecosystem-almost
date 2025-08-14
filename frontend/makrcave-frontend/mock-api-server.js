@@ -1,3 +1,8 @@
+/**
+ * Development-only mock API server for local testing.
+ * Not used in production environments.
+ */
+
 import express from 'express';
 import cors from 'cors';
 const app = express();

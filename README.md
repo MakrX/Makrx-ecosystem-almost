@@ -145,9 +145,9 @@ makrx-ecosystem/
 │   ├── gateway-frontend/          # MakrX.org (React)
 │   ├── makrcave-frontend/         # MakrCave (React)
 │   └── makrx-store-frontend/      # Store (Next.js)
-├── backends/
-│   ├── auth-service/              # Authentication service
-│   └── event-service/             # Event handling
+├── experimental/
+│   ├── auth-service/              # Archived authentication service
+│   └── event-service/             # Archived event handling service
 ├── makrcave-backend/              # MakrCave API (FastAPI)
 ├── makrx-store-backend/           # Store API (FastAPI)
 ├── packages/
@@ -159,7 +159,20 @@ makrx-ecosystem/
 ├── docker-compose.yml             # Local development
 ├── docker-compose.prod.yml        # Production setup
 └── deploy.sh                      # Deployment script
+
 ```
+
+### Production-Critical Services
+
+The following services are actively maintained and required for production:
+
+- `makrcave-backend` – MakrCave API (FastAPI)
+- `makrx-store-backend` – Store API (FastAPI)
+- `frontend/gateway-frontend` – Public gateway
+- `frontend/makrcave-frontend` – Makerspace management
+- `frontend/makrx-store-frontend` – E-commerce frontend
+
+Services in `experimental/` are archived and not part of the production deployment.
 
 ## 🛠️ Technology Stack
 

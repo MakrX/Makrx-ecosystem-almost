@@ -54,59 +54,35 @@ services:
     volumes:
       - keycloak_data:/opt/keycloak/data
 
-  # Auth Service (FastAPI)
-  auth-service:
-    build:
-      context: ./backends/auth-service
-      dockerfile: Dockerfile
-    container_name: makrx-auth-service
-    environment:
-      DATABASE_URL: postgresql://makrx:makrx-db-2024@postgres:5432/makrx
-      KEYCLOAK_URL: http://keycloak:8080
-      KEYCLOAK_REALM: makrx
-      KEYCLOAK_CLIENT_ID: auth-service
-      KEYCLOAK_CLIENT_SECRET: makrx-auth-service-secret-2024
-    ports:
-      - "8001:8000"
-    depends_on:
-      - postgres
-      - keycloak
-    networks:
-      - makrx-net
-
   # MakrCave Backend (FastAPI)
   makrcave-backend:
     build:
-      context: ./backends/makrcave-backend
+      context: ./makrcave-backend
       dockerfile: Dockerfile
     container_name: makrx-makrcave-backend
     environment:
       DATABASE_URL: postgresql://makrx:makrx-db-2024@postgres:5432/makrx
-      AUTH_SERVICE_URL: http://auth-service:8000
       KEYCLOAK_URL: http://keycloak:8080
     ports:
       - "8002:8000"
     depends_on:
       - postgres
-      - auth-service
     networks:
       - makrx-net
 
   # MakrX Store Backend (FastAPI)
   makrx-store-backend:
     build:
-      context: ./backends/makrx-store-backend
+      context: ./makrx-store-backend
       dockerfile: Dockerfile
     container_name: makrx-store-backend
     environment:
       DATABASE_URL: postgresql://makrx:makrx-db-2024@postgres:5432/makrx
-      AUTH_SERVICE_URL: http://auth-service:8000
       KEYCLOAK_URL: http://keycloak:8080
     ports:
       - "8003:8000"
     depends_on:
       - postgres
-      - auth-service
     networks:
       - makrx-net
 
@@ -120,12 +96,10 @@ services:
       VITE_KEYCLOAK_URL: http://localhost:8080
       VITE_KEYCLOAK_REALM: makrx
       VITE_KEYCLOAK_CLIENT_ID: gateway-frontend
-      VITE_AUTH_SERVICE_URL: http://localhost:8001
     ports:
       - "3000:3000"
     depends_on:
       - keycloak
-      - auth-service
     networks:
       - makrx-net
 
