@@ -48,7 +48,13 @@ Always branch from `main` and keep in sync via `git fetch origin` and `git rebas
   - [ ] OpenAPI specs regenerated
   - [ ] Alembic migrations added and applied
   - [ ] Documentation updated
+  - [ ] CHANGELOG.md updated
   - [ ] Feature flags default to safe values
+
+## Changelog
+
+We maintain a root [`CHANGELOG.md`](CHANGELOG.md) using the [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) format and [Semantic Versioning](https://semver.org/).
+Include an entry under the **Unreleased** section for any user-facing change in your pull request. During release tagging, entries are moved to a new version heading.
 
 ## Coding Standards
 - **TypeScript/JavaScript**: ESLint + Prettier; 2‑space indent
