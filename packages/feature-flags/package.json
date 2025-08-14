@@ -11,7 +11,8 @@
     "lint": "eslint src --ext .ts,.tsx",
     "lint:fix": "eslint src --ext .ts,.tsx --fix",
     "test": "jest",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "format": "prettier --config ../../.prettierrc --ignore-path ../../.prettierignore --write ."
   },
   "keywords": [
     "feature-flags",

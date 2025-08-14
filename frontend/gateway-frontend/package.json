@@ -20,7 +20,8 @@
     "docker:compose": "docker-compose up -d",
     "lighthouse": "lhci autorun",
     "clean": "rm -rf dist node_modules/.vite",
-    "start": "npm run preview"
+    "start": "npm run preview",
+    "format": "prettier --config ../../.prettierrc --ignore-path ../../.prettierignore --write ."
   },
   "dependencies": {
     "@tanstack/react-query": "^5.0.0",
