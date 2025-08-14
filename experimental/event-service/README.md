@@ -1,6 +1,6 @@
 # Event Service (Archived)
 
-**NOT FOR PRODUCTION – no SLA**
+⚠️ **NO SUPPORT – NO SLA – NOT FOR PRODUCTION** ⚠️
 
 ## Purpose
 

@@ -1,6 +1,6 @@
 # MakrX Store Demos
 
-⚠️ **NOT FOR PRODUCTION** ⚠️
+⚠️ **NO SUPPORT – NO SLA – NOT FOR PRODUCTION** ⚠️
 
 Prototype demos for the MakrX Store frontend. These files are provided for experimentation and internal reference only.
 
