@@ -36,6 +36,9 @@ const nextConfig = {
   },
   experimental: {
     externalDir: true,
+    outputFileTracingExcludes: {
+      '*': ['../experimental/makrx-store-demos/**'],
+    },
   },
   webpack: (config) => {
     config.resolve.alias = {
