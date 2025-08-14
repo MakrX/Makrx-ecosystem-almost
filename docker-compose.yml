@@ -125,7 +125,7 @@ services:
   # MakrX Store Frontend (React + Vite)
   makrx-store-frontend:
     build:
-      context: ./frontend/makrx-store-frontend
+      context: ./makrx-store-frontend
       dockerfile: Dockerfile
     container_name: makrx-store-frontend
     environment:

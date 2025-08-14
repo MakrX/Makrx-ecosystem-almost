@@ -1,0 +1,17 @@
+node_modules
+dist
+.next
+coverage
+cypress
+*.log
+.env*
+.DS_Store
+.vscode
+.idea
+.storybook
+.cache
+.pnpm-store
+npm-cache
+.yarn/cache
+.turbo
+build
