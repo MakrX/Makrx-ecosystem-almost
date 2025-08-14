@@ -38,6 +38,10 @@ Additional services like Redis or mail can be added as needed.
 ### Production
 Frontends build to static assets served via CDN behind Nginx. Backends run behind the proxy with managed Postgres, Keycloak, Redis and S3‑compatible storage.
 
+## Docker Build Contexts
+
+Each service builds its Docker image from its own folder. The files sent to `docker build` are limited by the `.dockerignore` in that directory, keeping bulky artifacts and secrets out of the build context. See the [CI/CD pipeline docs](docs/DEPLOYMENT.md#ci-cd-pipeline) for how these images are constructed in automation.
+
 ## Authentication Flows
 
 - **Login** – Frontends redirect users to Keycloak. After successful auth, access and refresh tokens are issued and stored client‑side as `Authorization: Bearer`.
