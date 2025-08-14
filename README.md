@@ -219,6 +219,7 @@ Services in `experimental/` are archived and not part of the production deployme
 - [**Backend Guide**](docs/BACKEND.md) - Backend development guide
 - [**Deployment Guide**](docs/DEPLOYMENT.md) - Production deployment
 - [**Security Guide**](docs/SECURITY.md) - Security implementation
+- [**Authentication Policy**](docs/auth-policy.md) - Token lifetimes and session management
 - [**Contributing**](docs/CONTRIBUTING.md) - Contribution guidelines
 
 ## 🤝 Contributing
