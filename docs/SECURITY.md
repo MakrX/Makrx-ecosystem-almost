@@ -42,6 +42,8 @@ Security is a fundamental principle in the MakrX ecosystem design. This guide co
 
 ## 🔐 Authentication System
 
+See [Authentication Policy](auth-policy.md) for token lifetimes, session timeout rules, and logout behavior.
+
 ### Keycloak SSO Integration
 MakrX uses Keycloak as the central identity provider, enabling Single Sign-On across all domains.
 
