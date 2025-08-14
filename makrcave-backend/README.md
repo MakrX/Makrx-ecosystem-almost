@@ -123,7 +123,7 @@ The API will be available at:
 ### Environment Variables
 ```bash
 # Database
-DATABASE_URL=sqlite:///./makrcave.db
+DATABASE_URL=sqlite:///./makrcave_dev.db
 
 # Authentication
 JWT_SECRET_KEY=your-secret-key
@@ -186,7 +186,7 @@ For reordering functionality, configure the MakrX Store API credentials in your 
 5. Update dependencies if needed
 
 ### Database Migrations
-For production deployments, use Alembic for database migrations:
+For production deployments, use Alembic for database migrations (disabled in experiments):
 ```bash
 alembic init alembic
 alembic revision --autogenerate -m "Initial migration"
