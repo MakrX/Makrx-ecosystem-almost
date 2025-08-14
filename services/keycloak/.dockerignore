@@ -1,0 +1,21 @@
+# Ignore node modules
+node_modules
+
+# Ignore logs
+*.log
+logs/
+
+# Ignore editor directories and files
+.vscode
+.idea
+*.swp
+*~
+
+# Ignore temporary files and directories
+tmp/
+temp/
+*.tmp
+
+# Keep custom resources
+!themes/
+!realm-export/
