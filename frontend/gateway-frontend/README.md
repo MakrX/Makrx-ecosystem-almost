@@ -2,6 +2,8 @@
 
 The **MakrX Gateway Frontend** is the primary landing page and entry point for the entire MakrX ecosystem. Built with React 18.3.1, TypeScript, and Vite, it serves as the unified public gateway connecting users to external MakrX ecosystem applications.
 
+For the full ecosystem architecture, see the [MakrX architecture overview](../../docs/ARCHITECTURE.md).
+
 ## 🎯 Overview
 
 The Gateway Frontend is designed as a **simplified public gateway** that serves as the first touchpoint for visitors discovering the MakrX ecosystem. It provides:

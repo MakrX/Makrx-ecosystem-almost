@@ -2,6 +2,8 @@
 
 A Next.js-based e-commerce platform for the MakrX ecosystem, providing materials, tools, and fabrication services for makers and professionals.
 
+For full system context, refer to the [MakrX architecture overview](../docs/ARCHITECTURE.md).
+
 ## 📁 Directory Structure
 
 ```

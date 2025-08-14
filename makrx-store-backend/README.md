@@ -2,6 +2,8 @@
 
 A comprehensive FastAPI backend for the MakrX Store e-commerce platform, providing REST APIs for product catalog, 3D printing services, order management, and payment processing.
 
+See the [MakrX architecture overview](../docs/ARCHITECTURE.md) for how this service integrates with the broader ecosystem.
+
 ## Features
 
 ### 🛒 E-commerce Core
