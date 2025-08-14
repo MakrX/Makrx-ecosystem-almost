@@ -183,7 +183,7 @@ Services in `experimental/` are archived and not part of the production deployme
 - **Routing**: React Router, Next.js App Router
 
 ### Backend
-- **API**: FastAPI (Python)
+- **API**: FastAPI (Python) — only FastAPI-based services are supported
 - **Database**: PostgreSQL
 - **Authentication**: Keycloak
 - **Storage**: MinIO (S3-compatible)
