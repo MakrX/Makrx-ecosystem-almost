@@ -25,7 +25,9 @@
   "emailTheme": "makrx-login",
   "accountTheme": "keycloak.v3",
   "internationalizationEnabled": true,
-  "supportedLocales": ["en"],
+  "supportedLocales": [
+    "en"
+  ],
   "defaultLocale": "en",
   "accessTokenLifespan": 300,
   "accessTokenLifespanForImplicitFlow": 300,
@@ -50,7 +52,7 @@
   },
   "clients": [
     {
-      "clientId": "gateway-frontend",
+      "clientId": "makrx-gateway-frontend",
       "name": "MakrX Gateway Frontend",
       "description": "Main MakrX gateway application",
       "enabled": true,
@@ -58,20 +60,37 @@
       "redirectUris": [
         "http://localhost:5173/*",
         "http://localhost:3000/*",
-        "https://makrx.org/*",
-        "https://*.makrx.org/*"
+        "https://makrx.org/*"
       ],
       "webOrigins": [
         "http://localhost:5173",
         "http://localhost:3000",
-        "https://makrx.org",
-        "https://*.makrx.org"
+        "https://makrx.org"
       ],
       "protocol": "openid-connect",
-      "fullScopeAllowed": true,
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
       "attributes": {
         "pkce.code.challenge.method": "S256"
-      }
+      },
+      "protocolMappers": [
+        {
+          "name": "realm roles",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-realm-role-mapper",
+          "consentRequired": false,
+          "config": {
+            "multivalued": "true",
+            "user.attribute": "",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "userinfo.token.claim": "true",
+            "claim.name": "realm_access.roles",
+            "jsonType.label": "String"
+          }
+        }
+      ]
     },
     {
       "clientId": "makrcave-frontend",
@@ -87,7 +106,30 @@
         "http://localhost:5174",
         "https://cave.makrx.org"
       ],
-      "protocol": "openid-connect"
+      "protocol": "openid-connect",
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "attributes": {
+        "pkce.code.challenge.method": "S256"
+      },
+      "protocolMappers": [
+        {
+          "name": "realm roles",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-realm-role-mapper",
+          "consentRequired": false,
+          "config": {
+            "multivalued": "true",
+            "user.attribute": "",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "userinfo.token.claim": "true",
+            "claim.name": "realm_access.roles",
+            "jsonType.label": "String"
+          }
+        }
+      ]
     },
     {
       "clientId": "makrx-store-frontend",
@@ -103,7 +145,30 @@
         "http://localhost:5175",
         "https://store.makrx.org"
       ],
-      "protocol": "openid-connect"
+      "protocol": "openid-connect",
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "attributes": {
+        "pkce.code.challenge.method": "S256"
+      },
+      "protocolMappers": [
+        {
+          "name": "realm roles",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-realm-role-mapper",
+          "consentRequired": false,
+          "config": {
+            "multivalued": "true",
+            "user.attribute": "",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "userinfo.token.claim": "true",
+            "claim.name": "realm_access.roles",
+            "jsonType.label": "String"
+          }
+        }
+      ]
     },
     {
       "clientId": "auth-service",
@@ -155,7 +220,10 @@
           "temporary": false
         }
       ],
-      "realmRoles": ["super_admin", "admin"]
+      "realmRoles": [
+        "super_admin",
+        "admin"
+      ]
     },
     {
       "username": "demo",
@@ -171,19 +239,26 @@
           "temporary": false
         }
       ],
-      "realmRoles": ["user"]
+      "realmRoles": [
+        "user"
+      ]
     }
   ],
   "groups": [
     {
       "name": "Administrators",
       "path": "/Administrators",
-      "realmRoles": ["admin", "super_admin"]
+      "realmRoles": [
+        "admin",
+        "super_admin"
+      ]
     },
     {
       "name": "Service Providers",
       "path": "/Service Providers",
-      "realmRoles": ["service_provider"]
+      "realmRoles": [
+        "service_provider"
+      ]
     }
   ]
 }
