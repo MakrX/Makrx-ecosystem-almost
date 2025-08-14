@@ -637,15 +637,6 @@ function AdminManagementPage() {
                 Manage categories, filters, and products
               </p>
             </div>
-            <div className="flex items-center gap-3">
-              <a
-                href="/admin/qr-demo"
-                className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 text-sm"
-              >
-                <QrCode className="h-4 w-4" />
-                QR Demo
-              </a>
-            </div>
           </div>
         </div>
       </div>
