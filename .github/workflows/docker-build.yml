@@ -35,7 +35,7 @@ jobs:
             echo "Unable to find context size line" >&2
             exit 1
           fi
-          echo "$line"
+          echo "Raw line: $line"
           size=$(echo "$line" | awk '{print $(NF-1)}')
           unit=$(echo "$line" | awk '{print $NF}')
           export SIZE=$size UNIT=$unit
@@ -44,8 +44,11 @@ jobs:
           size=float(os.environ['SIZE'])
           unit=os.environ['UNIT']
           threshold_mb=int(os.environ['THRESHOLD_MB'])
-          unit_map={'B':1,'kB':1024,'MB':1024*1024,'GB':1024*1024*1024}
-          size_bytes=int(size*unit_map.get(unit,1))
+          unit_map={'B':1, 'kB':1024, 'MB':1024*1024, 'GB':1024*1024*1024}
+          try:
+              size_bytes=int(size*unit_map[unit])
+          except KeyError:
+              raise SystemExit(f"Unknown size unit: {unit}")
           threshold=threshold_mb*1024*1024
           print(f"Context size: {size} {unit} ({size_bytes} bytes)")
           if size_bytes > threshold:
