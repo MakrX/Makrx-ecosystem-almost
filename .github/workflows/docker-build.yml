@@ -3,7 +3,11 @@ name: Docker Build
 on:
   push:
     branches: [main]
+    paths-ignore:
+      - 'experimental/**'
   pull_request:
+    paths-ignore:
+      - 'experimental/**'
 
 jobs:
   docker-build:
@@ -19,8 +23,6 @@ jobs:
           - makrx-store-backend
           - makrx-store-frontend
           - services/keycloak
-          - experimental/auth-service
-          - experimental/event-service
           - nginx
     env:
       THRESHOLD_MB: 200
