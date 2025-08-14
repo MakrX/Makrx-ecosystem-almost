@@ -110,7 +110,7 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
       );
     }
 
-    if (user.role === 'maker') {
+    if (user.role === 'user') {
       mockNotifications.push(
         {
           type: 'project',

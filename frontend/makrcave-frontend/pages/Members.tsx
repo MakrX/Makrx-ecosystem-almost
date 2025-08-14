@@ -149,7 +149,7 @@ const Members: React.FC = () => {
 
   const getRoleBadge = (role: string) => {
     const variants = {
-      maker: 'bg-blue-100 text-blue-800',
+      user: 'bg-blue-100 text-blue-800',
       service_provider: 'bg-purple-100 text-purple-800',
       admin: 'bg-red-100 text-red-800',
       makerspace_admin: 'bg-yellow-100 text-yellow-800',
@@ -293,7 +293,7 @@ const Members: React.FC = () => {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="all">All Roles</SelectItem>
-                      <SelectItem value="maker">Maker</SelectItem>
+                      <SelectItem value="user">User</SelectItem>
                       <SelectItem value="service_provider">Service Provider</SelectItem>
                       <SelectItem value="admin">Admin</SelectItem>
                       <SelectItem value="makerspace_admin">Manager</SelectItem>

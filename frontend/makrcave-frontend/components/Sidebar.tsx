@@ -4,7 +4,7 @@ import ManagerSidebar from './ManagerSidebar';
 import MakerSidebar from './MakerSidebar';
 
 export default function Sidebar() {
-  const { user, isSuperAdmin, isMakrcaveManager, isMaker } = useAuth();
+  const { user, isSuperAdmin, isMakrcaveManager, isUser } = useAuth();
   // Render role-specific sidebar
   if (isSuperAdmin) {
     return <SuperAdminSidebar />;
@@ -14,7 +14,7 @@ export default function Sidebar() {
     return <ManagerSidebar />;
   }
 
-  if (isMaker) {
+  if (isUser) {
     return <MakerSidebar />;
   }
 

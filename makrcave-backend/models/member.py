@@ -7,7 +7,7 @@ import uuid
 import enum
 
 class MemberRole(str, enum.Enum):
-    MAKER = "maker"
+    USER = "user"
     SERVICE_PROVIDER = "service_provider"
     ADMIN = "admin"
     MAKERSPACE_ADMIN = "makerspace_admin"
@@ -55,7 +55,7 @@ class Member(Base):
     phone = Column(String(20))
     
     # Role and permissions
-    role = Column(Enum(MemberRole), nullable=False, default=MemberRole.MAKER)
+    role = Column(Enum(MemberRole), nullable=False, default=MemberRole.USER)
     
     # Membership details
     membership_plan_id = Column(String, ForeignKey("membership_plans.id"), nullable=False)
@@ -103,7 +103,7 @@ class MemberInvite(Base):
 
     id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
     email = Column(String(255), nullable=False, index=True)
-    role = Column(Enum(MemberRole), nullable=False, default=MemberRole.MAKER)
+    role = Column(Enum(MemberRole), nullable=False, default=MemberRole.USER)
     membership_plan_id = Column(String, ForeignKey("membership_plans.id"), nullable=False)
     
     # Invitation details

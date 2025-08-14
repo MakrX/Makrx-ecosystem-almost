@@ -26,7 +26,7 @@ const InviteMemberModal: React.FC<InviteMemberModalProps> = ({
   
   const [formData, setFormData] = useState({
     email: '',
-    role: 'maker',
+    role: 'user',
     membership_plan_id: '',
     message: '',
   });
@@ -66,7 +66,7 @@ const InviteMemberModal: React.FC<InviteMemberModalProps> = ({
       setTimeout(() => {
         setFormData({
           email: '',
-          role: 'maker',
+          role: 'user',
           membership_plan_id: '',
           message: '',
         });
@@ -84,7 +84,7 @@ const InviteMemberModal: React.FC<InviteMemberModalProps> = ({
   const handleCancel = () => {
     setFormData({
       email: '',
-      role: 'maker',
+      role: 'user',
       membership_plan_id: '',
       message: '',
     });
@@ -152,7 +152,7 @@ const InviteMemberModal: React.FC<InviteMemberModalProps> = ({
                 <SelectValue placeholder="Select role" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="maker">Maker</SelectItem>
+                <SelectItem value="user">User</SelectItem>
                 <SelectItem value="service_provider">Service Provider</SelectItem>
                 <SelectItem value="admin">Admin</SelectItem>
                 <SelectItem value="makerspace_admin">Makerspace Admin</SelectItem>

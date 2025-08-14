@@ -17,8 +17,8 @@ interface ProtectedRouteProps {
     area: 'admin' | 'analytics' | 'billing' | 'users' | 'equipment' | 'projects' | 'inventory';
     action: string;
   };
-  requiredRole?: 'super_admin' | 'admin' | 'makerspace_admin' | 'service_provider' | 'maker';
-  allowedRoles?: ('super_admin' | 'admin' | 'makerspace_admin' | 'service_provider' | 'maker')[];
+  requiredRole?: 'super_admin' | 'admin' | 'makerspace_admin' | 'service_provider' | 'user';
+  allowedRoles?: ('super_admin' | 'admin' | 'makerspace_admin' | 'service_provider' | 'user')[];
   adminFeature?: 'systemLogs' | 'featureFlags' | 'healthMonitoring' | 'userRoleManagement' | 'globalDashboard';
   fallbackPath?: string;
   showAccessDenied?: boolean;

@@ -282,7 +282,7 @@ export const ROLE_PERMISSIONS: Record<UserRole, RolePermissions> = {
     },
   },
 
-  maker: {
+  user: {
     users: {
       view: 'none',
       create: false,
@@ -439,7 +439,7 @@ export const UI_ACCESS: Record<UserRole, {
     canViewAllMakerspaces: false,
     canManageUsers: false,
   },
-  maker: {
+  user: {
     dashboard: 'personal',
     adminPanels: [],
     inventoryAccess: 'availability',

@@ -33,7 +33,7 @@ The server listens on [http://localhost:8000](http://localhost:8000) and accepts
 - `admin@makrcave.com` / `Admin2024!`
 - `manager@makrcave.com` / `Manager2024!`
 - `provider@makrcave.com` / `Provider2024!`
-- `maker@makrcave.com` / `Maker2024!`
+- `user@makrcave.com` / `User2024!`
 
 These credentials are fake and should never be used with real services. Run `npm run dev:with-api` to launch both the mock API and the frontend together.
 

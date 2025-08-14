@@ -67,7 +67,7 @@ const MemberDetailsModal: React.FC<MemberDetailsModalProps> = ({
 
   const getRoleBadge = (role: string) => {
     const variants = {
-      maker: 'bg-blue-100 text-blue-800',
+      user: 'bg-blue-100 text-blue-800',
       service_provider: 'bg-purple-100 text-purple-800',
       admin: 'bg-red-100 text-red-800',
       makerspace_admin: 'bg-yellow-100 text-yellow-800',

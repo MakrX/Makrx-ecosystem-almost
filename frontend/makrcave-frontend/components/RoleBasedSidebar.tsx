@@ -253,7 +253,7 @@ export default function RoleBasedSidebar() {
       return <ManagerSidebar />;
     case 'service_provider':
       return <ServiceProviderSidebar />;
-    case 'maker':
+    case 'user':
       return <MakerSidebar />;
     default:
       return <MakerSidebar />;

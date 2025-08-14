@@ -8,7 +8,7 @@ export interface Member {
   firstName: string;
   lastName: string;
   phone?: string;
-  role: 'maker' | 'service_provider' | 'admin' | 'makerspace_admin';
+  role: 'user' | 'service_provider' | 'admin' | 'makerspace_admin';
   membership_plan_id: string;
   membership_plan_name: string;
   start_date: string;
@@ -133,7 +133,7 @@ export const MemberProvider: React.FC<MemberProviderProps> = ({ children }) => {
       firstName: 'John',
       lastName: 'Doe',
       phone: '+1234567890',
-      role: 'maker',
+      role: 'user',
       membership_plan_id: 'plan_1',
       membership_plan_name: 'Pro Maker',
       start_date: '2024-01-15',
@@ -175,7 +175,7 @@ export const MemberProvider: React.FC<MemberProviderProps> = ({ children }) => {
       email: 'alex.expired@example.com',
       firstName: 'Alex',
       lastName: 'Johnson',
-      role: 'maker',
+      role: 'user',
       membership_plan_id: 'plan_1',
       membership_plan_name: 'Pro Maker',
       start_date: '2023-06-01',
@@ -245,7 +245,7 @@ export const MemberProvider: React.FC<MemberProviderProps> = ({ children }) => {
     {
       id: 'inv_1',
       email: 'newmember@example.com',
-      role: 'maker',
+      role: 'user',
       membership_plan_id: 'plan_1',
       invited_by: 'admin@makrcave.com',
       invite_token: 'token_123',
@@ -315,7 +315,7 @@ export const MemberProvider: React.FC<MemberProviderProps> = ({ children }) => {
       firstName: memberData.firstName || '',
       lastName: memberData.lastName || '',
       phone: memberData.phone,
-      role: memberData.role || 'maker',
+      role: memberData.role || 'user',
       membership_plan_id: memberData.membership_plan_id || 'plan_1',
       membership_plan_name: membershipPlans.find(p => p.id === memberData.membership_plan_id)?.name || 'Basic Maker',
       start_date: new Date().toISOString().split('T')[0],

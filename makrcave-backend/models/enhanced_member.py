@@ -11,7 +11,7 @@ from datetime import datetime
 from .access_control import user_roles, UserSession, AccessLog
 
 class MemberRole(str, enum.Enum):
-    MAKER = "maker"
+    USER = "user"
     SERVICE_PROVIDER = "service_provider"
     ADMIN = "admin"
     MAKERSPACE_ADMIN = "makerspace_admin"
@@ -48,7 +48,7 @@ class Member(Base):
     phone = Column(String(20))
     
     # Primary role for backward compatibility
-    role = Column(Enum(MemberRole), nullable=False, default=MemberRole.MAKER)
+    role = Column(Enum(MemberRole), nullable=False, default=MemberRole.USER)
     
     # Membership details
     membership_plan_id = Column(UUID(as_uuid=True), ForeignKey("membership_plans.id"), nullable=False)

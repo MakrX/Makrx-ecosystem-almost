@@ -25,7 +25,7 @@ interface OnboardingStep {
 }
 
 interface UserProfile {
-  userType: 'maker' | 'admin' | 'provider' | 'super_admin' | '';
+  userType: 'user' | 'admin' | 'provider' | 'super_admin' | '';
   personalInfo: {
     firstName: string;
     lastName: string;
@@ -87,8 +87,8 @@ const OnboardingFlow: React.FC = () => {
 
   const userTypes = [
     {
-      id: 'maker',
-      title: 'Individual Maker',
+      id: 'user',
+      title: 'Individual User',
       description: 'I want to access makerspaces, work on projects, and learn new skills',
       icon: Wrench,
       color: 'from-blue-500 to-cyan-500',

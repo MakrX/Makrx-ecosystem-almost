@@ -6,7 +6,7 @@ export interface User {
   firstName?: string;
   lastName?: string;
   role: UserRole;
-  assignedMakerspaces?: string[]; // For makerspace_admin, service_provider, maker
+  assignedMakerspaces?: string[]; // For makerspace_admin, service_provider, user
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
@@ -82,7 +82,7 @@ export interface RolePermissions {
   };
 }
 
-export type UserRole = 'super_admin' | 'admin' | 'makerspace_admin' | 'service_provider' | 'maker';
+export type UserRole = 'super_admin' | 'admin' | 'makerspace_admin' | 'service_provider' | 'user';
 
 export interface AuthTokens {
   accessToken: string;

@@ -46,7 +46,7 @@ interface AuthContextType {
   isAdmin: boolean;
   isMakerspaceAdmin: boolean;
   isServiceProvider: boolean;
-  isMaker: boolean;
+  isUser: boolean;
   // For backward compatibility
   isMakrcaveManager: boolean;
 }
@@ -124,11 +124,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const getCurrentRole = (): UserRole => {
-    return user?.role || 'maker';
+    return user?.role || 'user';
   };
 
   const getUserRolePermissions = (): RolePermissions => {
-    return user ? getRolePermissions(user.role) : getRolePermissions('maker');
+    return user ? getRolePermissions(user.role) : getRolePermissions('user');
   };
 
   const userHasPermission = (area: keyof RolePermissions, action: string, context?: any): boolean => {
@@ -136,7 +136,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const getUserUIAccess = () => {
-    return user ? UI_ACCESS[user.role] : UI_ACCESS.maker;
+    return user ? UI_ACCESS[user.role] : UI_ACCESS.user;
   };
 
   // ========================================
@@ -147,7 +147,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const isAdmin = user?.role === 'admin';                    // Administrative access
   const isMakerspaceAdmin = user?.role === 'makerspace_admin'; // Makerspace management
   const isServiceProvider = user?.role === 'service_provider'; // Service provider access
-  const isMaker = user?.role === 'maker';                     // Regular member access
+  const isUser = user?.role === 'user';                       // Regular member access
   const isMakrcaveManager = isMakerspaceAdmin;                // For backward compatibility
   const isAuthenticated = !!user && authService.isAuthenticated(); // Combined auth check
 
@@ -168,7 +168,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       isAdmin,
       isMakerspaceAdmin,
       isServiceProvider,
-      isMaker,
+      isUser,
       isMakrcaveManager
     }}>
       {children}

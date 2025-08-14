@@ -57,13 +57,13 @@ const mockUsers = {
     createdAt: '2024-01-01T00:00:00Z',
     assignedMakerspaces: []
   },
-  'maker@makrcave.com': {
-    id: 'user-maker',
-    email: 'maker@makrcave.com',
-    username: 'maker',
+  'user@makrcave.com': {
+    id: 'user-user',
+    email: 'user@makrcave.com',
+    username: 'user',
     firstName: 'Regular',
     lastName: 'Maker',
-    role: 'maker',
+    role: 'user',
     isActive: true,
     createdAt: '2024-01-01T00:00:00Z',
     assignedMakerspaces: ['ms-1']
@@ -76,7 +76,7 @@ const mockPasswords = {
   'admin@makrcave.com': 'Admin2024!',
   'manager@makrcave.com': 'Manager2024!',
   'provider@makrcave.com': 'Provider2024!',
-  'maker@makrcave.com': 'Maker2024!'
+  'user@makrcave.com': 'User2024!'
 };
 
 // Authentication endpoints
@@ -130,7 +130,7 @@ app.post('/api/auth/register', (req, res) => {
     username,
     firstName: firstName || '',
     lastName: lastName || '',
-    role: 'maker', // Default role
+    role: 'user', // Default role
     isActive: true,
     createdAt: new Date().toISOString(),
     assignedMakerspaces: []
