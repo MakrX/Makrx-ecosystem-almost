@@ -8,7 +8,7 @@ The MakrX ecosystem is organized into several main sections:
 - **Frontend Applications** (`frontend/`, `makrx-store-frontend/`)
 - **Backend Services** (`backends/`, `makrcave-backend/`, `makrx-store-backend/`)
 - **Shared Packages** (`packages/`)
-- **Infrastructure** (`nginx/`, `services/`, `netlify/`)
+- **Infrastructure** (`nginx/`, `services/`)
 - **Documentation** (`docs/`, various `.md` files)
 - **Configuration** (Docker, environment, build configs)
 
@@ -50,7 +50,7 @@ The MakrX ecosystem is organized into several main sections:
 - **Impact**: Changes affect CSS compilation pipeline
 - **Usage**: Used during build process for CSS optimization
 
-#### `vite.config.ts` & `vite.config.server.ts`
+#### `vite.config.ts`
 - **Purpose**: Vite build tool configuration
 - **Key Parameters**:
   - `server`: Development server settings
@@ -109,9 +109,7 @@ The MakrX ecosystem is organized into several main sections:
 #### `netlify.toml`
 - **Purpose**: Netlify deployment configuration
 - **Key Parameters**:
-  - Build commands
-  - Redirect rules
-  - Environment variables
+  - Build command
 - **Impact**: Changes affect Netlify deployment behavior
 - **Usage**: Used by Netlify for static site deployment
 
@@ -219,14 +217,8 @@ Reverse proxy configuration
 ### `services/`
 Additional services (Keycloak, etc.)
 
-### `netlify/`
-Netlify-specific functions and configuration
-
 ### `shared/`
 Shared utilities and types
-
-### `server/`
-Development server configuration
 
 ### `public/`
 Static assets
