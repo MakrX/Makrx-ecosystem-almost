@@ -36,15 +36,15 @@ jobs:
           unit=$(echo "$line" | awk '{print $NF}')
           export SIZE=$size UNIT=$unit
           python <<'PY'
-import os, sys
-size=float(os.environ['SIZE'])
-unit=os.environ['UNIT']
-threshold_mb=int(os.environ['THRESHOLD_MB'])
-unit_map={'B':1,'kB':1024,'MB':1024*1024,'GB':1024*1024*1024}
-size_bytes=int(size*unit_map.get(unit,1))
-threshold=threshold_mb*1024*1024
-print(f"Context size: {size} {unit} ({size_bytes} bytes)")
-if size_bytes > threshold:
-    print(f"Context size exceeds threshold of {threshold_mb} MB", file=sys.stderr)
-    sys.exit(1)
-PY
+          import os, sys
+          size=float(os.environ['SIZE'])
+          unit=os.environ['UNIT']
+          threshold_mb=int(os.environ['THRESHOLD_MB'])
+          unit_map={'B':1,'kB':1024,'MB':1024*1024,'GB':1024*1024*1024}
+          size_bytes=int(size*unit_map.get(unit,1))
+          threshold=threshold_mb*1024*1024
+          print(f"Context size: {size} {unit} ({size_bytes} bytes)")
+          if size_bytes > threshold:
+              print(f"Context size exceeds threshold of {threshold_mb} MB", file=sys.stderr)
+              sys.exit(1)
+          PY
