@@ -118,7 +118,7 @@ async def get_database_engine() -> AsyncEngine
 # Session management
 async def get_db_session() -> AsyncSession
 
-# Table creation and migrations
+# Table creation utilities
 async def create_tables() -> None
 
 # Health checks
@@ -538,7 +538,7 @@ async def get_products_by_category(
 ### Environment Configuration
 ```bash
 # Database
-DATABASE_URL=postgresql://user:pass@localhost:5432/makrx_store
+DATABASE_URL=postgresql://user:pass@localhost:5432/makrx_store_dev
 
 # Authentication
 KEYCLOAK_URL=http://localhost:8080
@@ -582,8 +582,6 @@ uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 # Run tests
 pytest
 
-# Database migrations
-alembic upgrade head
 
 # Security scan
 bandit -r app/

@@ -33,7 +33,7 @@ class Settings(BaseSettings):
     
     # Database
     DATABASE_URL: str = Field(
-        "postgresql+asyncpg://makrx:makrx@localhost:5432/makrx_store",
+        "postgresql+asyncpg://makrx:makrx@localhost:5432/makrx_store_dev",
         description="PostgreSQL database URL"
     )
     DB_ECHO: bool = Field(False, description="Enable SQLAlchemy query logging")

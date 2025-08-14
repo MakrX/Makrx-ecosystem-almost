@@ -8,7 +8,8 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Database configuration
-DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./makrcave.db")
+# Default to a clearly development-only SQLite database
+DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./makrcave_dev.db")
 
 # Create SQLAlchemy engine
 # Only enable SQL logging in development for debugging

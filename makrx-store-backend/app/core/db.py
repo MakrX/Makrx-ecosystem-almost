@@ -33,7 +33,7 @@ AsyncSessionLocal = async_sessionmaker(
 # Base class for all models
 Base = declarative_base()
 
-# Naming convention for constraints (helps with Alembic migrations)
+# Naming convention for constraints (helps with Alembic migrations; migrations disabled in experiments)
 convention = {
     "ix": "ix_%(column_0_label)s",
     "uq": "uq_%(table_name)s_%(column_0_name)s",

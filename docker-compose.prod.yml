@@ -6,7 +6,7 @@ services:
     image: postgres:13-alpine
     container_name: makrcave-postgres
     environment:
-      POSTGRES_DB: makrcave_db
+      POSTGRES_DB: makrcave_dev_db
       POSTGRES_USER: makrcave_user
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_INITDB_ARGS: "--encoding=UTF-8"
@@ -17,7 +17,7 @@ services:
       - "5432:5432"
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U makrcave_user -d makrcave_db"]
+      test: ["CMD-SHELL", "pg_isready -U makrcave_user -d makrcave_dev_db"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -31,7 +31,7 @@ services:
       dockerfile: Dockerfile
     container_name: makrcave-backend
     environment:
-      DATABASE_URL: postgresql://makrcave_user:${POSTGRES_PASSWORD}@postgres:5432/makrcave_db
+      DATABASE_URL: postgresql://makrcave_user:${POSTGRES_PASSWORD}@postgres:5432/makrcave_dev_db
       JWT_SECRET_KEY: ${JWT_SECRET_KEY}
       ENVIRONMENT: production
       DEBUG: "False"

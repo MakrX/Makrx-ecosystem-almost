@@ -60,7 +60,7 @@ if [ -d "makrcave-backend" ]; then
     # Backup database if running
     if docker-compose -f docker-compose.prod.yml ps postgres | grep -q "Up"; then
         log "Backing up database..."
-        docker-compose -f docker-compose.prod.yml exec -T postgres pg_dump -U makrcave_user makrcave_db > "$BACKUP_DIR/db_backup_$timestamp.sql"
+        docker-compose -f docker-compose.prod.yml exec -T postgres pg_dump -U makrcave_user makrcave_dev_db > "$BACKUP_DIR/db_backup_$timestamp.sql"
     fi
     
     # Backup uploads
@@ -87,19 +87,13 @@ docker-compose -f docker-compose.prod.yml up -d postgres redis
 log "Waiting for database to be ready..."
 timeout=60
 counter=0
-until docker-compose -f docker-compose.prod.yml exec -T postgres pg_isready -U makrcave_user -d makrcave_db; do
+until docker-compose -f docker-compose.prod.yml exec -T postgres pg_isready -U makrcave_user -d makrcave_dev_db; do
     sleep 2
     counter=$((counter + 2))
     if [ $counter -gt $timeout ]; then
         error "Database failed to start within $timeout seconds"
     fi
 done
-
-# Run database migrations
-log "Running database migrations..."
-docker-compose -f docker-compose.prod.yml run --rm backend python migrations/create_member_tables.py || warn "Member tables migration failed or already exists"
-docker-compose -f docker-compose.prod.yml run --rm backend python migrations/create_skill_tables.py || warn "Skill tables migration failed or already exists"
-docker-compose -f docker-compose.prod.yml run --rm backend python migrations/create_analytics_tables.py || warn "Analytics tables migration failed or already exists"
 
 # Start all services
 log "Starting all services..."
@@ -136,7 +130,7 @@ else
 fi
 
 # Check database connection
-if docker-compose -f docker-compose.prod.yml exec -T postgres psql -U makrcave_user -d makrcave_db -c "SELECT 1;" > /dev/null 2>&1; then
+if docker-compose -f docker-compose.prod.yml exec -T postgres psql -U makrcave_user -d makrcave_dev_db -c "SELECT 1;" > /dev/null 2>&1; then
     log "✓ Database connection check passed"
 else
     error "✗ Database connection check failed"

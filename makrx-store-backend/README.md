@@ -36,7 +36,7 @@ See the [MakrX architecture overview](../docs/ARCHITECTURE.md) for how this serv
 ## Tech Stack
 
 - **Framework**: FastAPI 0.104+ with async/await support
-- **Database**: PostgreSQL with SQLAlchemy 2.0 and Alembic migrations
+- **Database**: PostgreSQL with SQLAlchemy 2.0 (migrations disabled)
 - **Authentication**: Keycloak OIDC with JWT verification
 - **Storage**: S3/MinIO for file uploads with presigned URLs
 - **Payments**: Stripe and Razorpay integration
@@ -77,7 +77,7 @@ makrx-store-backend/
 │   │   ├── products.py        # Product data access layer
 │   │   └── categories.py      # Category data access layer
 │   └── utils/                  # Utility functions and helpers
-├── alembic/                    # Database migrations
+├── migrations_disabled/        # Archived migrations (not loaded)
 ├── tests/                      # Test suite
 ├── Dockerfile                  # Container configuration
 ├── requirements.txt            # Python dependencies
@@ -126,10 +126,7 @@ cp .env.example .env
 5. **Set up database**
 
 ```bash
-# Run migrations
-alembic upgrade head
-
-# Optional: Seed with sample data
+# Initialize tables (migrations disabled)
 python -c "from app.core.db import create_tables; import asyncio; asyncio.run(create_tables())"
 ```
 
@@ -231,19 +228,6 @@ RATE_RESIN_PER_CM3=0.35
 ```
 
 ## Development
-
-### Database Migrations
-
-```bash
-# Create new migration
-alembic revision --autogenerate -m "Description"
-
-# Apply migrations
-alembic upgrade head
-
-# Rollback migration
-alembic downgrade -1
-```
 
 ### Testing
 
