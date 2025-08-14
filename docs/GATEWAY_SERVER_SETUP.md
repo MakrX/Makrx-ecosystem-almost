@@ -11,6 +11,7 @@ The Gateway Frontend can be deployed in various hosting environments, from simpl
 ### Minimum System Requirements
 
 #### Static Hosting (Recommended)
+
 - **CDN**: CloudFlare, AWS CloudFront, or similar
 - **Storage**: 1GB for assets and builds
 - **Bandwidth**: 100GB/month (scales with traffic)
@@ -18,6 +19,7 @@ The Gateway Frontend can be deployed in various hosting environments, from simpl
 - **Domain**: Custom domain with DNS management
 
 #### VPS/Server Hosting
+
 - **CPU**: 2 vCPUs minimum (4 vCPUs recommended)
 - **RAM**: 4GB minimum (8GB recommended)
 - **Storage**: 20GB SSD minimum (50GB recommended)
@@ -25,6 +27,7 @@ The Gateway Frontend can be deployed in various hosting environments, from simpl
 - **OS**: Ubuntu 20.04+ LTS or CentOS 8+
 
 #### Container/Kubernetes Hosting
+
 - **Nodes**: 3 worker nodes minimum
 - **Resources per pod**: 256MB RAM, 0.25 CPU minimum
 - **Storage**: Persistent volumes for assets
@@ -34,6 +37,7 @@ The Gateway Frontend can be deployed in various hosting environments, from simpl
 ### Network Requirements
 
 #### Firewall Rules
+
 ```bash
 # HTTP/HTTPS traffic
 Port 80  (HTTP)  - Open to 0.0.0.0/0
@@ -48,6 +52,7 @@ Port 3000 (Grafana)    - Internal network only
 ```
 
 #### DNS Configuration
+
 ```
 # Primary domain
 yourdomain.com          A     YOUR_SERVER_IP
@@ -68,6 +73,7 @@ yourdomain.com          CAA   0 issuewild "letsencrypt.org"
 ### Option 1: Ubuntu Server Setup
 
 #### 1. Initial Server Configuration
+
 ```bash
 # Update system packages
 sudo apt update && sudo apt upgrade -y
@@ -88,6 +94,7 @@ chmod 600 ~/.ssh/authorized_keys
 ```
 
 #### 2. Install Node.js and npm
+
 ```bash
 # Install Node.js 18.x LTS
 curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
@@ -102,6 +109,7 @@ sudo npm install -g pm2
 ```
 
 #### 3. Install and Configure Nginx
+
 ```bash
 # Install Nginx
 sudo apt install -y nginx
@@ -120,6 +128,7 @@ curl http://localhost
 ```
 
 #### 4. SSL Certificate Setup with Let's Encrypt
+
 ```bash
 # Install Certbot
 sudo apt install -y certbot python3-certbot-nginx
@@ -137,6 +146,7 @@ echo "0 12 * * * /usr/bin/certbot renew --quiet" | sudo crontab -
 ### Option 2: CentOS/RHEL Server Setup
 
 #### 1. Initial Server Configuration
+
 ```bash
 # Update system packages
 sudo yum update -y
@@ -157,6 +167,7 @@ sudo firewall-cmd --reload
 ```
 
 #### 2. Install Node.js and npm
+
 ```bash
 # Install Node.js 18.x LTS
 curl -fsSL https://rpm.nodesource.com/setup_18.x | sudo bash -
@@ -170,6 +181,7 @@ sudo npm install -g pm2
 ```
 
 #### 3. Install and Configure Nginx
+
 ```bash
 # Install Nginx
 sudo yum install -y nginx
@@ -187,6 +199,7 @@ curl http://localhost
 ### Nginx Configuration
 
 #### Main Nginx Configuration
+
 File: `/etc/nginx/nginx.conf`
 
 ```nginx
@@ -207,16 +220,16 @@ http {
     # Basic settings
     include /etc/nginx/mime.types;
     default_type application/octet-stream;
-    
+
     # Logging format
     log_format main '$remote_addr - $remote_user [$time_local] "$request" '
                     '$status $body_bytes_sent "$http_referer" '
                     '"$http_user_agent" "$http_x_forwarded_for" '
                     '$request_time $upstream_response_time';
-    
+
     # Logging
     access_log /var/log/nginx/access.log main;
-    
+
     # Performance settings
     sendfile on;
     tcp_nopush on;
@@ -224,14 +237,14 @@ http {
     keepalive_timeout 65;
     types_hash_max_size 2048;
     client_max_body_size 10M;
-    
+
     # Security settings
     server_tokens off;
     add_header X-Frame-Options "SAMEORIGIN" always;
     add_header X-Content-Type-Options "nosniff" always;
     add_header X-XSS-Protection "1; mode=block" always;
     add_header Referrer-Policy "no-referrer-when-downgrade" always;
-    
+
     # Gzip compression
     gzip on;
     gzip_vary on;
@@ -247,11 +260,11 @@ http {
         application/xml+rss
         application/json
         image/svg+xml;
-    
+
     # Rate limiting
     limit_req_zone $binary_remote_addr zone=login:10m rate=5r/m;
     limit_req_zone $binary_remote_addr zone=api:10m rate=10r/s;
-    
+
     # Include virtual host configs
     include /etc/nginx/conf.d/*.conf;
     include /etc/nginx/sites-enabled/*;
@@ -259,6 +272,7 @@ http {
 ```
 
 #### Virtual Host Configuration
+
 File: `/etc/nginx/sites-available/makrx-gateway`
 
 ```nginx
@@ -266,12 +280,12 @@ File: `/etc/nginx/sites-available/makrx-gateway`
 server {
     listen 80;
     server_name yourdomain.com www.yourdomain.com;
-    
+
     # Let's Encrypt challenge
     location /.well-known/acme-challenge/ {
         root /var/www/letsencrypt;
     }
-    
+
     # Redirect all other traffic to HTTPS
     location / {
         return 301 https://$server_name$request_uri;
@@ -282,11 +296,11 @@ server {
 server {
     listen 443 ssl http2;
     server_name www.yourdomain.com;
-    
+
     # SSL configuration
     ssl_certificate /etc/letsencrypt/live/yourdomain.com/fullchain.pem;
     ssl_certificate_key /etc/letsencrypt/live/yourdomain.com/privkey.pem;
-    
+
     return 301 https://yourdomain.com$request_uri;
 }
 
@@ -294,46 +308,46 @@ server {
 server {
     listen 443 ssl http2;
     server_name yourdomain.com;
-    
+
     # Document root
     root /var/www/makrx-gateway/dist;
     index index.html;
-    
+
     # SSL Configuration
     ssl_certificate /etc/letsencrypt/live/yourdomain.com/fullchain.pem;
     ssl_certificate_key /etc/letsencrypt/live/yourdomain.com/privkey.pem;
     ssl_session_timeout 1d;
     ssl_session_cache shared:MozTLS:10m;
     ssl_session_tickets off;
-    
+
     # Modern SSL configuration
     ssl_protocols TLSv1.2 TLSv1.3;
     ssl_ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384;
     ssl_prefer_server_ciphers off;
-    
+
     # HSTS
     add_header Strict-Transport-Security "max-age=63072000; includeSubDomains; preload" always;
-    
+
     # Content Security Policy
     add_header Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://api.yourdomain.com https://auth.yourdomain.com https://www.google-analytics.com; frame-ancestors 'none';" always;
-    
+
     # OCSP stapling
     ssl_stapling on;
     ssl_stapling_verify on;
     ssl_trusted_certificate /etc/letsencrypt/live/yourdomain.com/chain.pem;
     resolver 8.8.8.8 8.8.4.4 valid=300s;
     resolver_timeout 5s;
-    
+
     # Logging
     access_log /var/log/nginx/makrx-gateway-access.log main;
     error_log /var/log/nginx/makrx-gateway-error.log warn;
-    
+
     # Cache static assets aggressively
     location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot|webp|avif)$ {
         expires 1y;
         add_header Cache-Control "public, immutable";
         add_header Vary "Accept-Encoding";
-        
+
         # Enable CORS for fonts
         if ($request_method = 'OPTIONS') {
             add_header Access-Control-Allow-Origin '*';
@@ -344,20 +358,20 @@ server {
             add_header Content-Length 0;
             return 204;
         }
-        
+
         if ($request_method = 'GET') {
             add_header Access-Control-Allow-Origin '*';
             add_header Access-Control-Allow-Methods 'GET, OPTIONS';
             add_header Access-Control-Allow-Headers 'Range';
         }
     }
-    
+
     # Cache HTML with short expiry
     location ~* \.(html)$ {
         expires 1h;
         add_header Cache-Control "public, must-revalidate";
     }
-    
+
     # Handle React Router (SPA)
     location / {
         try_files $uri $uri/ /index.html;
@@ -365,12 +379,12 @@ server {
         add_header Pragma "no-cache";
         add_header Expires "0";
     }
-    
+
     # API proxy (if serving API from same domain)
     location /api/ {
         # Rate limiting for API endpoints
         limit_req zone=api burst=20 nodelay;
-        
+
         proxy_pass https://api.yourdomain.com/;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
@@ -378,30 +392,30 @@ server {
         proxy_set_header X-Forwarded-Proto $scheme;
         proxy_set_header X-Forwarded-Host $host;
         proxy_set_header X-Forwarded-Port $server_port;
-        
+
         # Timeouts
         proxy_connect_timeout 60s;
         proxy_send_timeout 60s;
         proxy_read_timeout 60s;
-        
+
         # Buffering
         proxy_buffering on;
         proxy_buffer_size 4k;
         proxy_buffers 8 4k;
         proxy_busy_buffers_size 8k;
-        
+
         # Headers
         proxy_set_header Connection "";
         proxy_http_version 1.1;
     }
-    
+
     # Health check endpoint
     location /health {
         access_log off;
         return 200 "healthy\n";
         add_header Content-Type text/plain;
     }
-    
+
     # Monitoring endpoint (internal only)
     location /nginx_status {
         stub_status on;
@@ -412,20 +426,20 @@ server {
         allow 192.168.0.0/16;
         deny all;
     }
-    
+
     # Block sensitive files
     location ~ /\. {
         deny all;
         access_log off;
         log_not_found off;
     }
-    
+
     location ~ \.(env|log|htaccess|htpasswd|ini|conf|sql|backup|tar|gz|bak)$ {
         deny all;
         access_log off;
         log_not_found off;
     }
-    
+
     # Security restrictions
     location ~ ^/(admin|wp-admin|phpmyadmin) {
         deny all;
@@ -436,6 +450,7 @@ server {
 ```
 
 #### Enable the Site
+
 ```bash
 # Create symbolic link to enable site
 sudo ln -s /etc/nginx/sites-available/makrx-gateway /etc/nginx/sites-enabled/
@@ -450,6 +465,7 @@ sudo systemctl reload nginx
 ### Apache Configuration (Alternative)
 
 #### Main Apache Configuration
+
 File: `/etc/apache2/apache2.conf` (Ubuntu) or `/etc/httpd/conf/httpd.conf` (CentOS)
 
 ```apache
@@ -480,6 +496,7 @@ MaxRequestWorkers 150
 ```
 
 #### Virtual Host Configuration
+
 File: `/etc/apache2/sites-available/makrx-gateway.conf`
 
 ```apache
@@ -487,14 +504,14 @@ File: `/etc/apache2/sites-available/makrx-gateway.conf`
 <VirtualHost *:80>
     ServerName yourdomain.com
     ServerAlias www.yourdomain.com
-    
+
     # Let's Encrypt challenge
     DocumentRoot /var/www/letsencrypt
     <Directory "/var/www/letsencrypt">
         AllowOverride None
         Require all granted
     </Directory>
-    
+
     # Redirect to HTTPS
     RewriteEngine On
     RewriteCond %{REQUEST_URI} !^/.well-known/acme-challenge/
@@ -505,7 +522,7 @@ File: `/etc/apache2/sites-available/makrx-gateway.conf`
 <VirtualHost *:443>
     ServerName yourdomain.com
     DocumentRoot /var/www/makrx-gateway/dist
-    
+
     # SSL Configuration
     SSLEngine on
     SSLCertificateFile /etc/letsencrypt/live/yourdomain.com/fullchain.pem
@@ -514,17 +531,17 @@ File: `/etc/apache2/sites-available/makrx-gateway.conf`
     SSLCipherSuite ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305
     SSLHonorCipherOrder off
     SSLSessionTickets off
-    
+
     # Security headers
     Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
     Header always set X-Frame-Options "SAMEORIGIN"
     Header always set X-Content-Type-Options "nosniff"
     Header always set X-XSS-Protection "1; mode=block"
     Header always set Referrer-Policy "no-referrer-when-downgrade"
-    
+
     # Content Security Policy
     Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://api.yourdomain.com https://auth.yourdomain.com;"
-    
+
     # Compression
     <Location />
         SetOutputFilter DEFLATE
@@ -533,34 +550,34 @@ File: `/etc/apache2/sites-available/makrx-gateway.conf`
         SetEnvIfNoCase Request_URI \
             \.(?:exe|t?gz|zip|bz2|sit|rar)$ no-gzip dont-vary
     </Location>
-    
+
     # Cache static assets
     <LocationMatch "\.(css|js|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot|webp)$">
         ExpiresActive On
         ExpiresDefault "access plus 1 year"
         Header set Cache-Control "public, immutable"
     </LocationMatch>
-    
+
     # Cache HTML files briefly
     <LocationMatch "\.html$">
         ExpiresActive On
         ExpiresDefault "access plus 1 hour"
         Header set Cache-Control "public, must-revalidate"
     </LocationMatch>
-    
+
     # Handle React Router
     RewriteEngine On
-    
+
     # Handle client-side routing
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteRule . /index.html [L]
-    
+
     # Block sensitive files
     <FilesMatch "\.(env|log|htaccess|htpasswd|ini|conf|sql)$">
         Require all denied
     </FilesMatch>
-    
+
     # Logging
     ErrorLog ${APACHE_LOG_DIR}/makrx-gateway-error.log
     CustomLog ${APACHE_LOG_DIR}/makrx-gateway-access.log combined
@@ -573,6 +590,7 @@ File: `/etc/apache2/sites-available/makrx-gateway.conf`
 ### Docker Installation
 
 #### Ubuntu Docker Installation
+
 ```bash
 # Remove old Docker versions
 sudo apt-get remove docker docker-engine docker.io containerd runc
@@ -600,6 +618,7 @@ docker-compose --version
 ### Production Docker Deployment
 
 #### Multi-stage Dockerfile
+
 ```dockerfile
 # Build stage
 FROM node:18-alpine AS builder
@@ -610,7 +629,7 @@ WORKDIR /app
 # Copy package files
 COPY frontend/gateway-frontend/package*.json ./
 
-# Install dependencies
+# Install production dependencies
 RUN npm ci --omit=dev && npm cache clean --force
 
 # Copy source code
@@ -661,9 +680,10 @@ CMD ["nginx", "-g", "daemon off;"]
 ```
 
 #### Docker Compose Configuration
+
 ```yaml
 # docker-compose.production.yml
-version: '3.8'
+version: "3.8"
 
 services:
   makrx-gateway:
@@ -688,9 +708,9 @@ services:
       retries: 3
       start_period: 40s
     labels:
-      - "com.datadoghq.ad.check_names=[\"nginx\"]"
+      - 'com.datadoghq.ad.check_names=["nginx"]'
       - "com.datadoghq.ad.init_configs=[{}]"
-      - "com.datadoghq.ad.instances=[{\"nginx_status_url\":\"http://%%host%%:8080/nginx_status\"}]"
+      - 'com.datadoghq.ad.instances=[{"nginx_status_url":"http://%%host%%:8080/nginx_status"}]'
 
   # Reverse proxy (if using Traefik)
   traefik:
@@ -721,6 +741,7 @@ volumes:
 ```
 
 #### Nginx Configuration for Docker
+
 File: `default.conf`
 
 ```nginx
@@ -729,34 +750,34 @@ server {
     server_name _;
     root /usr/share/nginx/html;
     index index.html;
-    
+
     # Security headers
     add_header X-Frame-Options "SAMEORIGIN" always;
     add_header X-Content-Type-Options "nosniff" always;
     add_header X-XSS-Protection "1; mode=block" always;
-    
+
     # Gzip compression
     gzip on;
     gzip_types text/plain text/css application/json application/javascript text/xml application/xml;
-    
+
     # Cache static assets
     location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2)$ {
         expires 1y;
         add_header Cache-Control "public, immutable";
     }
-    
+
     # Handle React Router
     location / {
         try_files $uri $uri/ /index.html;
     }
-    
+
     # Health check endpoint
     location /health {
         access_log off;
         return 200 "healthy\n";
         add_header Content-Type text/plain;
     }
-    
+
     # Nginx status (for monitoring)
     location /nginx_status {
         stub_status on;
@@ -773,6 +794,7 @@ server {
 ### Kubernetes Cluster Requirements
 
 #### Cluster Specifications
+
 ```yaml
 # Minimum cluster requirements
 apiVersion: v1
@@ -800,6 +822,7 @@ spec:
 ### Kubernetes Manifests
 
 #### Deployment Configuration
+
 ```yaml
 # k8s/deployment.yaml
 apiVersion: apps/v1
@@ -832,113 +855,114 @@ spec:
         runAsNonRoot: true
         runAsUser: 1001
         fsGroup: 1001
-        
+
       # Pod anti-affinity for high availability
       affinity:
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
-          - weight: 100
-            podAffinityTerm:
-              labelSelector:
-                matchExpressions:
-                - key: app
-                  operator: In
-                  values:
-                  - makrx-gateway
-              topologyKey: kubernetes.io/hostname
-              
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: app
+                      operator: In
+                      values:
+                        - makrx-gateway
+                topologyKey: kubernetes.io/hostname
+
       containers:
-      - name: makrx-gateway
-        image: your-registry/makrx-gateway:v1.0.0
-        imagePullPolicy: Always
-        ports:
-        - containerPort: 8080
-          name: http
-          protocol: TCP
-          
-        # Environment variables
-        env:
-        - name: NODE_ENV
-          value: "production"
-        - name: POD_NAME
-          valueFrom:
-            fieldRef:
-              fieldPath: metadata.name
-        - name: POD_IP
-          valueFrom:
-            fieldRef:
-              fieldPath: status.podIP
-              
-        # Resource limits
-        resources:
-          requests:
-            memory: "256Mi"
-            cpu: "250m"
-          limits:
-            memory: "512Mi"
-            cpu: "500m"
-            
-        # Health checks
-        livenessProbe:
-          httpGet:
-            path: /health
-            port: 8080
-          initialDelaySeconds: 30
-          periodSeconds: 10
-          timeoutSeconds: 5
-          failureThreshold: 3
-          
-        readinessProbe:
-          httpGet:
-            path: /health
-            port: 8080
-          initialDelaySeconds: 5
-          periodSeconds: 5
-          timeoutSeconds: 3
-          failureThreshold: 3
-          
-        # Startup probe
-        startupProbe:
-          httpGet:
-            path: /health
-            port: 8080
-          initialDelaySeconds: 10
-          periodSeconds: 10
-          timeoutSeconds: 5
-          failureThreshold: 30
-          
-        # Security context
-        securityContext:
-          allowPrivilegeEscalation: false
-          readOnlyRootFilesystem: true
-          capabilities:
-            drop:
-            - ALL
-            
-        # Volume mounts
-        volumeMounts:
-        - name: tmp
-          mountPath: /tmp
-        - name: cache
-          mountPath: /var/cache/nginx
-        - name: run
-          mountPath: /var/run
-          
+        - name: makrx-gateway
+          image: your-registry/makrx-gateway:v1.0.0
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+              name: http
+              protocol: TCP
+
+          # Environment variables
+          env:
+            - name: NODE_ENV
+              value: "production"
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+
+          # Resource limits
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+
+          # Health checks
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 3
+
+          # Startup probe
+          startupProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 30
+
+          # Security context
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+
+          # Volume mounts
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+            - name: cache
+              mountPath: /var/cache/nginx
+            - name: run
+              mountPath: /var/run
+
       # Volumes
       volumes:
-      - name: tmp
-        emptyDir: {}
-      - name: cache
-        emptyDir: {}
-      - name: run
-        emptyDir: {}
-        
+        - name: tmp
+          emptyDir: {}
+        - name: cache
+          emptyDir: {}
+        - name: run
+          emptyDir: {}
+
       # Image pull secrets
       imagePullSecrets:
-      - name: registry-secret
+        - name: registry-secret
 ```
 
 #### Service Configuration
+
 ```yaml
 # k8s/service.yaml
 apiVersion: v1
@@ -951,10 +975,10 @@ metadata:
 spec:
   type: ClusterIP
   ports:
-  - port: 80
-    targetPort: 8080
-    protocol: TCP
-    name: http
+    - port: 80
+      targetPort: 8080
+      protocol: TCP
+      name: http
   selector:
     app: makrx-gateway
 ---
@@ -969,15 +993,16 @@ metadata:
 spec:
   clusterIP: None
   ports:
-  - port: 8080
-    targetPort: 8080
-    protocol: TCP
-    name: http
+    - port: 8080
+      targetPort: 8080
+      protocol: TCP
+      name: http
   selector:
     app: makrx-gateway
 ```
 
 #### Ingress Configuration
+
 ```yaml
 # k8s/ingress.yaml
 apiVersion: networking.k8s.io/v1
@@ -991,59 +1016,60 @@ metadata:
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
     nginx.ingress.kubernetes.io/proxy-body-size: "10m"
-    
+
     # Security annotations
     nginx.ingress.kubernetes.io/configuration-snippet: |
       add_header X-Frame-Options "SAMEORIGIN" always;
       add_header X-Content-Type-Options "nosniff" always;
       add_header X-XSS-Protection "1; mode=block" always;
       add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" always;
-      
+
     # Rate limiting
     nginx.ingress.kubernetes.io/rate-limit-rpm: "300"
     nginx.ingress.kubernetes.io/rate-limit-connections: "10"
-    
+
     # SSL configuration
     cert-manager.io/cluster-issuer: "letsencrypt-prod"
     cert-manager.io/acme-challenge-type: http01
-    
+
     # Monitoring annotations
     prometheus.io/scrape: "true"
     prometheus.io/port: "8080"
     prometheus.io/path: "/metrics"
-    
+
 spec:
   tls:
-  - hosts:
-    - yourdomain.com
-    - www.yourdomain.com
-    secretName: makrx-gateway-tls
-    
+    - hosts:
+        - yourdomain.com
+        - www.yourdomain.com
+      secretName: makrx-gateway-tls
+
   rules:
-  - host: yourdomain.com
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: makrx-gateway-service
-            port:
-              number: 80
-              
-  - host: www.yourdomain.com
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: makrx-gateway-service
-            port:
-              number: 80
+    - host: yourdomain.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: makrx-gateway-service
+                port:
+                  number: 80
+
+    - host: www.yourdomain.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: makrx-gateway-service
+                port:
+                  number: 80
 ```
 
 #### ConfigMap for Configuration
+
 ```yaml
 # k8s/configmap.yaml
 apiVersion: v1
@@ -1099,6 +1125,7 @@ data:
 ```
 
 #### Horizontal Pod Autoscaler
+
 ```yaml
 # k8s/hpa.yaml
 apiVersion: autoscaling/v2
@@ -1114,34 +1141,35 @@ spec:
   minReplicas: 3
   maxReplicas: 10
   metrics:
-  - type: Resource
-    resource:
-      name: cpu
-      target:
-        type: Utilization
-        averageUtilization: 70
-  - type: Resource
-    resource:
-      name: memory
-      target:
-        type: Utilization
-        averageUtilization: 80
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 70
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: 80
   behavior:
     scaleDown:
       stabilizationWindowSeconds: 300
       policies:
-      - type: Percent
-        value: 50
-        periodSeconds: 60
+        - type: Percent
+          value: 50
+          periodSeconds: 60
     scaleUp:
       stabilizationWindowSeconds: 60
       policies:
-      - type: Percent
-        value: 100
-        periodSeconds: 60
+        - type: Percent
+          value: 100
+          periodSeconds: 60
 ```
 
 #### Network Policy
+
 ```yaml
 # k8s/network-policy.yaml
 apiVersion: networking.k8s.io/v1
@@ -1154,42 +1182,43 @@ spec:
     matchLabels:
       app: makrx-gateway
   policyTypes:
-  - Ingress
-  - Egress
+    - Ingress
+    - Egress
   ingress:
-  - from:
-    # Allow traffic from ingress controller
-    - namespaceSelector:
-        matchLabels:
-          name: ingress-nginx
-    # Allow traffic from monitoring
-    - namespaceSelector:
-        matchLabels:
-          name: monitoring
-    ports:
-    - protocol: TCP
-      port: 8080
+    - from:
+        # Allow traffic from ingress controller
+        - namespaceSelector:
+            matchLabels:
+              name: ingress-nginx
+        # Allow traffic from monitoring
+        - namespaceSelector:
+            matchLabels:
+              name: monitoring
+      ports:
+        - protocol: TCP
+          port: 8080
   egress:
-  # Allow DNS resolution
-  - to: []
-    ports:
-    - protocol: UDP
-      port: 53
-  # Allow HTTPS outbound (for API calls)
-  - to: []
-    ports:
-    - protocol: TCP
-      port: 443
-  # Allow HTTP outbound (for health checks)
-  - to: []
-    ports:
-    - protocol: TCP
-      port: 80
+    # Allow DNS resolution
+    - to: []
+      ports:
+        - protocol: UDP
+          port: 53
+    # Allow HTTPS outbound (for API calls)
+    - to: []
+      ports:
+        - protocol: TCP
+          port: 443
+    # Allow HTTP outbound (for health checks)
+    - to: []
+      ports:
+        - protocol: TCP
+          port: 80
 ```
 
 ### Deployment Commands
 
 #### Deploy to Kubernetes
+
 ```bash
 # Create namespace
 kubectl apply -f k8s/namespace.yaml
@@ -1222,6 +1251,7 @@ kubectl scale deployment makrx-gateway --replicas=5 -n makrx-production
 ### System Monitoring
 
 #### Prometheus Configuration
+
 ```yaml
 # prometheus.yml
 global:
@@ -1232,28 +1262,29 @@ rule_files:
   - "alert_rules.yml"
 
 scrape_configs:
-- job_name: 'makrx-gateway'
-  static_configs:
-  - targets: ['yourdomain.com:443']
-  scheme: https
-  metrics_path: /metrics
-  scrape_interval: 30s
-  
-- job_name: 'nginx'
-  static_configs:
-  - targets: ['yourdomain.com:443']
-  scheme: https
-  metrics_path: /nginx_status
-  scrape_interval: 30s
+  - job_name: "makrx-gateway"
+    static_configs:
+      - targets: ["yourdomain.com:443"]
+    scheme: https
+    metrics_path: /metrics
+    scrape_interval: 30s
+
+  - job_name: "nginx"
+    static_configs:
+      - targets: ["yourdomain.com:443"]
+    scheme: https
+    metrics_path: /nginx_status
+    scrape_interval: 30s
 
 alerting:
   alertmanagers:
-  - static_configs:
-    - targets:
-      - alertmanager:9093
+    - static_configs:
+        - targets:
+            - alertmanager:9093
 ```
 
 #### Grafana Dashboard
+
 ```json
 {
   "dashboard": {
@@ -1270,7 +1301,7 @@ alerting:
       },
       {
         "title": "Response Time",
-        "type": "graph", 
+        "type": "graph",
         "targets": [
           {
             "expr": "histogram_quantile(0.95, rate(nginx_http_request_duration_seconds_bucket[5m]))"
@@ -1294,6 +1325,7 @@ alerting:
 ### Log Management
 
 #### Logrotate Configuration
+
 ```bash
 # /etc/logrotate.d/makrx-gateway
 /var/log/nginx/makrx-gateway-*.log {
@@ -1314,9 +1346,10 @@ alerting:
 ```
 
 #### Centralized Logging with ELK Stack
+
 ```yaml
 # docker-compose.elk.yml
-version: '3.8'
+version: "3.8"
 services:
   elasticsearch:
     image: elasticsearch:8.11.0
@@ -1328,7 +1361,7 @@ services:
       - elasticsearch-data:/usr/share/elasticsearch/data
     ports:
       - "9200:9200"
-      
+
   logstash:
     image: logstash:8.11.0
     container_name: logstash
@@ -1337,7 +1370,7 @@ services:
       - /var/log/nginx:/var/log/nginx:ro
     depends_on:
       - elasticsearch
-      
+
   kibana:
     image: kibana:8.11.0
     container_name: kibana
@@ -1357,6 +1390,7 @@ volumes:
 ### Firewall Configuration
 
 #### UFW (Ubuntu)
+
 ```bash
 # Reset firewall rules
 sudo ufw --force reset
@@ -1386,6 +1420,7 @@ sudo ufw status verbose
 ```
 
 #### Fail2Ban Configuration
+
 ```bash
 # Install Fail2Ban
 sudo apt install -y fail2ban
@@ -1427,6 +1462,7 @@ sudo fail2ban-client status
 ### SSL/TLS Security
 
 #### SSL Test and Optimization
+
 ```bash
 # Test SSL configuration
 curl -I https://yourdomain.com
@@ -1440,6 +1476,7 @@ ssl_dhparam /etc/nginx/dhparam.pem;
 ```
 
 #### Security Headers Validation
+
 ```bash
 # Test security headers
 curl -I https://yourdomain.com
@@ -1456,6 +1493,7 @@ curl -I https://yourdomain.com
 ### Automated Security Updates
 
 #### Unattended Upgrades (Ubuntu)
+
 ```bash
 # Install unattended upgrades
 sudo apt install -y unattended-upgrades
