@@ -1,2 +1,8 @@
-# Auto detect text files and perform LF normalization
-* text=auto
+# Force LF line endings for all text files
+* text eol=lf
+
+# Treat image, font, 3D model, and PDF files as binary
+*.{png,jpg,jpeg,gif,svg,ico} binary
+*.{ttf,otf,woff,woff2} binary
+*.{stl,step} binary
+*.pdf binary
