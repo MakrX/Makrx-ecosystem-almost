@@ -5,6 +5,7 @@ This guide provides step-by-step instructions for deploying the MakrX Gateway Fr
 ## 🎯 Pre-Deployment Requirements
 
 ### System Requirements
+
 - **Node.js**: Version 18+ (LTS recommended)
 - **Memory**: Minimum 4GB RAM for build process
 - **Storage**: At least 10GB free space
@@ -12,6 +13,7 @@ This guide provides step-by-step instructions for deploying the MakrX Gateway Fr
 - **Domain**: Configured DNS pointing to your server
 
 ### Infrastructure Prerequisites
+
 - **Web Server**: Nginx (recommended) or Apache
 - **SSL Certificate**: Valid certificate for your domain
 - **CDN**: CloudFlare, AWS CloudFront, or similar (recommended)
@@ -23,6 +25,7 @@ This guide provides step-by-step instructions for deploying the MakrX Gateway Fr
 ### ✅ Configuration Verification
 
 #### 1. Environment Variables
+
 Ensure all production environment variables are configured:
 
 ```bash
@@ -34,6 +37,7 @@ echo "Support Email: $VITE_SUPPORT_EMAIL"
 ```
 
 **Critical Variables to Update:**
+
 ```env
 # Production URLs (MUST be updated)
 VITE_KEYCLOAK_URL=https://auth.yourdomain.com
@@ -56,9 +60,11 @@ VITE_HOTJAR_ID=XXXXXXX
 ```
 
 #### 2. Code Customization Points
+
 Update these files with your actual information:
 
 **`components/Footer.tsx`** - Company Information:
+
 ```typescript
 // Lines 100-130: Update company details
 const companyInfo = {
@@ -66,31 +72,34 @@ const companyInfo = {
   cin: "YOUR_ACTUAL_CIN",
   address: "Your registered address",
   phone: "+91 XXXX XXXXXX",
-  email: "support@yourdomain.com"
+  email: "support@yourdomain.com",
 };
 ```
 
 **`pages/PrivacyPolicy.tsx`** - Data Protection Officer:
+
 ```typescript
 // Lines 150-160: Update DPO contact information
 const dpoContact = {
   name: "Your Data Protection Officer",
   email: "dpo@yourdomain.com",
-  phone: "+91 XXXX XXXXXX"
+  phone: "+91 XXXX XXXXXX",
 };
 ```
 
 **`pages/TermsOfService.tsx`** - Legal Jurisdiction:
+
 ```typescript
 // Lines 200-210: Update jurisdiction and company details
 const legalInfo = {
   company: "Your Company Name",
   jurisdiction: "Your State, India",
-  registeredOffice: "Your complete address"
+  registeredOffice: "Your complete address",
 };
 ```
 
 #### 3. Legal Policy Review
+
 - [ ] Privacy Policy reviewed and updated with actual practices
 - [ ] Terms of Service updated with your business model
 - [ ] Cookie Policy configured for your analytics setup
@@ -98,7 +107,9 @@ const legalInfo = {
 - [ ] Returns Policy aligned with your business practices
 
 #### 4. SEO Configuration
+
 Update meta tags in `App.tsx`:
+
 ```typescript
 <Helmet>
   <title>Your Company - Your Tagline</title>
@@ -111,6 +122,7 @@ Update meta tags in `App.tsx`:
 ```
 
 Update `public/sitemap.xml` with your domain:
+
 ```xml
 <loc>https://yourdomain.com/</loc>
 ```
@@ -118,12 +130,13 @@ Update `public/sitemap.xml` with your domain:
 ### ✅ Build Verification
 
 #### 1. Production Build Test
+
 ```bash
 # Navigate to gateway frontend
 cd frontend/gateway-frontend
 
 # Install dependencies
-npm ci
+npm ci --omit=dev
 
 # Run production build
 npm run build
@@ -136,6 +149,7 @@ ls -la dist/
 ```
 
 **Expected Build Output:**
+
 ```
 dist/
 ├── index.html                   (~1KB)
@@ -147,6 +161,7 @@ dist/
 ```
 
 #### 2. Bundle Size Analysis
+
 ```bash
 # Analyze bundle size
 npm run build:analyze
@@ -156,6 +171,7 @@ npm run build:analyze
 ```
 
 #### 3. Performance Testing
+
 ```bash
 # Run Lighthouse audit
 npm run lighthouse
@@ -175,6 +191,7 @@ npm run lighthouse
 
 **Step 1: Prepare Netlify Configuration**
 Create `netlify.toml` in project root:
+
 ```toml
 [build]
   base = "frontend/gateway-frontend"
@@ -203,6 +220,7 @@ Create `netlify.toml` in project root:
 ```
 
 **Step 2: Deploy to Netlify**
+
 ```bash
 # Install Netlify CLI
 npm install -g netlify-cli
@@ -221,6 +239,7 @@ In Netlify dashboard, add all environment variables from your `.env.production` 
 
 **Step 1: Configure Vercel**
 Create `vercel.json` in project root:
+
 ```json
 {
   "version": 2,
@@ -251,6 +270,7 @@ Create `vercel.json` in project root:
 ```
 
 **Step 2: Deploy to Vercel**
+
 ```bash
 # Install Vercel CLI
 npm install -g vercel
@@ -265,6 +285,7 @@ vercel --prod
 #### Option C: AWS S3 + CloudFront
 
 **Step 1: Create S3 Bucket**
+
 ```bash
 # Create S3 bucket
 aws s3 mb s3://your-gateway-bucket
@@ -274,6 +295,7 @@ aws s3 website s3://your-gateway-bucket --index-document index.html --error-docu
 ```
 
 **Step 2: Create CloudFront Distribution**
+
 ```bash
 # Create distribution configuration
 cat > cloudfront-config.json << EOF
@@ -316,6 +338,7 @@ aws cloudfront create-distribution --distribution-config file://cloudfront-confi
 ```
 
 **Step 3: Deploy Files**
+
 ```bash
 # Build and sync to S3
 npm run build
@@ -328,6 +351,7 @@ aws cloudfront create-invalidation --distribution-id YOUR_DISTRIBUTION_ID --path
 ### Method 2: Docker Deployment
 
 #### Step 1: Create Production Dockerfile
+
 ```dockerfile
 # Multi-stage build for production
 FROM node:18-alpine AS builder
@@ -368,6 +392,7 @@ CMD ["nginx", "-g", "daemon off;"]
 ```
 
 #### Step 2: Create Nginx Configuration
+
 ```nginx
 # nginx.conf
 user nginx;
@@ -445,6 +470,7 @@ http {
 ```
 
 #### Step 3: Build and Deploy Docker Image
+
 ```bash
 # Build Docker image
 docker build -t makrx-gateway:latest -f Dockerfile .
@@ -464,6 +490,7 @@ docker push your-registry/makrx-gateway:v1.0.0
 #### Step 1: Create Kubernetes Manifests
 
 **Deployment Configuration:**
+
 ```yaml
 # k8s/deployment.yaml
 apiVersion: apps/v1
@@ -485,35 +512,36 @@ spec:
         version: v1.0.0
     spec:
       containers:
-      - name: makrx-gateway
-        image: your-registry/makrx-gateway:v1.0.0
-        ports:
-        - containerPort: 80
-        env:
-        - name: NODE_ENV
-          value: "production"
-        resources:
-          requests:
-            memory: "256Mi"
-            cpu: "250m"
-          limits:
-            memory: "512Mi"
-            cpu: "500m"
-        livenessProbe:
-          httpGet:
-            path: /health
-            port: 80
-          initialDelaySeconds: 30
-          periodSeconds: 10
-        readinessProbe:
-          httpGet:
-            path: /health
-            port: 80
-          initialDelaySeconds: 5
-          periodSeconds: 5
+        - name: makrx-gateway
+          image: your-registry/makrx-gateway:v1.0.0
+          ports:
+            - containerPort: 80
+          env:
+            - name: NODE_ENV
+              value: "production"
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 80
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 5
 ```
 
 **Service Configuration:**
+
 ```yaml
 # k8s/service.yaml
 apiVersion: v1
@@ -525,14 +553,15 @@ metadata:
 spec:
   type: ClusterIP
   ports:
-  - port: 80
-    targetPort: 80
-    protocol: TCP
+    - port: 80
+      targetPort: 80
+      protocol: TCP
   selector:
     app: makrx-gateway
 ```
 
 **Ingress Configuration:**
+
 ```yaml
 # k8s/ingress.yaml
 apiVersion: networking.k8s.io/v1
@@ -545,23 +574,24 @@ metadata:
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
 spec:
   tls:
-  - hosts:
-    - yourdomain.com
-    secretName: makrx-gateway-tls
+    - hosts:
+        - yourdomain.com
+      secretName: makrx-gateway-tls
   rules:
-  - host: yourdomain.com
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: makrx-gateway-service
-            port:
-              number: 80
+    - host: yourdomain.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: makrx-gateway-service
+                port:
+                  number: 80
 ```
 
 #### Step 2: Deploy to Kubernetes
+
 ```bash
 # Apply configurations
 kubectl apply -f k8s/
@@ -581,6 +611,7 @@ kubectl logs -f deployment/makrx-gateway
 ### Nginx Server Configuration
 
 #### Complete Production Nginx Config
+
 ```nginx
 # /etc/nginx/sites-available/makrx-gateway
 server {
@@ -600,7 +631,7 @@ server {
     add_header X-Content-Type-Options "nosniff" always;
     add_header X-XSS-Protection "1; mode=block" always;
     add_header Referrer-Policy "no-referrer-when-downgrade" always;
-    
+
     # Content Security Policy
     add_header Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://api.yourdomain.com https://auth.yourdomain.com https://www.google-analytics.com;" always;
 
@@ -686,6 +717,7 @@ server {
 ```
 
 #### Enable the Site
+
 ```bash
 # Enable the site
 sudo ln -s /etc/nginx/sites-available/makrx-gateway /etc/nginx/sites-enabled/
@@ -700,6 +732,7 @@ sudo systemctl reload nginx
 ### Apache Server Configuration
 
 #### Virtual Host Configuration
+
 ```apache
 # /etc/apache2/sites-available/makrx-gateway.conf
 <VirtualHost *:80>
@@ -757,6 +790,7 @@ sudo systemctl reload nginx
 ### Automated Testing
 
 #### 1. Smoke Tests
+
 ```bash
 #!/bin/bash
 # smoke-test.sh
@@ -799,6 +833,7 @@ echo "All smoke tests passed!"
 ```
 
 #### 2. Performance Tests
+
 ```bash
 # performance-test.sh
 #!/bin/bash
@@ -817,6 +852,7 @@ curl "https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=$DOMAIN&cat
 ```
 
 #### 3. Security Tests
+
 ```bash
 # security-test.sh
 #!/bin/bash
@@ -837,6 +873,7 @@ curl -I "https://$DOMAIN" | grep -E "(Strict-Transport-Security|X-Frame-Options|
 ### Manual Verification Checklist
 
 #### ✅ Functionality Tests
+
 - [ ] Homepage loads correctly
 - [ ] Navigation menu works
 - [ ] App launcher modal opens
@@ -847,6 +884,7 @@ curl -I "https://$DOMAIN" | grep -E "(Strict-Transport-Security|X-Frame-Options|
 - [ ] Search functionality works (if implemented)
 
 #### ✅ Authentication Tests
+
 - [ ] Sign In button redirects to Keycloak
 - [ ] Authentication flow completes successfully
 - [ ] User can access protected areas
@@ -854,13 +892,15 @@ curl -I "https://$DOMAIN" | grep -E "(Strict-Transport-Security|X-Frame-Options|
 - [ ] Session management works correctly
 
 #### ✅ Cross-Portal Tests
+
 - [ ] Links to MakrCave work
-- [ ] Links to Store work  
+- [ ] Links to Store work
 - [ ] Links to Learn work
 - [ ] Cross-portal authentication works
 - [ ] User context is maintained across apps
 
 #### ✅ Performance Tests
+
 - [ ] Page load time < 3 seconds
 - [ ] First contentful paint < 1.8 seconds
 - [ ] Largest contentful paint < 2.5 seconds
@@ -869,6 +909,7 @@ curl -I "https://$DOMAIN" | grep -E "(Strict-Transport-Security|X-Frame-Options|
 - [ ] Fonts load without flash
 
 #### ✅ SEO & Accessibility Tests
+
 - [ ] Meta tags are correct
 - [ ] Open Graph tags work (test with social media)
 - [ ] Sitemap.xml is accessible
@@ -879,6 +920,7 @@ curl -I "https://$DOMAIN" | grep -E "(Strict-Transport-Security|X-Frame-Options|
 - [ ] Alt text on images
 
 #### ✅ Mobile & Responsive Tests
+
 - [ ] Site works on mobile devices
 - [ ] Touch interactions work
 - [ ] Responsive breakpoints work
@@ -886,6 +928,7 @@ curl -I "https://$DOMAIN" | grep -E "(Strict-Transport-Security|X-Frame-Options|
 - [ ] Buttons are touch-friendly
 
 #### ✅ Browser Compatibility Tests
+
 - [ ] Chrome (latest)
 - [ ] Firefox (latest)
 - [ ] Safari (latest)
@@ -897,114 +940,116 @@ curl -I "https://$DOMAIN" | grep -E "(Strict-Transport-Security|X-Frame-Options|
 ### GitHub Actions Workflow
 
 Create `.github/workflows/deploy-gateway.yml`:
+
 ```yaml
 name: Deploy Gateway Frontend
 
 on:
   push:
     branches: [main]
-    paths: ['frontend/gateway-frontend/**']
+    paths: ["frontend/gateway-frontend/**"]
   workflow_dispatch:
 
 jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '18'
-        cache: 'npm'
-        cache-dependency-path: frontend/gateway-frontend/package-lock.json
-    
-    - name: Install dependencies
-      run: |
-        cd frontend/gateway-frontend
-        npm ci
-    
-    - name: Run tests
-      run: |
-        cd frontend/gateway-frontend
-        npm run test
-    
-    - name: Run linting
-      run: |
-        cd frontend/gateway-frontend
-        npm run lint
-    
-    - name: Type check
-      run: |
-        cd frontend/gateway-frontend
-        npm run type-check
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+          cache: "npm"
+          cache-dependency-path: frontend/gateway-frontend/package-lock.json
+
+      - name: Install dependencies
+        run: |
+          cd frontend/gateway-frontend
+          npm ci
+
+      - name: Run tests
+        run: |
+          cd frontend/gateway-frontend
+          npm run test
+
+      - name: Run linting
+        run: |
+          cd frontend/gateway-frontend
+          npm run lint
+
+      - name: Type check
+        run: |
+          cd frontend/gateway-frontend
+          npm run type-check
 
   build:
     needs: test
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '18'
-        cache: 'npm'
-        cache-dependency-path: frontend/gateway-frontend/package-lock.json
-    
-    - name: Install dependencies
-      run: |
-        cd frontend/gateway-frontend
-        npm ci
-    
-    - name: Build application
-      run: |
-        cd frontend/gateway-frontend
-        npm run build
-      env:
-        VITE_KEYCLOAK_URL: ${{ secrets.VITE_KEYCLOAK_URL }}
-        VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL }}
-        VITE_GA_TRACKING_ID: ${{ secrets.VITE_GA_TRACKING_ID }}
-        # Add all your environment variables
-    
-    - name: Upload build artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: gateway-build
-        path: frontend/gateway-frontend/dist
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+          cache: "npm"
+          cache-dependency-path: frontend/gateway-frontend/package-lock.json
+
+      - name: Install dependencies
+        run: |
+          cd frontend/gateway-frontend
+          npm ci --omit=dev
+
+      - name: Build application
+        run: |
+          cd frontend/gateway-frontend
+          npm run build
+        env:
+          VITE_KEYCLOAK_URL: ${{ secrets.VITE_KEYCLOAK_URL }}
+          VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL }}
+          VITE_GA_TRACKING_ID: ${{ secrets.VITE_GA_TRACKING_ID }}
+          # Add all your environment variables
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: gateway-build
+          path: frontend/gateway-frontend/dist
 
   deploy:
     needs: build
     runs-on: ubuntu-latest
     environment: production
     steps:
-    - name: Download build artifacts
-      uses: actions/download-artifact@v4
-      with:
-        name: gateway-build
-        path: dist
-    
-    - name: Deploy to S3
-      run: |
-        aws s3 sync dist/ s3://${{ secrets.S3_BUCKET }}/ --delete
-      env:
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
-    
-    - name: Invalidate CloudFront
-      run: |
-        aws cloudfront create-invalidation --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} --paths "/*"
-    
-    - name: Run smoke tests
-      run: |
-        sleep 30  # Wait for deployment
-        curl -f ${{ secrets.PRODUCTION_URL }}/health
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: gateway-build
+          path: dist
+
+      - name: Deploy to S3
+        run: |
+          aws s3 sync dist/ s3://${{ secrets.S3_BUCKET }}/ --delete
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
+
+      - name: Invalidate CloudFront
+        run: |
+          aws cloudfront create-invalidation --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} --paths "/*"
+
+      - name: Run smoke tests
+        run: |
+          sleep 30  # Wait for deployment
+          curl -f ${{ secrets.PRODUCTION_URL }}/health
 ```
 
 ### GitLab CI Pipeline
 
 Create `.gitlab-ci.yml`:
+
 ```yaml
 stages:
   - test
@@ -1033,7 +1078,7 @@ build:
   image: node:18-alpine
   before_script:
     - cd frontend/gateway-frontend
-    - npm ci
+    - npm ci --omit=dev
   script:
     - npm run build
   artifacts:
@@ -1065,7 +1110,9 @@ deploy:
 ### Common Problems and Solutions
 
 #### Build Failures
+
 **Issue**: TypeScript compilation errors
+
 ```bash
 # Solution: Fix type errors
 cd frontend/gateway-frontend
@@ -1074,6 +1121,7 @@ npm run type-check
 ```
 
 **Issue**: Missing environment variables
+
 ```bash
 # Solution: Verify all required variables are set
 echo $VITE_KEYCLOAK_URL
@@ -1082,7 +1130,9 @@ echo $VITE_API_BASE_URL
 ```
 
 #### Runtime Issues
+
 **Issue**: White screen or app not loading
+
 ```bash
 # Check browser console for errors
 # Common causes:
@@ -1093,6 +1143,7 @@ echo $VITE_API_BASE_URL
 ```
 
 **Issue**: Authentication not working
+
 ```bash
 # Verify Keycloak configuration:
 # 1. Realm exists and is enabled
@@ -1102,7 +1153,9 @@ echo $VITE_API_BASE_URL
 ```
 
 #### Performance Issues
+
 **Issue**: Slow loading times
+
 ```bash
 # Check bundle size
 npm run build:analyze
@@ -1117,6 +1170,7 @@ npm run build:analyze
 ### Support and Escalation
 
 For production issues:
+
 1. **Immediate Issues**: Contact on-call DevOps team
 2. **Security Issues**: Email security@yourdomain.com
 3. **User Reports**: Check monitoring dashboards first
@@ -1125,6 +1179,7 @@ For production issues:
 ### Rollback Procedures
 
 #### Quick Rollback (Static Hosting)
+
 ```bash
 # Rollback to previous deployment
 aws s3 sync s3://your-backup-bucket/previous-version/ s3://your-main-bucket/ --delete
@@ -1132,6 +1187,7 @@ aws cloudfront create-invalidation --distribution-id YOUR_DIST_ID --paths "/*"
 ```
 
 #### Docker Rollback
+
 ```bash
 # Rollback to previous image version
 kubectl set image deployment/makrx-gateway makrx-gateway=your-registry/makrx-gateway:v1.0.0-previous

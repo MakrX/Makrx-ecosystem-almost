@@ -7,6 +7,7 @@ The MakrX Gateway Frontend serves as the primary entry point and unified portal 
 ## Quick Start
 
 ### Development Setup
+
 ```bash
 cd frontend/gateway-frontend
 npm install
@@ -14,6 +15,7 @@ npm run dev
 ```
 
 ### Production Build
+
 ```bash
 npm run build
 npm run preview  # Test build locally
@@ -22,6 +24,7 @@ npm run preview  # Test build locally
 ## Architecture & Design
 
 ### System Architecture
+
 The Gateway Frontend follows a simplified React architecture:
 
 ```
@@ -46,6 +49,7 @@ The Gateway Frontend follows a simplified React architecture:
 ```
 
 ### Technology Stack
+
 - **Frontend Framework**: React 18.3.1 with TypeScript
 - **Build Tool**: Vite 6.2.2 (fast development, optimized builds)
 - **Styling**: Tailwind CSS with custom MakrX design system
@@ -58,28 +62,30 @@ The Gateway Frontend follows a simplified React architecture:
 - **Meta Tags**: React Helmet Async for SEO
 
 ### Design System Integration
+
 The Gateway uses a unified MakrX design system:
 
 ```typescript
 // Tailwind configuration
 export const makrxTheme = {
   colors: {
-    'makrx-blue': '#1e40af',     // Primary brand color
-    'makrx-yellow': '#f59e0b',   // Accent/CTA color  
-    'makrx-dark': '#0f172a',     // Dark theme base
+    "makrx-blue": "#1e40af", // Primary brand color
+    "makrx-yellow": "#f59e0b", // Accent/CTA color
+    "makrx-dark": "#0f172a", // Dark theme base
   },
   fontFamily: {
-    'sans': ['Inter', 'system-ui', 'sans-serif'],
+    sans: ["Inter", "system-ui", "sans-serif"],
   },
   spacing: {
     // 8px grid system
-  }
-}
+  },
+};
 ```
 
 ## Core Features
 
 ### 1. Unified Authentication (SSO)
+
 - **Provider**: Keycloak hosted at `auth.makrx.org`
 - **Flow**: Authorization Code with PKCE
 - **Session Management**: JWT tokens with refresh capability
@@ -89,12 +95,13 @@ export const makrxTheme = {
 // Authentication configuration
 const keycloakConfig = {
   url: process.env.VITE_KEYCLOAK_URL,
-  realm: 'makrx',
-  clientId: 'makrx-gateway'
+  realm: "makrx",
+  clientId: "makrx-gateway",
 };
 ```
 
 ### 2. App Launcher System
+
 Central hub providing access to all MakrX applications:
 
 - **MakrCave**: Makerspace management and booking
@@ -103,15 +110,17 @@ Central hub providing access to all MakrX applications:
 - **Admin**: Administrative interfaces (role-based)
 
 ### 3. Feature Flag System
+
 Dynamic feature control without deployments:
 
 ```typescript
 // Feature flag usage
-const showStats = useBooleanFlag('org.homepage.stats', true);
-const enableNewFeature = useBooleanFlag('org.new-feature', false);
+const showStats = useBooleanFlag("org.homepage.stats", true);
+const enableNewFeature = useBooleanFlag("org.new-feature", false);
 ```
 
 Available flags:
+
 - `org.homepage.stats` - Statistics display
 - `org.homepage.testimonials` - User testimonials
 - `org.homepage.video` - Promotional video
@@ -119,6 +128,7 @@ Available flags:
 - `org.footer.newsletter` - Newsletter subscription
 
 ### 4. Legal Compliance
+
 Comprehensive compliance with Indian regulations:
 
 - **DPDP Act 2023**: Data protection and privacy
@@ -129,6 +139,7 @@ Comprehensive compliance with Indian regulations:
 ## Configuration
 
 ### Environment Variables
+
 Create `.env.local` file in the Gateway Frontend directory:
 
 ```env
@@ -144,7 +155,7 @@ VITE_KEYCLOAK_CLIENT_ID=makrx-gateway
 
 # Portal Integration
 VITE_MAKRCAVE_URL=https://makrcave.makrx.org
-VITE_STORE_URL=https://store.makrx.org  
+VITE_STORE_URL=https://store.makrx.org
 VITE_LEARN_URL=https://learn.makrx.org
 
 # API Configuration
@@ -182,20 +193,22 @@ VITE_ASSETS_VERSION=v1.0.0
 ### Required Production Changes
 
 #### 1. Company Information Updates
+
 In `components/Footer.tsx`, update these placeholder values:
 
 ```typescript
 // CHANGE THESE FOR PRODUCTION:
 const companyDetails = {
-  name: "YOUR_COMPANY_NAME",           // Replace with actual company
-  cin: "YOUR_ACTUAL_CIN_NUMBER",       // Replace with real CIN
-  address: "YOUR_REGISTERED_ADDRESS",   // Complete registered address
-  phone: "YOUR_SUPPORT_NUMBER",        // Customer support number
-  email: "YOUR_SUPPORT_EMAIL"          // Customer support email
+  name: "YOUR_COMPANY_NAME", // Replace with actual company
+  cin: "YOUR_ACTUAL_CIN_NUMBER", // Replace with real CIN
+  address: "YOUR_REGISTERED_ADDRESS", // Complete registered address
+  phone: "YOUR_SUPPORT_NUMBER", // Customer support number
+  email: "YOUR_SUPPORT_EMAIL", // Customer support email
 };
 ```
 
 #### 2. Legal Policy Updates
+
 Update contact information in all legal pages:
 
 - **Privacy Policy** (`pages/PrivacyPolicy.tsx`): Update Data Protection Officer details
@@ -204,18 +217,20 @@ Update contact information in all legal pages:
 - **Returns Policy** (`pages/ReturnsPolicy.tsx`): Update return process details
 
 #### 3. Analytics Configuration
+
 Replace placeholder tracking IDs:
 
 ```typescript
 // In App.tsx or analytics configuration
 const analyticsConfig = {
-  googleAnalytics: 'G-XXXXXXXXXX',     // Your actual GA4 property
-  hotjar: 'XXXXXXX',                   // Your Hotjar site ID  
-  sentry: 'https://xxx@sentry.io/xxx', // Your actual Sentry DSN
+  googleAnalytics: "G-XXXXXXXXXX", // Your actual GA4 property
+  hotjar: "XXXXXXX", // Your Hotjar site ID
+  sentry: "https://xxx@sentry.io/xxx", // Your actual Sentry DSN
 };
 ```
 
 #### 4. SEO Metadata
+
 Update meta tags in `App.tsx`:
 
 ```typescript
@@ -234,13 +249,15 @@ Update meta tags in `App.tsx`:
 ### Pre-Deployment Checklist
 
 #### ✅ Environment Configuration
+
 - [ ] All environment variables configured for production
 - [ ] Company information updated (no placeholders)
 - [ ] Legal policies reviewed and customized
 - [ ] Analytics tracking IDs configured
 - [ ] CDN URLs updated for static assets
 
-#### ✅ Security Configuration  
+#### ✅ Security Configuration
+
 - [ ] HTTPS enforcement enabled
 - [ ] Content Security Policy configured
 - [ ] CORS settings properly configured
@@ -248,6 +265,7 @@ Update meta tags in `App.tsx`:
 - [ ] Environment variables secured in deployment platform
 
 #### ✅ Performance Optimization
+
 - [ ] Production build tested (`npm run build`)
 - [ ] Bundle size analyzed and optimized
 - [ ] Image assets optimized and compressed
@@ -255,6 +273,7 @@ Update meta tags in `App.tsx`:
 - [ ] Caching headers configured
 
 #### ✅ SEO & Accessibility
+
 - [ ] Sitemap.xml generated and accessible
 - [ ] Robots.txt configured correctly
 - [ ] Meta tags and structured data verified
@@ -266,6 +285,7 @@ Update meta tags in `App.tsx`:
 #### Option 1: Static Hosting (Recommended)
 
 **Netlify Deployment:**
+
 ```bash
 # Build for production
 npm run build
@@ -275,6 +295,7 @@ netlify deploy --prod --dir=dist
 ```
 
 **Vercel Deployment:**
+
 ```bash
 # Install Vercel CLI
 npm i -g vercel
@@ -284,6 +305,7 @@ vercel --prod
 ```
 
 **AWS S3 + CloudFront:**
+
 ```bash
 # Build and sync to S3
 npm run build
@@ -294,6 +316,9 @@ aws cloudfront create-invalidation --distribution-id YOUR_DIST_ID --paths "/*"
 #### Option 2: Docker Deployment
 
 Create `Dockerfile`:
+
+> Use `npm ci --omit=dev` to install only production dependencies (replaces the deprecated `--only=production` flag).
+
 ```dockerfile
 # Build stage
 FROM node:18-alpine AS builder
@@ -303,7 +328,7 @@ RUN npm ci --omit=dev
 COPY . .
 RUN npm run build
 
-# Production stage  
+# Production stage
 FROM nginx:alpine
 COPY --from=builder /app/dist /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/nginx.conf
@@ -312,6 +337,7 @@ CMD ["nginx", "-g", "daemon off;"]
 ```
 
 Create `nginx.conf`:
+
 ```nginx
 server {
   listen 80;
@@ -338,6 +364,7 @@ server {
 ```
 
 Build and deploy:
+
 ```bash
 docker build -t makrx-gateway .
 docker run -p 80:80 makrx-gateway
@@ -346,6 +373,7 @@ docker run -p 80:80 makrx-gateway
 #### Option 3: Kubernetes Deployment
 
 Create `k8s-deployment.yaml`:
+
 ```yaml
 apiVersion: apps/v1
 kind: Deployment
@@ -362,13 +390,13 @@ spec:
         app: makrx-gateway
     spec:
       containers:
-      - name: makrx-gateway
-        image: makrx-gateway:latest
-        ports:
-        - containerPort: 80
-        env:
-        - name: NODE_ENV
-          value: "production"
+        - name: makrx-gateway
+          image: makrx-gateway:latest
+          ports:
+            - containerPort: 80
+          env:
+            - name: NODE_ENV
+              value: "production"
 ---
 apiVersion: v1
 kind: Service
@@ -378,14 +406,15 @@ spec:
   selector:
     app: makrx-gateway
   ports:
-  - port: 80
-    targetPort: 80
+    - port: 80
+      targetPort: 80
   type: LoadBalancer
 ```
 
 ### Server Configuration
 
 #### Web Server Setup (Nginx)
+
 ```nginx
 # /etc/nginx/sites-available/makrx-gateway
 server {
@@ -395,14 +424,14 @@ server {
     # SSL Configuration
     ssl_certificate /path/to/ssl/certificate.crt;
     ssl_certificate_key /path/to/ssl/private.key;
-    
+
     # Security headers
     add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
     add_header X-Frame-Options "SAMEORIGIN" always;
     add_header X-Content-Type-Options "nosniff" always;
     add_header X-XSS-Protection "1; mode=block" always;
     add_header Referrer-Policy "no-referrer-when-downgrade" always;
-    
+
     # CSP header
     add_header Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://api.makrx.org https://auth.makrx.org;" always;
 
@@ -413,18 +442,18 @@ server {
     # Gzip compression
     gzip on;
     gzip_types text/plain text/css application/json application/javascript text/xml application/xml;
-    
+
     # Cache static assets
     location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2)$ {
         expires 1y;
         add_header Cache-Control "public, immutable";
     }
-    
+
     # Handle React Router
     location / {
         try_files $uri $uri/ /index.html;
     }
-    
+
     # API proxy (if needed)
     location /api/ {
         proxy_pass https://api.makrx.org/;
@@ -444,27 +473,28 @@ server {
 ```
 
 #### Apache Configuration
+
 ```apache
 <VirtualHost *:443>
     ServerName makrx.org
     DocumentRoot /var/www/makrx-gateway/dist
-    
+
     # SSL Configuration
     SSLEngine on
     SSLCertificateFile /path/to/ssl/certificate.crt
     SSLCertificateKeyFile /path/to/ssl/private.key
-    
+
     # Security headers
     Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
     Header always set X-Frame-Options "SAMEORIGIN"
     Header always set X-Content-Type-Options "nosniff"
-    
+
     # Compression
     LoadModule deflate_module modules/mod_deflate.so
     <Location />
         SetOutputFilter DEFLATE
     </Location>
-    
+
     # Handle React Router
     RewriteEngine On
     RewriteRule ^(.*)$ /index.html [QSA,L]
@@ -476,6 +506,7 @@ server {
 ### Keycloak SSO Configuration
 
 #### 1. Realm Setup
+
 Create a new realm named `makrx` in your Keycloak instance:
 
 ```json
@@ -490,6 +521,7 @@ Create a new realm named `makrx` in your Keycloak instance:
 ```
 
 #### 2. Client Configuration
+
 Create client for the Gateway Frontend:
 
 ```json
@@ -498,14 +530,8 @@ Create client for the Gateway Frontend:
   "enabled": true,
   "protocol": "openid-connect",
   "publicClient": true,
-  "redirectUris": [
-    "https://makrx.org/*",
-    "http://localhost:5173/*"
-  ],
-  "webOrigins": [
-    "https://makrx.org",
-    "http://localhost:5173"
-  ],
+  "redirectUris": ["https://makrx.org/*", "http://localhost:5173/*"],
+  "webOrigins": ["https://makrx.org", "http://localhost:5173"],
   "attributes": {
     "pkce.code.challenge.method": "S256"
   }
@@ -513,6 +539,7 @@ Create client for the Gateway Frontend:
 ```
 
 #### 3. Role Mappings
+
 Define application roles:
 
 ```json
@@ -549,43 +576,45 @@ The Gateway Frontend supports seamless authentication across all MakrX portals:
 const crossPortalConfig = {
   portals: [
     {
-      name: 'makrcave',
-      url: 'https://makrcave.makrx.org',
-      clientId: 'makrx-makrcave'
+      name: "makrcave",
+      url: "https://makrcave.makrx.org",
+      clientId: "makrx-makrcave",
     },
     {
-      name: 'store', 
-      url: 'https://store.makrx.org',
-      clientId: 'makrx-store'
+      name: "store",
+      url: "https://store.makrx.org",
+      clientId: "makrx-store",
     },
     {
-      name: 'learn',
-      url: 'https://learn.makrx.org', 
-      clientId: 'makrx-learn'
-    }
-  ]
+      name: "learn",
+      url: "https://learn.makrx.org",
+      clientId: "makrx-learn",
+    },
+  ],
 };
 ```
 
 ### Feature Flag Service Integration
 
 #### 1. Service Setup
+
 Deploy a feature flag service or integrate with existing solution:
 
 ```typescript
 // Feature flag service configuration
 const featureFlagConfig = {
-  serviceUrl: 'https://flags.makrx.org',
+  serviceUrl: "https://flags.makrx.org",
   pollingInterval: 30000, // 30 seconds
   fallbackFlags: {
-    'org.homepage.stats': true,
-    'org.homepage.testimonials': true,
-    'org.homepage.video': false
-  }
+    "org.homepage.stats": true,
+    "org.homepage.testimonials": true,
+    "org.homepage.video": false,
+  },
 };
 ```
 
 #### 2. Flag Definitions
+
 Define feature flags in your service:
 
 ```json
@@ -599,7 +628,7 @@ Define feature flags in your service:
       "rules": []
     },
     {
-      "key": "org.header.app-launcher", 
+      "key": "org.header.app-launcher",
       "name": "App Launcher Button",
       "description": "Show app launcher button in header",
       "defaultValue": true,
@@ -619,13 +648,15 @@ Define feature flags in your service:
 ### Performance Monitoring
 
 #### Core Web Vitals Targets
+
 - **Largest Contentful Paint (LCP)**: < 2.5s
-- **First Input Delay (FID)**: < 100ms  
+- **First Input Delay (FID)**: < 100ms
 - **Cumulative Layout Shift (CLS)**: < 0.1
 - **First Contentful Paint (FCP)**: < 1.8s
 - **Time to Interactive (TTI)**: < 3.8s
 
 #### Monitoring Setup
+
 ```typescript
 // Performance monitoring configuration
 const performanceConfig = {
@@ -639,16 +670,14 @@ const performanceConfig = {
 ### Error Monitoring
 
 #### Sentry Configuration
+
 ```typescript
 import * as Sentry from "@sentry/react";
 
 Sentry.init({
   dsn: process.env.VITE_SENTRY_DSN,
   environment: process.env.NODE_ENV,
-  integrations: [
-    new Sentry.BrowserTracing(),
-    new Sentry.Replay()
-  ],
+  integrations: [new Sentry.BrowserTracing(), new Sentry.Replay()],
   tracesSampleRate: 1.0,
   replaysSessionSampleRate: 0.1,
   replaysOnErrorSampleRate: 1.0,
@@ -658,6 +687,7 @@ Sentry.init({
 ### Analytics Tracking
 
 #### Google Analytics 4 Setup
+
 ```typescript
 // GA4 configuration
 const analyticsConfig = {
@@ -665,33 +695,35 @@ const analyticsConfig = {
   enableEnhancedEcommerce: true,
   enableUserID: true,
   customDimensions: {
-    userRole: 'custom_dimension_1',
-    portalSource: 'custom_dimension_2'
-  }
+    userRole: "custom_dimension_1",
+    portalSource: "custom_dimension_2",
+  },
 };
 ```
 
 ### Health Checks
 
 #### Application Health Endpoint
+
 The Gateway includes health check endpoints:
 
 ```typescript
 // Health check configuration
 const healthChecks = {
-  '/health': 'Application health status',
-  '/health/ready': 'Readiness probe for K8s',
-  '/health/live': 'Liveness probe for K8s'
+  "/health": "Application health status",
+  "/health/ready": "Readiness probe for K8s",
+  "/health/live": "Liveness probe for K8s",
 };
 ```
 
 #### External Service Monitoring
+
 ```typescript
 // Monitor external service health
 const serviceHealth = {
-  keycloak: 'https://auth.makrx.org/health',
-  api: 'https://api.makrx.org/health',
-  flags: 'https://flags.makrx.org/health'
+  keycloak: "https://auth.makrx.org/health",
+  api: "https://api.makrx.org/health",
+  flags: "https://flags.makrx.org/health",
 };
 ```
 
@@ -700,6 +732,7 @@ const serviceHealth = {
 ### Common Issues
 
 #### Build Failures
+
 ```bash
 # Clear cache and rebuild
 rm -rf node_modules package-lock.json
@@ -708,12 +741,14 @@ npm run build
 ```
 
 #### Authentication Issues
+
 - Verify Keycloak realm and client configuration
 - Check CORS settings in Keycloak
 - Ensure redirect URIs are correctly configured
 - Verify SSL certificate validity
 
 #### Performance Issues
+
 ```bash
 # Analyze bundle size
 npm run build:analyze
@@ -726,12 +761,14 @@ npm run lighthouse
 ```
 
 #### Feature Flag Issues
+
 - Verify feature flag service connectivity
 - Check polling interval and fallback values
 - Monitor flag evaluation performance
 - Validate flag key naming conventions
 
 ### Debug Mode
+
 Enable debug mode for development:
 
 ```env
@@ -740,26 +777,30 @@ VITE_LOG_LEVEL=debug
 ```
 
 ### Support Escalation
+
 - **Technical Issues**: Create GitHub issue with reproduction steps
-- **Security Issues**: Contact security@makrx.org immediately  
+- **Security Issues**: Contact security@makrx.org immediately
 - **Production Issues**: Follow incident response procedures
 - **Integration Issues**: Contact DevOps team via established channels
 
 ## Security Considerations
 
 ### Authentication Security
+
 - Implement PKCE for OAuth flows
 - Use secure cookie settings for session management
 - Enable MFA for administrative accounts
 - Regular security audits of authentication flow
 
 ### Data Protection
+
 - Implement DPDP Act 2023 compliance measures
 - Use HTTPS everywhere with HSTS
 - Implement proper CORS policies
 - Regular security scans and vulnerability assessments
 
 ### Content Security
+
 - Implement strict Content Security Policy
 - Sanitize all user inputs
 - Use prepared statements for database queries
@@ -768,7 +809,8 @@ VITE_LOG_LEVEL=debug
 ---
 
 For additional technical documentation, see:
+
 - [API Documentation](./API.md)
-- [Security Guidelines](./SECURITY.md) 
+- [Security Guidelines](./SECURITY.md)
 - [Deployment Guide](./DEPLOYMENT.md)
 - [Contributing Guidelines](./CONTRIBUTING.md)
