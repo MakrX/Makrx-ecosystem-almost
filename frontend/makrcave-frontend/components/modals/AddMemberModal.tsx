@@ -28,7 +28,7 @@ const AddMemberModal: React.FC<AddMemberModalProps> = ({
     lastName: '',
     email: '',
     phone: '',
-    role: 'maker',
+    role: 'user',
     membership_plan_id: '',
     skills: '',
   });
@@ -66,7 +66,7 @@ const AddMemberModal: React.FC<AddMemberModalProps> = ({
         lastName: '',
         email: '',
         phone: '',
-        role: 'maker',
+        role: 'user',
         membership_plan_id: '',
         skills: '',
       });
@@ -85,7 +85,7 @@ const AddMemberModal: React.FC<AddMemberModalProps> = ({
       lastName: '',
       email: '',
       phone: '',
-      role: 'maker',
+      role: 'user',
       membership_plan_id: '',
       skills: '',
     });
@@ -170,7 +170,7 @@ const AddMemberModal: React.FC<AddMemberModalProps> = ({
                 <SelectValue placeholder="Select role" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="maker">Maker</SelectItem>
+                <SelectItem value="user">User</SelectItem>
                 <SelectItem value="service_provider">Service Provider</SelectItem>
                 <SelectItem value="admin">Admin</SelectItem>
                 <SelectItem value="makerspace_admin">Makerspace Admin</SelectItem>

@@ -142,7 +142,7 @@ export default function Inventory() {
     } else if (user?.role === 'service_provider') {
       // Service Provider: View own inventory only
       items = items.filter(item => item.ownerUserId === user?.id);
-    } else if (user?.role === 'maker') {
+    } else if (user?.role === 'user') {
       // Maker: Read-only access to all items in their makerspace
       if (user.assignedMakerspaces) {
         items = items.filter(item => user.assignedMakerspaces?.includes(item.makerspaceId));
@@ -747,7 +747,7 @@ export default function Inventory() {
               setSelectedItem(item);
               setShowDetailModal(true);
             }}
-            userRole={user?.role || 'maker'}
+            userRole={user?.role || 'user'}
             canEdit={canAddEdit}
             canDelete={canDelete && (!item.ownerUserId || item.ownerUserId === user?.id)}
             canIssue={canIssue}
@@ -764,7 +764,7 @@ export default function Inventory() {
           <p className="text-muted-foreground mb-4">
             {searchTerm || selectedCategory !== 'all' || selectedStatus !== 'all' || selectedSupplierType !== 'all'
               ? 'Try adjusting your search or filter criteria'
-              : user?.role === 'maker' 
+              : user?.role === 'user'
                 ? 'No inventory items available in your makerspace'
                 : 'Start by adding your first inventory item'
             }

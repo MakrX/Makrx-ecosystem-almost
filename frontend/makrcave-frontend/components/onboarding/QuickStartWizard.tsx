@@ -22,7 +22,7 @@ interface QuickAction {
 }
 
 interface QuickStartWizardProps {
-  userType: 'maker' | 'admin' | 'provider' | 'super_admin';
+  userType: 'user' | 'admin' | 'provider' | 'super_admin';
   onClose: () => void;
   onActionComplete: (actionId: string) => void;
 }
@@ -207,7 +207,7 @@ const QuickStartWizard: React.FC<QuickStartWizardProps> = ({
     ];
 
     switch (type) {
-      case 'maker':
+      case 'user':
         return makerActions;
       case 'admin':
         return adminActions;

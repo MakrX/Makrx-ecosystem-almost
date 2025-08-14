@@ -235,7 +235,7 @@ const Profile: React.FC = () => {
       case 'admin': return 'Administrator';
       case 'makerspace_admin': return 'Makerspace Manager';
       case 'service_provider': return 'Service Provider';
-      case 'maker': return 'Maker';
+      case 'user': return 'User';
       default: return role.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
     }
   };
@@ -246,7 +246,7 @@ const Profile: React.FC = () => {
       case 'admin': return 'secondary';
       case 'makerspace_admin': return 'outline';
       case 'service_provider': return 'outline';
-      case 'maker': return 'outline';
+      case 'user': return 'outline';
       default: return 'outline';
     }
   };
@@ -306,8 +306,8 @@ const Profile: React.FC = () => {
               <h2 className="text-xl font-semibold">{profile.firstName} {profile.lastName}</h2>
               <p className="text-gray-600">{profile.email}</p>
               <div className="flex items-center gap-2 mt-2">
-                <Badge variant={getRoleBadgeVariant(user?.role || 'maker')}>
-                  {getRoleDisplayName(user?.role || 'maker')}
+                <Badge variant={getRoleBadgeVariant(user?.role || 'user')}>
+                  {getRoleDisplayName(user?.role || 'user')}
                 </Badge>
                 {user?.assignedMakerspaces && user.assignedMakerspaces.length > 0 && (
                   <Badge variant="outline">

@@ -13,7 +13,7 @@ import {
 
 interface OnboardingState {
   stage: 'welcome' | 'profile_setup' | 'tutorial' | 'quick_start' | 'completed';
-  userType: 'maker' | 'admin' | 'provider' | 'super_admin' | '';
+  userType: 'user' | 'admin' | 'provider' | 'super_admin' | '';
   completedSteps: string[];
   showTutorial: boolean;
   showQuickStart: boolean;
@@ -32,7 +32,7 @@ const OnboardingPage: React.FC = () => {
 
   // Check if user is returning from invitation or specific flow
   const inviteCode = searchParams.get('invite');
-  const userTypeParam = searchParams.get('type') as 'maker' | 'admin' | 'provider' | 'super_admin';
+  const userTypeParam = searchParams.get('type') as 'user' | 'admin' | 'provider' | 'super_admin';
   const skipToParam = searchParams.get('skip_to');
 
   useEffect(() => {
@@ -78,7 +78,7 @@ const OnboardingPage: React.FC = () => {
       }
     ];
 
-    const makerSteps = [
+    const userSteps = [
       ...commonSteps,
       {
         id: 'projects',
@@ -127,8 +127,8 @@ const OnboardingPage: React.FC = () => {
     ];
 
     switch (userType) {
-      case 'maker':
-        return makerSteps;
+      case 'user':
+        return userSteps;
       case 'admin':
         return adminSteps;
       default:

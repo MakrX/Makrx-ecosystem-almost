@@ -82,7 +82,7 @@ export default function HeaderWithHealth({
       case 'admin': return 'bg-blue-500';
       case 'makerspace_admin': return 'bg-green-500';
       case 'service_provider': return 'bg-orange-500';
-      case 'maker': return 'bg-gray-500';
+      case 'user': return 'bg-gray-500';
       default: return 'bg-gray-500';
     }
   };
@@ -128,11 +128,11 @@ export default function HeaderWithHealth({
           </div>
           <div className="hidden md:flex flex-col items-start">
             <span className="text-sm font-medium">{getUserDisplayName()}</span>
-            <Badge 
-              className={`text-xs text-white ${getRoleBadgeColor(user?.role || 'maker')}`}
+            <Badge
+              className={`text-xs text-white ${getRoleBadgeColor(user?.role || 'user')}`}
               variant="secondary"
             >
-              {formatRoleDisplay(user?.role || 'maker')}
+              {formatRoleDisplay(user?.role || 'user')}
             </Badge>
           </div>
           <ChevronDown className="w-4 h-4 text-muted-foreground" />
@@ -142,11 +142,11 @@ export default function HeaderWithHealth({
         <div className="p-2">
           <div className="font-medium">{getUserDisplayName()}</div>
           <div className="text-sm text-muted-foreground">{user?.email}</div>
-          <Badge 
-            className={`text-xs text-white mt-1 ${getRoleBadgeColor(user?.role || 'maker')}`}
+          <Badge
+            className={`text-xs text-white mt-1 ${getRoleBadgeColor(user?.role || 'user')}`}
             variant="secondary"
           >
-            {formatRoleDisplay(user?.role || 'maker')}
+            {formatRoleDisplay(user?.role || 'user')}
           </Badge>
         </div>
         <DropdownMenuSeparator />

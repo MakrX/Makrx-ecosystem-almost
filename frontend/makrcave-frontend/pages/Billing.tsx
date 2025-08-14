@@ -247,7 +247,7 @@ const Billing: React.FC = () => {
       {(isSuperAdmin || isMakerspaceAdmin) && (
         <BillingOverview 
           analytics={billingData.analytics}
-          userRole={user?.role || 'maker'}
+          userRole={user?.role || 'user'}
         />
       )}
 
@@ -393,7 +393,7 @@ const Billing: React.FC = () => {
             </div>
             <BillingOverview 
               analytics={billingData.analytics}
-              userRole={user?.role || 'maker'}
+              userRole={user?.role || 'user'}
               detailed={true}
             />
           </TabsContent>

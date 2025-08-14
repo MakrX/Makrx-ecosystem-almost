@@ -5,7 +5,7 @@ from enum import Enum
 
 # Enums
 class MemberRole(str, Enum):
-    MAKER = "maker"
+    USER = "user"
     SERVICE_PROVIDER = "service_provider"
     ADMIN = "admin"
     MAKERSPACE_ADMIN = "makerspace_admin"
@@ -60,7 +60,7 @@ class MemberBase(BaseModel):
     first_name: str = Field(..., min_length=1, max_length=100)
     last_name: str = Field(..., min_length=1, max_length=100)
     phone: Optional[str] = Field(None, max_length=20)
-    role: MemberRole = MemberRole.MAKER
+    role: MemberRole = MemberRole.USER
     skills: List[str] = []
     bio: Optional[str] = None
 
@@ -136,7 +136,7 @@ class MemberSummaryResponse(BaseModel):
 # Member invite schemas
 class MemberInviteBase(BaseModel):
     email: EmailStr
-    role: MemberRole = MemberRole.MAKER
+    role: MemberRole = MemberRole.USER
     membership_plan_id: str
     invite_message: Optional[str] = None
 

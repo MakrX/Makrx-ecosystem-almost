@@ -2,8 +2,8 @@ import { Users, UserPlus, Shield, Mail, Calendar } from 'lucide-react';
 
 export default function AdminUsers() {
   const users = [
-    { id: '1', name: 'John Maker', email: 'john@makrx.org', role: 'maker', joinDate: '2024-01-15', lastActive: '2024-01-26' },
-    { id: '2', name: 'Sarah Designer', email: 'sarah@makrx.org', role: 'maker', joinDate: '2024-01-10', lastActive: '2024-01-25' },
+    { id: '1', name: 'John User', email: 'john@makrx.org', role: 'user', joinDate: '2024-01-15', lastActive: '2024-01-26' },
+    { id: '2', name: 'Sarah Designer', email: 'sarah@makrx.org', role: 'user', joinDate: '2024-01-10', lastActive: '2024-01-25' },
     { id: '3', name: 'Mike Creator', email: 'mike@makrx.org', role: 'makerspace_admin', joinDate: '2024-01-05', lastActive: '2024-01-26' }
   ];
 

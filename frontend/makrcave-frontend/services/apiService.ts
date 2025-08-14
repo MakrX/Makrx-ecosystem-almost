@@ -140,7 +140,7 @@ export interface User {
   username: string;
   first_name?: string;
   last_name?: string;
-  role: 'super_admin' | 'admin' | 'makerspace_admin' | 'service_provider' | 'maker';
+  role: 'super_admin' | 'admin' | 'makerspace_admin' | 'service_provider' | 'user';
   assigned_makerspaces?: string[];
   membership_tier?: string;
   subscription_status?: 'active' | 'inactive' | 'expired';

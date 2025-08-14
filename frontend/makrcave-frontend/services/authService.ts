@@ -37,7 +37,7 @@ export interface User {
   username: string;
   firstName?: string;
   lastName?: string;
-  role: 'super_admin' | 'admin' | 'makerspace_admin' | 'service_provider' | 'maker';
+  role: 'super_admin' | 'admin' | 'makerspace_admin' | 'service_provider' | 'user';
   assignedMakerspaces?: string[];
   membershipTier?: string;
   subscriptionStatus?: 'active' | 'inactive' | 'expired';
@@ -265,13 +265,13 @@ class AuthService {
         createdAt: '2024-01-01T00:00:00Z',
         assignedMakerspaces: []
       },
-      'maker@makrcave.com': {
-        id: 'user-maker',
-        email: 'maker@makrcave.com',
+      'user@makrcave.com': {
+        id: 'user-user',
+        email: 'user@makrcave.com',
         username: 'creativemakr',
         firstName: 'Regular',
         lastName: 'Maker',
-        role: 'maker',
+        role: 'user',
         isActive: true,
         createdAt: '2024-01-01T00:00:00Z',
         assignedMakerspaces: ['ms-1']
@@ -284,7 +284,7 @@ class AuthService {
       'admin@makrcave.com': 'Admin2024!',
       'manager@makrcave.com': 'Manager2024!',
       'provider@makrcave.com': 'Provider2024!',
-      'maker@makrcave.com': 'Maker2024!'
+      'user@makrcave.com': 'User2024!'
     };
 
     // Check if user exists
@@ -346,7 +346,7 @@ class AuthService {
   // ========================================
   // REGISTRATION METHOD
   // ========================================
-  // Creates new user account (default role: 'maker')
+  // Creates new user account (default role: 'user')
   // Automatically logs in user after successful registration
   async register(data: RegisterData): Promise<LoginResponse> {
     const startTime = Date.now();
@@ -462,14 +462,14 @@ class AuthService {
   // MOCK REGISTRATION FOR CLOUD ENVIRONMENT
   // ========================================
   private mockRegister(data: RegisterData, responseTime: number): LoginResponse {
-    // Create new user with maker role
+    // Create new user with user role
     const newUser: User = {
       id: `user-${Date.now()}`,
       email: data.email,
       username: data.username,
       firstName: data.firstName || '',
       lastName: data.lastName || '',
-      role: 'maker', // Default role for new registrations
+      role: 'user', // Default role for new registrations
       isActive: true,
       createdAt: new Date().toISOString(),
       assignedMakerspaces: data.makerspaceId ? [data.makerspaceId] : []

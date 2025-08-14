@@ -93,9 +93,9 @@ const SkillManagement: React.FC = () => {
 
   // Mock data for members and equipment
   const mockMembers = [
-    { id: 'user-1', name: 'John Smith', email: 'john.smith@makrcave.local', role: 'maker' },
-    { id: 'user-2', name: 'Emily Davis', email: 'emily.davis@makrcave.local', role: 'maker' },
-    { id: 'user-3', name: 'Mike Johnson', email: 'mike.johnson@makrcave.local', role: 'maker' },
+    { id: 'user-1', name: 'John Smith', email: 'john.smith@makrcave.local', role: 'user' },
+    { id: 'user-2', name: 'Emily Davis', email: 'emily.davis@makrcave.local', role: 'user' },
+    { id: 'user-3', name: 'Mike Johnson', email: 'mike.johnson@makrcave.local', role: 'user' },
     { id: 'user-4', name: 'Sarah Wilson', email: 'sarah.wilson@makrcave.local', role: 'service_provider' }
   ];
 
