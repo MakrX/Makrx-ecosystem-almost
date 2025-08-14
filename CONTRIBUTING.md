@@ -11,6 +11,22 @@ Thanks for helping improve the MakrX ecosystem! This guide covers how we work an
   - [Gateway Frontend](frontend/gateway-frontend/README.md)
   - [Makrcave Frontend](frontend/makrcave-frontend/README.md)
 
+## Experiments
+
+Prototype or archived services belong in [/experimental/](experimental/). Each experiment must live in its own folder and include a README containing:
+
+- Purpose and scope
+- Status (prototype, archived, etc.)
+- Owner
+- Last updated date
+- Link to the [promotion checklist](experimental/PROMOTION_CHECKLIST.md)
+
+### Promotion workflow
+
+1. Flesh out tests, documentation, and deployment artifacts.
+2. Complete the [promotion checklist](experimental/PROMOTION_CHECKLIST.md).
+3. Move the service out of `/experimental` and update [ARCHITECTURE.md](ARCHITECTURE.md).
+
 ## Prerequisites
 - Node.js LTS (18+)
 - Python 3.11+
