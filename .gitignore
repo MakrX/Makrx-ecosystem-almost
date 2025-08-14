@@ -24,5 +24,17 @@ dist-ssr
 *.sw?
 
 .config/
-!.env
 *.tsbuildinfo
+
+# Python
+__pycache__/
+.venv/
+*.pyc
+coverage/
+.pytest_cache/
+env/
+
+# Environment files
+.env*
+!.env.example
+!.env.production.template
