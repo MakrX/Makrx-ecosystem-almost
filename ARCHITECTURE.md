@@ -78,7 +78,7 @@ Frontends build to static assets served via CDN behind Nginx. Backends run behin
 ## Non‑Goals for MVP
 
 - Real‑time collaboration, advanced analytics, automated equipment control, and full payment settlement are deferred.
-- Decision history is tracked in [docs/adr/](docs/adr/).
+- Decision history is tracked in the [ADR directory](docs/adr/README.md), where files are named `YYYYMMDD-short-title.md`.
 
 ---
 A typical request flows `Gateway → Keycloak → service API → Postgres`. To add features, extend routes under `makrx-store-backend/app/routes/*` or `makrcave-backend/routes/*` and update the corresponding frontend in `frontend/`.

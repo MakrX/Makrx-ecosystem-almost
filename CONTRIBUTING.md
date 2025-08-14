@@ -68,6 +68,6 @@ Always branch from `main` and keep in sync via `git fetch origin` and `git rebas
 ## Issue Triage & Security
 - Triage issues with labels (`bug`, `feature`, `docs`, etc.)
 - Report security concerns per [SECURITY.md](docs/SECURITY.md)
-- Architectural decisions: record ADRs under `docs/adr/NNN-title.md`
+- Architectural decisions: record ADRs under [docs/adr/](docs/adr/README.md) using `YYYYMMDD-short-title.md`
 
 Happy hacking!
