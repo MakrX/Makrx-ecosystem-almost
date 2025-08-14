@@ -34,6 +34,17 @@ Thanks for helping improve the MakrX ecosystem! This guide covers how we work an
    npm run dev
    ```
 
+## Docker Build Contexts
+
+Never include the following in Docker build contexts:
+
+- `node_modules` or other dependency directories
+- compiled output such as `dist/` or build caches
+- secrets, environment files, or credentials
+- large media, test fixtures, or sample datasets
+
+`.dockerignore` files are audited quarterly to keep images lean. For how build contexts are used in automation, see the [CI/CD pipeline docs](docs/DEPLOYMENT.md#ci-cd-pipeline).
+
 ## Branching Model
 - `feature/<topic>` for new features
 - `fix/<bug>` for bug fixes
@@ -48,6 +59,7 @@ Always branch from `main` and keep in sync via `git fetch origin` and `git rebas
   - [ ] OpenAPI specs regenerated
   - [ ] Alembic migrations added and applied
   - [ ] Documentation updated
+  - [ ] Update `.dockerignore` when adding heavy folders
   - [ ] CHANGELOG.md updated
   - [ ] Feature flags default to safe values
 
