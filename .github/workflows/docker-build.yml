@@ -30,7 +30,11 @@ jobs:
         run: |
           set -euo pipefail
           docker build "${{ matrix.context }}" 2>&1 | tee build.log
-          line=$(head -n1 build.log)
+          line=$(grep -m1 'Sending build context to Docker daemon' build.log)
+          if [ -z "$line" ]; then
+            echo "Unable to find context size line" >&2
+            exit 1
+          fi
           echo "$line"
           size=$(echo "$line" | awk '{print $(NF-1)}')
           unit=$(echo "$line" | awk '{print $NF}')
