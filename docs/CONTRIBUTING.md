@@ -105,6 +105,7 @@ git push origin feature/your-feature-name
 
 ## 📝 Coding Standards
 
+The repository includes an `.editorconfig` file that enforces UTF-8 encoding, LF line endings, and consistent indentation (2 spaces for TypeScript, TSX, and Markdown, 4 spaces for Python). Ensure your editor supports EditorConfig to follow these conventions.
 ### Git Commit Convention
 We follow [Conventional Commits](https://www.conventionalcommits.org/):
 
