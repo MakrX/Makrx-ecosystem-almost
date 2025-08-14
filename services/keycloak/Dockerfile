@@ -7,7 +7,8 @@ COPY themes/makrx-login /opt/keycloak/themes/makrx-login
 COPY realm-export/makrx-realm.json /opt/keycloak/data/import/makrx-realm.json
 
 # Set up environment
-ENV KEYCLOAK_ADMIN=admin
+ARG KEYCLOAK_ADMIN
+ENV KEYCLOAK_ADMIN=${KEYCLOAK_ADMIN}
 ENV KC_HOSTNAME_STRICT=false
 ENV KC_HOSTNAME_STRICT_HTTPS=false
 ENV KC_HTTP_ENABLED=true

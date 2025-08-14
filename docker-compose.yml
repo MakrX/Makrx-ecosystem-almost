@@ -14,8 +14,8 @@ services:
     image: postgres:15
     container_name: makrx-postgres
     environment:
-      POSTGRES_DB: makrx
-      POSTGRES_USER: makrx
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${KC_DB_PASSWORD}
     volumes:
       - postgres_data:/var/lib/postgresql/data
@@ -38,11 +38,11 @@ services:
     environment:
       KC_DB: postgres
       KC_DB_URL_HOST: postgres
-      KC_DB_URL_DATABASE: makrx
-      KC_DB_USERNAME: makrx
+      KC_DB_URL_DATABASE: ${POSTGRES_DB}
+      KC_DB_USERNAME: ${POSTGRES_USER}
       KC_DB_PASSWORD: ${KC_DB_PASSWORD}
       KC_DB_SCHEMA: keycloak
-      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN}
       KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
     ports:
       - "8080:8080"
@@ -61,7 +61,7 @@ services:
       dockerfile: Dockerfile
     container_name: makrx-makrcave-backend
     environment:
-      DATABASE_URL: postgresql://makrx:${KC_DB_PASSWORD}@postgres:5432/makrx
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${KC_DB_PASSWORD}@postgres:5432/${POSTGRES_DB}
       KEYCLOAK_URL: http://keycloak:8080
     ports:
       - "8002:8000"
@@ -77,7 +77,7 @@ services:
       dockerfile: Dockerfile
     container_name: makrx-store-backend
     environment:
-      DATABASE_URL: postgresql://makrx:${KC_DB_PASSWORD}@postgres:5432/makrx
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${KC_DB_PASSWORD}@postgres:5432/${POSTGRES_DB}
       KEYCLOAK_URL: http://keycloak:8080
     ports:
       - "8003:8000"

@@ -4,7 +4,12 @@ dist
 coverage
 cypress
 *.log
-.env*
+# Environment files
+.env
+.env.*
+!.env.example
+!.env.*.example
+!.env.*.template
 .DS_Store
 .vscode
 .idea

@@ -8,7 +8,11 @@
 .git
 
 # Environment files
-.env*
+.env
+.env.*
+!.env.example
+!.env.*.example
+!.env.*.template
 
 # Editor directories and files
 .DS_Store
