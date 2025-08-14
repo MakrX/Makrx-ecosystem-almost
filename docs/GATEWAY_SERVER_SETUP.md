@@ -611,7 +611,7 @@ WORKDIR /app
 COPY frontend/gateway-frontend/package*.json ./
 
 # Install dependencies
-RUN npm ci --only=production && npm cache clean --force
+RUN npm ci --omit=dev && npm cache clean --force
 
 # Copy source code
 COPY frontend/gateway-frontend/ .
