@@ -85,7 +85,7 @@
       "serviceAccountsEnabled": true,
       "publicClient": false,
       "protocol": "openid-connect",
-      "secret": "makrx-auth-service-secret-2024"
+      "secret": "CHANGE_ME"
     }
   ],
   "roles": {
@@ -123,7 +123,7 @@
       "credentials": [
         {
           "type": "password",
-          "value": "makrx-admin-2024",
+          "value": "CHANGE_ME",
           "temporary": false
         }
       ],
@@ -139,7 +139,7 @@
       "credentials": [
         {
           "type": "password",
-          "value": "makrx2024",
+          "value": "CHANGE_ME",
           "temporary": false
         }
       ],
