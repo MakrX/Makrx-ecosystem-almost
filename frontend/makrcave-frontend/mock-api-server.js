@@ -1977,7 +1977,7 @@ app.get('/api/billing/analytics/revenue-trends', (req, res) => {
 app.post('/api/billing/checkout/create-session', (req, res) => {
   res.json({
     session_id: `cs_${Date.now()}`,
-    client_secret: 'pi_1234567890_secret_abcd',
+    client_secret: 'pi_test_secret_placeholder',
     redirect_url: '/billing/checkout/success'
   });
 });

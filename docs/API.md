@@ -42,8 +42,8 @@ Authorization: Bearer <jwt_token>
 {
   "success": true,
   "data": {
-    "access_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...",
-    "refresh_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...",
+    "access_token": "<ACCESS_TOKEN>",
+    "refresh_token": "<REFRESH_TOKEN>",
     "expires_in": 3600,
     "user": {
       "id": "uuid",
@@ -63,7 +63,7 @@ Authorization: Bearer <jwt_token>
 **Request Body**:
 ```json
 {
-  "refresh_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9..."
+  "refresh_token": "<REFRESH_TOKEN>"
 }
 ```
 
