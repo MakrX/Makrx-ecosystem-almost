@@ -127,6 +127,13 @@ graph TB
 ��─────────────────────────────────────┘
 ```
 
+#### Skill Management & Equipment Access
+
+MakrCave includes a complete skill certification system:
+- Database tables for `skills`, `user_skills`, `skill_requests`, `skill_audit_logs`, and `skill_equipment`
+- REST endpoints under `/api/v1/skills/*` for skill CRUD, user certifications, requests, and equipment access checks
+- The frontend wraps routes with a `SkillProvider` to enforce skill gates and makerspace-specific overrides
+
 ### MakrX.Store (E-commerce)
 ```
 ┌─────────────────────────────────────┐
@@ -371,6 +378,13 @@ services:
 - **Load Balancing**: Traffic distribution
 - **Auto-scaling**: Based on CPU/memory usage
 - **CDN**: Global content delivery
+
+## Operational Guidelines
+
+- All services expose `/health` endpoints; database connectivity can be verified with `pg_isready`
+- Tail logs using `docker-compose logs -f` and monitor CPU, memory, and disk usage
+- Daily backup scripts archive databases, uploads, and configuration
+- Security hardening includes UFW firewall, Fail2Ban, environment-based secrets, JWT validation, CORS restrictions, rate limiting, and security headers
 
 ---
 

@@ -197,6 +197,20 @@ Services in `experimental/` are archived and not part of the production deployme
 - **CI/CD**: GitHub Actions
 - **Monitoring**: Custom health checks
 
+## Deployment & Security
+
+- **Server Requirements**: Ubuntu 20.04+, 4GB RAM (8GB recommended), 2 CPU cores, 50GB SSD
+- **Software**: Docker 20+, Docker Compose 2+, Node.js 18+, Python 3.9+, PostgreSQL 13+, Nginx 1.18+
+- **Configuration**: all secrets in `.env.production`, JWT validation enabled, CORS restricted to trusted origins, rate limiting and security headers applied
+- **Network**: open ports 80/443/8000, secure HTTPS with SSL certificates
+- **Protection**: enable UFW firewall and Fail2Ban to limit intrusion attempts
+
+## Maintenance & Monitoring
+
+- Health endpoints at `/health` for frontend and backend; database health via `pg_isready`
+- Tail logs with `docker-compose logs -f` and monitor CPU, memory, and disk usage
+- Schedule daily backups of databases, uploads, and configuration using provided scripts
+
 ## 📚 Documentation
 
 - [**System Architecture**](docs/ARCHITECTURE.md) - Detailed technical architecture

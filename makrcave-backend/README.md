@@ -2,6 +2,8 @@
 
 Backend API for the MakrCave Inventory Management System built with FastAPI, SQLAlchemy, and Pydantic.
 
+For an overview of how this service fits into the ecosystem, see the [MakrX architecture overview](../docs/ARCHITECTURE.md).
+
 ## 🚀 Features
 
 - **RESTful API** for inventory management
