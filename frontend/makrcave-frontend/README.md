@@ -19,6 +19,24 @@ Copy `.env.example` to `.env` and update values as needed.
 
 The dev server runs on [http://localhost:3001](http://localhost:3001).
 
+### Mock API Server
+
+For local development, a mock API server can be started separately:
+
+```bash
+npm run mock-api
+```
+
+The server listens on [http://localhost:8000](http://localhost:8000) and accepts only test accounts:
+
+- `superadmin@makrcave.com` / `SuperAdmin2024!`
+- `admin@makrcave.com` / `Admin2024!`
+- `manager@makrcave.com` / `Manager2024!`
+- `provider@makrcave.com` / `Provider2024!`
+- `maker@makrcave.com` / `Maker2024!`
+
+These credentials are fake and should never be used with real services. Run `npm run dev:with-api` to launch both the mock API and the frontend together.
+
 ## Available Scripts
 - `npm run dev` – start Vite development server
 - `npm run dev:with-api` – dev server with backend proxy

@@ -14,7 +14,7 @@ console.log('🚀 Starting MakrCave development environment...');
 
 // Start mock API server
 console.log('📡 Starting mock API server on port 8000...');
-const apiServer = spawn('node', ['mock-api-server.js'], {
+const apiServer = spawn('node', ['mocks/mock-api-server.js'], {
   cwd: __dirname,
   stdio: ['inherit', 'pipe', 'pipe']
 });
