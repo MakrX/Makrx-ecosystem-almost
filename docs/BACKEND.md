@@ -9,10 +9,12 @@ The MakrX backend consists of multiple FastAPI services that provide REST APIs f
 ### Service Overview
 ```
 Backend Services:
-├── auth-service/          # Authentication & user management
-├── makrcave-backend/      # MakrCave management API  
-├── makrx-store-backend/   # E-commerce & store API
-└── event-service/         # Event handling & notifications
+├── makrcave-backend/      # MakrCave management API (production)
+└── makrx-store-backend/   # E-commerce & store API (production)
+
+Archived services (not production-critical) are kept in `experimental/`:
+├── experimental/auth-service/   # Deprecated authentication service
+└── experimental/event-service/  # Deprecated event handling service
 ```
 
 ### Technology Stack

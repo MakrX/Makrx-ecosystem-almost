@@ -1,3 +1,8 @@
+/**
+ * Development-only script to run MakrCave with a mock API server.
+ * Not used in production.
+ */
+
 import { spawn } from 'child_process';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';

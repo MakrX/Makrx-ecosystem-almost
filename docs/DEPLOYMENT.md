@@ -85,7 +85,7 @@ cd ../makrx-store-backend
 poetry install  
 poetry run uvicorn app.main:app --reload --port 8001 &
 
-cd ../backends/auth-service
+cd ../experimental/auth-service
 poetry install
 poetry run uvicorn main:app --reload --port 8002 &
 ```
@@ -194,7 +194,7 @@ services:
 
   auth-service:
     build:
-      context: ./backends/auth-service
+      context:../experimental/auth-service
       dockerfile: Dockerfile
     environment:
       - KEYCLOAK_URL=http://keycloak:8080

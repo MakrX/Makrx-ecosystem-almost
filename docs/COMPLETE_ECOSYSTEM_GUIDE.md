@@ -21,11 +21,14 @@ backend-service/
 └── .env.example       # Environment template
 ```
 
-### Auth Service (Port 8001)
+### Auth Service (Archived, Port 8001)
+
+*This service is archived and not used in production.*
+
 
 #### Folder Structure
 ```
-backends/auth-service/
+experimental/auth-service/
 ├── app/
 │   ├── core/
 │   │   ├── config.py      # JWT settings, Keycloak config

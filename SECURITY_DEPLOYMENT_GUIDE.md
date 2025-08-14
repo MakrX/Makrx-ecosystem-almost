@@ -21,10 +21,10 @@ This guide covers the security vulnerabilities that have been fixed and the depl
 
 ### 1. Environment Configuration
 
-#### Auth Service
+#### Auth Service (Archived)
 ```bash
 # Copy and configure environment
-cp backends/auth-service/.env.example backends/auth-service/.env
+cp experimental/auth-service/.env.example experimental/auth-service/.env
 
 # Generate secure secrets
 export KEYCLOAK_CLIENT_SECRET=$(openssl rand -base64 32)
@@ -47,10 +47,10 @@ export ENCRYPTION_KEY=$(openssl rand -hex 32)
 export DATABASE_URL="postgresql://makrcave_user:SECURE_PASSWORD@localhost:5432/makrcave"
 ```
 
-#### Event Service
+#### Event Service (Archived)
 ```bash
 # Copy and configure environment
-cp backends/event-service/.env.example backends/event-service/.env
+cp experimental/event-service/.env.example experimental/event-service/.env
 
 # Generate secure secrets
 export JWT_SECRET=$(openssl rand -base64 32)
@@ -174,7 +174,7 @@ sudo ufw enable
 cd makrcave-backend
 pip install -r requirements.txt
 
-cd ../backends/auth-service
+cd ../experimental/auth-service
 pip install -r requirements.txt
 
 cd ../event-service
@@ -184,7 +184,7 @@ pip install -r requirements.txt
 #### Start Services with Security
 ```bash
 # Auth Service
-cd backends/auth-service
+cd experimental/auth-service
 uvicorn main:app --host 0.0.0.0 --port 8000 --ssl-keyfile=/path/to/key.pem --ssl-certfile=/path/to/cert.pem
 
 # MakrCave Backend
@@ -192,7 +192,7 @@ cd makrcave-backend
 uvicorn main:app --host 0.0.0.0 --port 8001 --ssl-keyfile=/path/to/key.pem --ssl-certfile=/path/to/cert.pem
 
 # Event Service
-cd backends/event-service
+cd experimental/event-service
 uvicorn main:app --host 0.0.0.0 --port 8004 --ssl-keyfile=/path/to/key.pem --ssl-certfile=/path/to/cert.pem
 ```
 

@@ -2,7 +2,7 @@
 
 ## 🚨 Priority 1: Authentication Vulnerabilities
 
-### 1. Fix JWT Verification (backends/auth-service/main.py:123)
+### 1. Fix JWT Verification (experimental/auth-service/main.py:123)
 ```python
 # CURRENT (VULNERABLE):
 payload = jwt.decode(token, options={"verify_signature": False})

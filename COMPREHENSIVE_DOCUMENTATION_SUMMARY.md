@@ -39,10 +39,10 @@ MakrX-Ecosystem/
 │   ├── frontend/makrcave-frontend/    # React + Vite makerspace management  
 │   └── makrx-store-frontend/         # Next.js e-commerce platform
 ├── 🔧 Backend Services
-│   ├── backends/auth-service/         # Authentication microservice
-│   ├── backends/event-service/        # Event processing service
 │   ├── makrcave-backend/             # MakrCave FastAPI backend
-│   └── makrx-store-backend/          # Store FastAPI backend
+│   ├── makrx-store-backend/          # Store FastAPI backend
+│   ├── experimental/auth-service/    # Archived authentication microservice
+│   └── experimental/event-service/   # Archived event processing service
 ├── 📚 Shared Packages
 │   ├── packages/ui/                  # Shared UI components
 │   ├── packages/types/               # TypeScript type definitions
@@ -59,6 +59,8 @@ MakrX-Ecosystem/
     ├── tailwind.config.ts           # Global styling
     └── Various config files
 ```
+
+**Production-critical services:** `makrcave-backend`, `makrx-store-backend`. Services in `experimental/` are archived.
 
 ## 🔍 Detailed File Analysis
 
@@ -142,8 +144,8 @@ MakrX-Ecosystem/
 - Project management and collaboration
 - Analytics and reporting APIs
 
-#### Authentication Service
-**Location**: `backends/auth-service/`
+#### Authentication Service (Archived)
+**Location**: `experimental/auth-service/`
 **Purpose**: Centralized authentication microservice
 
 ### Shared Packages Analysis
