@@ -1,0 +1,50 @@
+name: Docker Build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  docker-build:
+    name: Build ${{ matrix.context }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        context:
+          - frontend/gateway-frontend
+          - frontend/makrcave-frontend
+          - makrcave-backend
+          - makrx-store-backend
+          - makrx-store-frontend
+          - services/keycloak
+          - experimental/auth-service
+          - experimental/event-service
+          - nginx
+    env:
+      THRESHOLD_MB: 200
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build image
+        run: |
+          set -euo pipefail
+          docker build "${{ matrix.context }}" 2>&1 | tee build.log
+          line=$(head -n1 build.log)
+          echo "$line"
+          size=$(echo "$line" | awk '{print $(NF-1)}')
+          unit=$(echo "$line" | awk '{print $NF}')
+          export SIZE=$size UNIT=$unit
+          python <<'PY'
+import os, sys
+size=float(os.environ['SIZE'])
+unit=os.environ['UNIT']
+threshold_mb=int(os.environ['THRESHOLD_MB'])
+unit_map={'B':1,'kB':1024,'MB':1024*1024,'GB':1024*1024*1024}
+size_bytes=int(size*unit_map.get(unit,1))
+threshold=threshold_mb*1024*1024
+print(f"Context size: {size} {unit} ({size_bytes} bytes)")
+if size_bytes > threshold:
+    print(f"Context size exceeds threshold of {threshold_mb} MB", file=sys.stderr)
+    sys.exit(1)
+PY
