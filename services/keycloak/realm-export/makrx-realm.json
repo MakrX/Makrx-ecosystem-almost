@@ -171,6 +171,38 @@
       ]
     },
     {
+      "clientId": "makrcave-backend",
+      "name": "MakrCave Backend",
+      "description": "Backend API for makerspace management",
+      "enabled": true,
+      "serviceAccountsEnabled": true,
+      "publicClient": false,
+      "protocol": "openid-connect",
+      "secret": "CHANGE_ME",
+      "defaultClientScopes": [
+        "email",
+        "profile",
+        "roles",
+        "makrcave-backend-scope"
+      ]
+    },
+    {
+      "clientId": "makrx-store-backend",
+      "name": "MakrX Store Backend",
+      "description": "Backend API for ecommerce platform",
+      "enabled": true,
+      "serviceAccountsEnabled": true,
+      "publicClient": false,
+      "protocol": "openid-connect",
+      "secret": "CHANGE_ME",
+      "defaultClientScopes": [
+        "email",
+        "profile",
+        "roles",
+        "makrx-store-backend-scope"
+      ]
+    },
+    {
       "clientId": "auth-service",
       "name": "Auth Service Backend",
       "description": "Authentication microservice",
@@ -179,6 +211,64 @@
       "publicClient": false,
       "protocol": "openid-connect",
       "secret": "CHANGE_ME"
+    }
+  ],
+  "clientScopes": [
+    {
+      "name": "makrcave-backend-scope",
+      "description": "Service scope for MakrCave backend",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "false"
+      },
+      "protocolMappers": [
+        {
+          "name": "makrcave-backend-audience",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "consentRequired": false,
+          "config": {
+            "included.client.audience": "makrcave-backend",
+            "id.token.claim": "false",
+            "access.token.claim": "true"
+          }
+        }
+      ],
+      "composite": true,
+      "composites": {
+        "realm": [
+          "service_provider"
+        ]
+      }
+    },
+    {
+      "name": "makrx-store-backend-scope",
+      "description": "Service scope for MakrX Store backend",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "false"
+      },
+      "protocolMappers": [
+        {
+          "name": "makrx-store-backend-audience",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "consentRequired": false,
+          "config": {
+            "included.client.audience": "makrx-store-backend",
+            "id.token.claim": "false",
+            "access.token.claim": "true"
+          }
+        }
+      ],
+      "composite": true,
+      "composites": {
+        "realm": [
+          "service_provider"
+        ]
+      }
     }
   ],
   "roles": {

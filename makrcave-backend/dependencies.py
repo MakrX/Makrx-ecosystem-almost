@@ -1,14 +1,12 @@
-from fastapi import Depends, HTTPException, status
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from sqlalchemy.orm import Session
-from typing import Optional
-import jwt
-import httpx
-import os
-from datetime import datetime
 import logging
+import os
 
-from .database import get_db
+import httpx
+import jwt
+from fastapi import Depends, HTTPException, status
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+
+from .services.keycloak_client import get_service_token
 
 # Configure logging
 logger = logging.getLogger(__name__)
@@ -50,9 +48,13 @@ async def validate_token_with_auth_service(token: str) -> dict:
         # Call auth service to validate token
         auth_service_url = os.getenv("AUTH_SERVICE_URL", "http://auth-service:8000")
 
+        service_token = await get_service_token()
         response = await client.get(
             f"{auth_service_url}/auth/profile",
-            headers={"Authorization": f"Bearer {token}"}
+            headers={
+                "Authorization": f"Bearer {token}",
+                "X-Service-Token": f"Bearer {service_token}"
+            }
         )
 
         if response.status_code == 200:
