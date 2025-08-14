@@ -38,6 +38,27 @@ Additional services like Redis or mail can be added as needed.
 ### Production
 Frontends build to static assets served via CDN behind Nginx. Backends run behind the proxy with managed Postgres, Keycloak, Redis and S3‑compatible storage.
 
+## What's Supported in Production
+
+Only the core services are maintained for live deployments:
+
+- Gateway frontend
+- MakrCave frontend
+- MakrCave backend
+- Store frontend
+- Store backend
+- Keycloak
+- PostgreSQL
+- Reverse proxy (Nginx)
+- S3‑compatible object storage
+
+Anything under [/experimental/](experimental/) is not production‑grade.
+
+## Experiments
+
+Prototype or archived services live in [/experimental/](experimental/README.md). They are excluded from production builds but remain as references.
+To graduate an experiment, complete the [promotion checklist](experimental/PROMOTION_CHECKLIST.md) and move the code into a supported service.
+
 ## Docker Build Contexts
 
 Each service builds its Docker image from its own folder. The files sent to `docker build` are limited by the `.dockerignore` in that directory, keeping bulky artifacts and secrets out of the build context. See the [CI/CD pipeline docs](docs/DEPLOYMENT.md#ci-cd-pipeline) for how these images are constructed in automation.
