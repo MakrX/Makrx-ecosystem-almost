@@ -1,0 +1,8 @@
+{
+  "name": "makrx-store-backend",
+  "private": true,
+  "scripts": {
+    "lint": "ruff check app",
+    "lint:fix": "ruff check app --fix"
+  }
+}
