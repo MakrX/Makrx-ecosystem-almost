@@ -27,3 +27,21 @@ MakrX uses Keycloak for single sign-on across all applications. This policy defi
 
 - **Cookie Domain**: `.makrx.org`
 - **Hostnames**: `auth.makrx.org`, `makrx.org`, `cave.makrx.org`, `store.makrx.org`, `providers.makrx.org`
+
+## Token Claims
+
+All MakrX clients are configured to expose the following OpenID Connect claims:
+
+- `sub`
+- `email`
+- `email_verified`
+- `preferred_username`
+- `realm_access.roles`
+- `groups`
+
+Additional custom claims are included when required by specific services:
+
+- `makerspace_id`
+- `service_provider_id`
+
+These claims allow downstream services to perform authorization decisions based on user identity, realm roles and group membership.
