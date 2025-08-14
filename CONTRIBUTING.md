@@ -28,8 +28,8 @@ Prototype or archived services belong in [/experimental/](experimental/). Each e
 3. Move the service out of `/experimental` and update [ARCHITECTURE.md](ARCHITECTURE.md).
 
 ## Prerequisites
-- Node.js LTS (18+)
-- Python 3.11+
+- Node.js 20.x
+- Python 3.11
 - Docker 20+
 - JavaScript package manager: `npm`
 - Environment template: `.env.production.template` in repo root (service-specific `.env.example` files live in each app)
