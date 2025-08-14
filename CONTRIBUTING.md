@@ -70,6 +70,7 @@ Always branch from `main` and keep in sync via `git fetch origin` and `git rebas
 
 ## Commits & Pull Requests
 - Use [Conventional Commits](https://www.conventionalcommits.org/)
+- Review the [PR review checklist](docs/PR_REVIEW_CHECKLIST.md) before submitting.
 - PR checklist:
   - [ ] Tests updated
   - [ ] OpenAPI specs regenerated
