@@ -243,12 +243,14 @@ pytest --cov=app tests/
 
 ```bash
 # Format code
-black app/
-isort app/
+./format.sh
+# or run manually
+black .
+isort .
 
 # Lint code
-flake8 app/
-mypy app/
+flake8 .
+mypy .
 ```
 
 ## Production Deployment
