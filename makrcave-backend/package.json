@@ -14,7 +14,8 @@
     "init-db": "python init_db.py",
     "reset-db": "python init_db.py --reset",
     "sample-data": "python init_db.py --reset --sample",
-    "install": "pip install -r requirements.txt"
+    "install": "pip install -r requirements.txt",
+    "format": "black ."
   },
   "keywords": [
     "fastapi",

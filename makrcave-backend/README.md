@@ -193,6 +193,17 @@ alembic revision --autogenerate -m "Initial migration"
 alembic upgrade head
 ```
 
+
+### Code Formatting
+
+```bash
+./format.sh
+# or use npm script
+npm run format
+# or run directly
+black .
+```
+
 ## 🚨 Troubleshooting
 
 ### Common Issues
