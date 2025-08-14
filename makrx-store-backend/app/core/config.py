@@ -3,10 +3,12 @@ Core configuration settings for MakrX Store API
 Uses Pydantic BaseSettings for environment variable management
 """
 
-from pydantic import BaseSettings, Field, validator
-from typing import List, Optional
 import secrets
+from typing import List, Optional
+
 import asyncpg  # noqa: F401 - ensure asyncpg is installed
+from pydantic import BaseSettings, Field, validator
+
 
 class Settings(BaseSettings):
     """Application settings with environment variable support"""
@@ -85,10 +87,6 @@ class Settings(BaseSettings):
     SERVICE_MAKRCAVE_URL: str = Field(
         "http://localhost:8001",
         description="MakrCave backend service URL"
-    )
-    SERVICE_TOKEN: str = Field(
-        default_factory=lambda: secrets.token_urlsafe(32),
-        description="Service-to-service authentication token"
     )
     
     # Pricing Configuration

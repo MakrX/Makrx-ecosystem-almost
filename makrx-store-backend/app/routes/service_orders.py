@@ -20,6 +20,7 @@ from ..core.db import get_db
 from ..core.storage import upload_file_to_storage, generate_presigned_url
 from ..models.commerce import Order, OrderItem, Product
 from ..schemas.commerce import OrderResponse
+from ..services.keycloak_client import get_service_token
 
 logger = logging.getLogger(__name__)
 
@@ -129,10 +130,14 @@ class ProviderJobRequest(BaseModel):
 # HTTP Client for MakrCave API
 async def get_makrcave_client() -> httpx.AsyncClient:
     """Get HTTP client for MakrCave API calls"""
+    token = await get_service_token()
     return httpx.AsyncClient(
         base_url=MAKRCAVE_API_URL,
         timeout=30.0,
-        headers={"Content-Type": "application/json"}
+        headers={
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {token}"
+        }
     )
 
 @router.post("/upload", response_model=Dict[str, Any])
