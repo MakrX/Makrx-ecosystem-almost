@@ -11,9 +11,12 @@ A React + Vite application for makerspace management, covering inventory, equipm
 ### Installation
 ```bash
 cd frontend/makrcave-frontend
+cp .env.example .env
 npm install
 npm run dev
 ```
+Copy `.env.example` to `.env` and update values as needed.
+
 The dev server runs on [http://localhost:3001](http://localhost:3001).
 
 ## Available Scripts
