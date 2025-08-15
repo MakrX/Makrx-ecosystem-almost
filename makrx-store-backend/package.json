@@ -2,7 +2,12 @@
   "name": "makrx-store-backend",
   "private": true,
   "scripts": {
+    "dev": "uvicorn app.main:app --reload",
+    "build": "echo \"no build step\"",
     "lint": "ruff check app",
-    "lint:fix": "ruff check app --fix"
+    "lint:fix": "ruff check app --fix",
+    "test": "pytest",
+    "typecheck": "mypy app",
+    "format": "black app"
   }
 }
