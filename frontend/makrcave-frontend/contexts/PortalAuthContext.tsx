@@ -230,27 +230,6 @@ export class PortalAwareApiService {
     return response.json();
   }
 
-  async callAuthService(
-    endpoint: string,
-    options: RequestInit = {},
-  ): Promise<any> {
-    const authServiceUrl =
-      process.env.NEXT_PUBLIC_AUTH_SERVICE_URL || "http://localhost:8001";
-
-    const response = await fetch(`${authServiceUrl}${endpoint}`, {
-      ...options,
-      headers: {
-        ...this.getHeaders(),
-        ...options.headers,
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error(`Auth service request failed: ${response.status}`);
-    }
-
-    return response.json();
-  }
 }
 
 // Create portal-aware API service instance

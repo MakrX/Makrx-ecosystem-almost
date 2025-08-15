@@ -26,7 +26,6 @@ logger = logging.getLogger(__name__)
 
 # Configuration
 MAKRCAVE_API_URL = os.getenv("MAKRCAVE_API_URL", "http://makrcave-backend:8000")
-AUTH_SERVICE_URL = os.getenv("AUTH_SERVICE_URL", "http://auth-service:8000")
 
 router = APIRouter(prefix="/service-orders", tags=["3D Printing Service Orders"])
 

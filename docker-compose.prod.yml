@@ -32,7 +32,6 @@ services:
     container_name: makrcave-backend
     environment:
       DATABASE_URL: postgresql://makrcave_user:${POSTGRES_PASSWORD}@postgres:5432/makrcave_dev_db
-      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
       ENVIRONMENT: production
       DEBUG: "False"
     env_file:

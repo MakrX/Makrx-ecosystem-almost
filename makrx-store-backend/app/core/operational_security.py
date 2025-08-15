@@ -36,7 +36,6 @@ class SecretType(str, Enum):
     """Types of secrets managed"""
     DATABASE_PASSWORD = "database_password"
     API_KEY = "api_key"
-    JWT_SECRET = "jwt_secret"
     ENCRYPTION_KEY = "encryption_key"
     WEBHOOK_SECRET = "webhook_secret"
     SERVICE_ACCOUNT_KEY = "service_account_key"
@@ -66,7 +65,6 @@ class OpSecConfig:
     ROTATION_SCHEDULES = {
         SecretType.DATABASE_PASSWORD: RotationFrequency.QUARTERLY,
         SecretType.API_KEY: RotationFrequency.QUARTERLY,
-        SecretType.JWT_SECRET: RotationFrequency.QUARTERLY,
         SecretType.ENCRYPTION_KEY: RotationFrequency.ANNUALLY,
         SecretType.WEBHOOK_SECRET: RotationFrequency.QUARTERLY,
         SecretType.SERVICE_ACCOUNT_KEY: RotationFrequency.QUARTERLY,
@@ -252,8 +250,6 @@ class SecretsManager:
         """Generate new secret value based on type"""
         if secret_type in [SecretType.API_KEY, SecretType.WEBHOOK_SECRET]:
             return secrets.token_urlsafe(32)
-        elif secret_type == SecretType.JWT_SECRET:
-            return secrets.token_urlsafe(64)
         elif secret_type == SecretType.DATABASE_PASSWORD:
             # Complex password with special characters
             import string

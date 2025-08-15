@@ -77,14 +77,11 @@ class Settings(BaseSettings):
     # Security
     SECRET_KEY: str
     ENCRYPTION_KEY: str
-    JWT_ALGORITHM: str = "HS256"
-    
     # Environment
     ENVIRONMENT: str = "development"
     DEBUG: bool = False
     
     # External Services
-    AUTH_SERVICE_URL: str
     PAYMENT_GATEWAY_URL: str
     EMAIL_SERVICE_URL: str
     
@@ -551,7 +548,6 @@ SECRET_KEY=your-secret-key
 ENCRYPTION_KEY=your-encryption-key
 
 # External Services
-AUTH_SERVICE_URL=http://localhost:8001
 PAYMENT_GATEWAY_URL=https://api.stripe.com
 
 # Features

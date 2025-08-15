@@ -2,32 +2,7 @@
 
 ## 🚨 Priority 1: Authentication Vulnerabilities
 
-### 1. Fix JWT Verification (experimental/auth-service/main.py:123)
-```python
-# CURRENT (VULNERABLE):
-payload = jwt.decode(token, options={"verify_signature": False})
-
-# FIX TO:
-payload = jwt.decode(
-    token, 
-    key=get_public_key_from_keycloak(),  # Implement JWKS endpoint
-    algorithms=["RS256"],
-    audience="makrx-services"
-)
-```
-
-### 2. Remove Hardcoded Secrets
-```python
-# REMOVE from auth-service/main.py:
-KEYCLOAK_CLIENT_SECRET = "makrx-auth-service-secret-2024"  # DELETE THIS
-
-# REPLACE WITH:
-KEYCLOAK_CLIENT_SECRET = os.getenv("KEYCLOAK_CLIENT_SECRET")
-if not KEYCLOAK_CLIENT_SECRET:
-    raise ValueError("KEYCLOAK_CLIENT_SECRET environment variable required")
-```
-
-### 3. Fix MakrCave Authentication (makrcave-backend/dependencies.py)
+### 1. Fix MakrCave Authentication (makrcave-backend/dependencies.py)
 ```python
 # REMOVE mock authentication:
 async def get_current_user():
@@ -40,7 +15,7 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
 
 ## 🔒 Priority 2: CORS and Input Validation
 
-### 4. Fix CORS Configuration
+### 2. Fix CORS Configuration
 ```python
 # makrcave-backend/main.py
 app.add_middleware(
@@ -56,7 +31,7 @@ app.add_middleware(
 )
 ```
 
-### 5. Add Input Validation
+### 3. Add Input Validation
 ```python
 # Add to all endpoints:
 from pydantic import BaseModel, validator
@@ -71,7 +46,7 @@ class SecureRequest(BaseModel):
 
 ## 🛡️ Priority 3: Database Security
 
-### 6. Fix SQL Injection Prevention
+### 4. Fix SQL Injection Prevention
 ```python
 # VULNERABLE:
 db.execute(f"SELECT * FROM users WHERE id = {user_id}")
@@ -80,7 +55,7 @@ db.execute(f"SELECT * FROM users WHERE id = {user_id}")
 db.execute("SELECT * FROM users WHERE id = ?", (user_id,))
 ```
 
-### 7. Disable Database Query Logging in Production
+### 5. Disable Database Query Logging in Production
 ```python
 # makrcave-backend/database.py
 engine = create_engine(
@@ -92,7 +67,7 @@ engine = create_engine(
 
 ## 📊 Security Monitoring
 
-### 8. Add Rate Limiting
+### 6. Add Rate Limiting
 ```python
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.util import get_remote_address
@@ -107,7 +82,7 @@ async def login_endpoint(request: Request):
     pass
 ```
 
-### 9. Implement Audit Logging
+### 7. Implement Audit Logging
 ```python
 import structlog
 
@@ -125,11 +100,10 @@ async def log_security_event(event_type: str, user_id: str, details: dict):
 
 ## 🔐 Secrets Management
 
-### 10. Environment Variables Required
+### 8. Environment Variables Required
 ```bash
 # Add to .env files:
 KEYCLOAK_CLIENT_SECRET=your-real-secret-here
-JWT_SECRET_KEY=your-jwt-secret-here
 DATABASE_ENCRYPTION_KEY=your-db-encryption-key
 STRIPE_SECRET_KEY=your-stripe-secret
 ```

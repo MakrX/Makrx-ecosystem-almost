@@ -409,7 +409,6 @@ KEYCLOAK_ADMIN_PASSWORD=SECURE_ADMIN_PASSWORD
 KC_DB_PASSWORD=SECURE_DB_PASSWORD
 
 # Secrets
-JWT_SECRET_KEY=RANDOM_64_CHAR_SECRET
 ENCRYPTION_KEY=RANDOM_32_CHAR_KEY
 
 # External Services
@@ -509,7 +508,6 @@ kubectl apply -f k8s/namespace.yaml
 kubectl create secret generic makrx-secrets \
   --from-literal=postgres-user=makrx \
   --from-literal=postgres-password=SECURE_PASSWORD \
-  --from-literal=jwt-secret=SECURE_JWT_SECRET \
   -n makrx-ecosystem
 
 # Deploy infrastructure
@@ -518,7 +516,6 @@ kubectl apply -f k8s/keycloak.yaml
 kubectl apply -f k8s/redis.yaml
 
 # Deploy applications
-kubectl apply -f k8s/auth-service.yaml
 kubectl apply -f k8s/makrcave-backend.yaml
 kubectl apply -f k8s/store-backend.yaml
 kubectl apply -f k8s/frontends.yaml
@@ -533,50 +530,23 @@ kubectl apply -f k8s/ingress.yaml
 ```bash
 # .env file for local development
 DATABASE_URL=postgresql://makrx:makrx-dev@localhost:5432/makrx
-JWT_SECRET_KEY=dev-secret-key-not-for-production
 KEYCLOAK_CLIENT_SECRET=dev-client-secret
 ```
 
 #### Production Secrets Management
 
-**Docker Secrets** (Docker Swarm):
-```bash
-# Create secrets
-echo "production-jwt-secret" | docker secret create jwt_secret -
-echo "production-db-password" | docker secret create db_password -
-
-# Reference in compose file
-version: '3.8'
-services:
-  auth-service:
-    image: makrx/auth-service:latest
-    secrets:
-      - jwt_secret
-      - db_password
-    environment:
-      JWT_SECRET_KEY_FILE: /run/secrets/jwt_secret
-      DB_PASSWORD_FILE: /run/secrets/db_password
-
-secrets:
-  jwt_secret:
-    external: true
-  db_password:
-    external: true
-```
-
 **Kubernetes Secrets**:
 ```bash
 # Create secrets from files
 kubectl create secret generic makrx-secrets \
-  --from-file=jwt-secret=./secrets/jwt-secret.txt \
   --from-file=db-password=./secrets/db-password.txt \
   --from-file=stripe-key=./secrets/stripe-key.txt \
   -n makrx-ecosystem
 
 # Or from environment
 kubectl create secret generic makrx-secrets \
-  --from-literal=jwt-secret="$(openssl rand -base64 32)" \
   --from-literal=db-password="$(openssl rand -base64 24)" \
+  --from-literal=stripe-key="$(openssl rand -base64 32)" \
   -n makrx-ecosystem
 ```
 
@@ -1162,7 +1132,7 @@ POST   /quotes/{id}/accept
 docker-compose up -d
 
 # Frontend only (with backend services)
-docker-compose up -d postgres keycloak redis auth-service makrcave-backend store-backend
+docker-compose up -d postgres keycloak redis makrcave-backend store-backend
 cd frontend/makrcave-frontend && npm run dev
 
 # Backend only (with database)
@@ -1200,7 +1170,6 @@ VITE_MAKRCAVE_URL=http://localhost:3001
 VITE_STORE_URL=http://localhost:3003
 
 # API Endpoints
-VITE_AUTH_SERVICE_URL=http://localhost:8001
 VITE_MAKRCAVE_API_URL=http://localhost:8002
 VITE_STORE_API_URL=http://localhost:8003
 

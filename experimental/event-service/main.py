@@ -25,7 +25,6 @@ logger = logging.getLogger(__name__)
 # Configuration
 MAKRCAVE_API_URL = os.getenv("MAKRCAVE_API_URL", "http://makrcave-backend:8000")
 STORE_API_URL = os.getenv("STORE_API_URL", "http://makrx-store-backend:8000")
-AUTH_SERVICE_URL = os.getenv("AUTH_SERVICE_URL", "http://auth-service:8000")
 
 # Event Types
 class EventType(str, Enum):
@@ -390,8 +389,7 @@ def get_service_url(service: str) -> Optional[str]:
     """Get service URL for event delivery"""
     service_urls = {
         "makrcave": MAKRCAVE_API_URL,
-        "store": STORE_API_URL,
-        "auth": AUTH_SERVICE_URL
+        "store": STORE_API_URL
     }
     return service_urls.get(service)
 
@@ -527,8 +525,7 @@ async def get_event_stats():
         "subscriptions": len(event_subscriptions),
         "service_endpoints": {
             "makrcave": MAKRCAVE_API_URL,
-            "store": STORE_API_URL,
-            "auth": AUTH_SERVICE_URL
+            "store": STORE_API_URL
         }
     }
 
