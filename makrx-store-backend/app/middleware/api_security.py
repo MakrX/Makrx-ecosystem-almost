@@ -34,16 +34,14 @@ class APISecurityConfig:
     # CORS Configuration - exact domains from specification
     ALLOWED_ORIGINS = [
         "https://makrx.org",
-        "https://makrcave.com", 
-        "https://makrx.store",
-        "https://3d.makrx.store"
+        "https://cave.makrx.org",
+        "https://store.makrx.org"
     ]
-    
+
     # Development origins (only in development)
     DEV_ORIGINS = [
-        "http://localhost:3000",
         "http://localhost:5173",
-        "http://localhost:5174", 
+        "http://localhost:5174",
         "http://localhost:5175"
     ]
     
