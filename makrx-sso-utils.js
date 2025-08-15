@@ -91,29 +91,31 @@ function redirectToSSO() {
 /**
  * Logout from SSO and redirect
  */
+const STORAGE_PREFIXES = ['makrx_', 'makrcave_', 'makrxstore_'];
+
+function clearSSOStorage() {
+  if (typeof window === 'undefined') return;
+
+  [localStorage, sessionStorage].forEach(store => {
+    Object.keys(store).forEach(key => {
+      if (STORAGE_PREFIXES.some(prefix => key.startsWith(prefix))) {
+        store.removeItem(key);
+      }
+    });
+  });
+}
+
 function logoutFromSSO() {
   if (typeof window === 'undefined') return;
-  
+
   const clientId = getClientId();
   const params = new URLSearchParams({
     client_id: clientId,
     post_logout_redirect_uri: window.location.origin
   });
-  
-  // Clear local storage
-  Object.keys(localStorage).forEach(key => {
-    if (key.startsWith('makrx_')) {
-      localStorage.removeItem(key);
-    }
-  });
-  
-  // Clear session storage
-  Object.keys(sessionStorage).forEach(key => {
-    if (key.startsWith('makrx_')) {
-      sessionStorage.removeItem(key);
-    }
-  });
-  
+
+  clearSSOStorage();
+
   // Redirect to SSO logout
   window.location.href = `${SSO_CONFIG.authDomain}/realms/${SSO_CONFIG.realm}/protocol/openid-connect/logout?${params}`;
 }
@@ -126,6 +128,7 @@ if (typeof module !== 'undefined' && module.exports) {
     logoutFromSSO,
     getClientId,
     getAndClearRedirectUrl,
+    clearSSOStorage,
     SSO_CONFIG
   };
 } else if (typeof window !== 'undefined') {
@@ -135,6 +138,7 @@ if (typeof module !== 'undefined' && module.exports) {
     logoutFromSSO,
     getClientId,
     getAndClearRedirectUrl,
+    clearSSOStorage,
     SSO_CONFIG
   };
 }
@@ -145,5 +149,6 @@ export {
   logoutFromSSO,
   getClientId,
   getAndClearRedirectUrl,
+   clearSSOStorage,
   SSO_CONFIG
 };

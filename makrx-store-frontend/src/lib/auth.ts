@@ -4,6 +4,7 @@
  */
 
 import Keycloak, { KeycloakInstance } from "keycloak-js";
+import { logoutFromSSO, redirectToSSO } from "../../../makrx-sso-utils.js";
 
 // Configuration
 const KEYCLOAK_URL =
@@ -60,8 +61,9 @@ export const init = async (): Promise<boolean> => {
         await keycloak.updateToken(60);
         notifyAuthListeners(getCurrentUser());
       } catch {
-        keycloak.clearToken();
-        notifyAuthListeners(null);
+        sessionStorage.setItem("makrx_redirect_url", window.location.href);
+        window.alert("Session expired. Please log in again.");
+        redirectToSSO();
       }
     };
   }
@@ -76,6 +78,9 @@ export const getToken = async (): Promise<string | null> => {
     await keycloak.updateToken(60);
     return keycloak.token ?? null;
   } catch {
+    sessionStorage.setItem("makrx_redirect_url", window.location.href);
+    window.alert("Session expired. Please log in again.");
+    redirectToSSO();
     return null;
   }
 };
@@ -127,8 +132,8 @@ export const login = (redirectUri?: string): void => {
 
 export const logout = async (): Promise<void> => {
   if (!isClient) return;
-  await keycloak.logout({ redirectUri: window.location.origin });
   notifyAuthListeners(null);
+  logoutFromSSO();
 };
 
 // Handle auth callback after redirect from Keycloak

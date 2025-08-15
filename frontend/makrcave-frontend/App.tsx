@@ -52,6 +52,7 @@ import Integrations from "./pages/Integrations";
 import ProtectedRoute from "./components/ProtectedRoute";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { createRoot } from "react-dom/client";
+import IdleTimeoutBanner from "./components/IdleTimeoutBanner";
 
 const App = () => (
   <ErrorBoundary
@@ -73,6 +74,7 @@ const App = () => (
                       enableNotifications={true}
                     >
                       <BrowserRouter>
+                  <IdleTimeoutBanner />
                   <Routes>
                     {/* Public Landing Page */}
                     <Route path="/" element={<LandingPage />} />
