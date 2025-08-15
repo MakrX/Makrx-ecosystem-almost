@@ -28,6 +28,17 @@ MakrX uses Keycloak for single sign-on across all applications. This policy defi
 - **Cookie Domain**: `.makrx.org`
 - **Hostnames**: `auth.makrx.org`, `makrx.org`, `cave.makrx.org`, `store.makrx.org`, `providers.makrx.org`
 
+## Approved Origins
+
+Only the following origins are authorized for browser clients and CORS requests:
+
+- `https://makrx.org`
+- `https://cave.makrx.org`
+- `https://store.makrx.org`
+- `http://localhost:5173`
+- `http://localhost:5174`
+- `http://localhost:5175`
+
 ## Token Claims
 
 All MakrX clients are configured to expose the following OpenID Connect claims:
