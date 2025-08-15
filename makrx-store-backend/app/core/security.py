@@ -1,100 +1,144 @@
-"""
-Security utilities for authentication and authorization
-"""
+"""Security utilities for authentication and authorization using Keycloak JWTs."""
 
-from fastapi import Depends, HTTPException, status
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from typing import Optional
-import jwt
 import logging
+from dataclasses import dataclass
+from datetime import datetime, timedelta
+from typing import List, Optional
+
+import httpx
+from app.core.config import settings
+from fastapi import Depends, HTTPException, status
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+from jose import jwt
+from jose.exceptions import ExpiredSignatureError, JWTClaimsError, JWTError
 
 logger = logging.getLogger(__name__)
 
 security = HTTPBearer(auto_error=False)
 
-def get_current_user(credentials: Optional[HTTPAuthorizationCredentials] = Depends(security)) -> Optional[str]:
-    """
-    Extract user ID from JWT token (optional)
-    Returns None if no valid token provided
-    """
-    if not credentials:
-        return None
-    
+# JWKS caching
+jwks_cache: Optional[dict] = None
+jwks_cache_expiry: Optional[datetime] = None
+
+
+async def get_jwks() -> dict:
+    """Fetch JWKS from Keycloak with simple caching."""
+    global jwks_cache, jwks_cache_expiry
+    if jwks_cache and jwks_cache_expiry and datetime.utcnow() < jwks_cache_expiry:
+        return jwks_cache
+
+    async with httpx.AsyncClient() as client:
+        response = await client.get(settings.KEYCLOAK_JWKS_URL)
+        response.raise_for_status()
+        jwks_cache = response.json()
+        jwks_cache_expiry = datetime.utcnow() + timedelta(hours=1)
+        return jwks_cache
+
+
+async def decode_token(token: str) -> dict:
+    """Decode and verify a JWT using the realm's JWKS."""
     try:
-        # In production, validate JWT token properly
-        # For demo purposes, extract user ID from token
-        token = credentials.credentials
-        
-        # Mock JWT decoding - replace with actual JWT validation
-        if token.startswith("user_"):
-            return token  # Return the token as user ID for demo
-        
-        return None
-        
-    except Exception as e:
-        logger.error(f"Token validation error: {e}")
-        return None
+        header = jwt.get_unverified_header(token)
+        kid = header.get("kid")
+        jwks = await get_jwks()
+        key = next((k for k in jwks.get("keys", []) if k.get("kid") == kid), None)
+        if not key:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid token",
+                headers={"WWW-Authenticate": "Bearer"},
+            )
 
-def require_auth(credentials: Optional[HTTPAuthorizationCredentials] = Depends(security)) -> str:
-    """
-    Require valid authentication
-    Raises 401 if no valid token provided
-    """
-    if not credentials:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Authentication required",
-            headers={"WWW-Authenticate": "Bearer"},
+        return jwt.decode(
+            token,
+            key,
+            algorithms=["RS256"],
+            audience=settings.KEYCLOAK_AUDIENCE,
+            issuer=settings.KEYCLOAK_ISSUER,
         )
-    
-    user_id = get_current_user(credentials)
-    if not user_id:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid or expired token",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
-    
-    return user_id
 
-def require_admin(credentials: Optional[HTTPAuthorizationCredentials] = Depends(security)) -> str:
-    """
-    Require admin role
-    Raises 401/403 if not authenticated or not admin
-    """
-    if not credentials:
+    except ExpiredSignatureError:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Authentication required",
+            detail="Token expired",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    
-    user_id = get_current_user(credentials)
-    if not user_id:
+    except (JWTClaimsError, JWTError) as exc:
+        logger.error(f"JWT verification failed: {exc}")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid or expired token",
+            detail="Invalid token",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    
-    # Check if user has admin role
-    # In production, check actual user roles from database
-    if not user_id.startswith("admin_"):
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Admin access required"
-        )
-    
-    return user_id
 
+
+@dataclass
 class AuthUser:
-    """User model for authenticated requests"""
-    def __init__(self, user_id: str, roles: list = None):
-        self.user_id = user_id
-        self.roles = roles or []
-    
-    def has_role(self, role: str) -> bool:
+    """Authenticated user extracted from JWT."""
+
+    user_id: str
+    email: str
+    name: str
+    roles: List[str]
+    email_verified: bool = False
+
+    def has_role(self, role: str) -> bool:  # pragma: no cover - simple helper
         return role in self.roles
-    
-    def is_admin(self) -> bool:
-        return "admin" in self.roles or self.user_id.startswith("admin_")
+
+
+async def get_current_user(
+    credentials: Optional[HTTPAuthorizationCredentials] = Depends(security),
+) -> Optional[AuthUser]:
+    """Extract and verify the current user from Authorization header."""
+    if not credentials:
+        return None
+
+    try:
+        payload = await decode_token(credentials.credentials)
+        roles = payload.get("realm_access", {}).get("roles", [])
+        return AuthUser(
+            user_id=payload.get("sub"),
+            email=payload.get("email", ""),
+            name=payload.get("preferred_username") or payload.get("email", ""),
+            roles=roles,
+            email_verified=payload.get("email_verified", False),
+        )
+    except HTTPException:
+        raise
+    except Exception as exc:  # pragma: no cover - unexpected errors
+        logger.error(f"Token validation error: {exc}")
+        return None
+
+
+async def require_auth(
+    credentials: Optional[HTTPAuthorizationCredentials] = Depends(security),
+) -> AuthUser:
+    """Ensure a valid JWT is present."""
+    user = await get_current_user(credentials)
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Authentication required",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    return user
+
+
+def require_role(required_roles: List[str]):
+    """Create a dependency that checks for required roles."""
+
+    async def role_checker(user: AuthUser = Depends(require_auth)) -> AuthUser:
+        if not any(role in user.roles for role in required_roles):
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail=f"Insufficient permissions. Required: {required_roles}",
+            )
+        return user
+
+    return role_checker
+
+
+# Convenience dependencies
+require_admin = require_role(["admin", "super_admin"])
+require_super_admin = require_role(["super_admin"])
+

@@ -45,3 +45,8 @@ Additional custom claims are included when required by specific services:
 - `service_provider_id`
 
 These claims allow downstream services to perform authorization decisions based on user identity, realm roles and group membership.
+
+## Token Verification
+
+- **JWKS Endpoint**: Services retrieve signing keys from `https://auth.makrx.org/realms/makrx/protocol/openid-connect/certs` (or the configured Keycloak issuer).
+- **Audience Enforcement**: Every backend validates that the JWT `aud` claim matches its own Keycloak client ID, rejecting tokens meant for other services.
