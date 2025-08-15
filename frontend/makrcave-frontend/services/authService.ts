@@ -10,6 +10,7 @@
 // - Role-based permission checking
 
 import loggingService from './loggingService';
+import { logoutFromSSO, redirectToSSO } from '../../../makrx-sso-utils.js';
 
 // API Configuration - Change this URL to point to your backend
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
@@ -556,64 +557,18 @@ class AuthService {
         username: user?.username,
         timestamp: new Date().toISOString()
       });
-
-      const token = this.getAccessToken();
-      if (token) {
-        // Check if we're in a cloud environment or using mock tokens
-        const isMockToken = token.includes('mock_signature_');
-        const isCloudEnvironment = window.location.hostname.includes('fly.dev') ||
-                                 window.location.hostname.includes('builder.codes') ||
-                                 window.location.hostname.includes('vercel.app') ||
-                                 window.location.hostname.includes('netlify.app') ||
-                                 !window.location.hostname.includes('localhost');
-
-        if (isMockToken || isCloudEnvironment) {
-          loggingService.info('auth', 'AuthService.logout', 'Skipping server logout call in cloud environment', {
-            userId: user?.id,
-            environment: 'cloud',
-            isMockToken
-          });
-        } else {
-          // Call logout endpoint to invalidate token on server
-          try {
-            const response = await fetch(`${API_BASE_URL}/auth/logout`, {
-              method: 'POST',
-              headers: {
-                'Authorization': `Bearer ${token}`,
-              },
-            });
-
-            const responseTime = Date.now() - startTime;
-            loggingService.logAPICall('/auth/logout', 'POST', response.status, responseTime);
-
-            if (!response.ok) {
-              loggingService.warn('auth', 'AuthService.logout', 'Server logout returned error, proceeding with local cleanup', {
-                statusCode: response.status,
-                userId: user?.id
-              });
-            }
-          } catch (error) {
-            loggingService.warn('auth', 'AuthService.logout', 'Server-side logout failed, proceeding with local cleanup', {
-              error: (error as Error).message,
-              userId: user?.id
-            });
-          }
-        }
-      }
     } finally {
-      // Always clear local data
       this.clearAuthData();
-
       loggingService.logAuthEvent('logout', true, {
         userId: user?.id,
         username: user?.username,
         responseTime: Date.now() - startTime
       });
-
       loggingService.info('auth', 'AuthService.logout', 'Logout completed', {
         userId: user?.id,
         responseTime: Date.now() - startTime
       });
+      logoutFromSSO();
     }
   }
 
@@ -691,15 +646,16 @@ class AuthService {
           return newAccessToken;
         }
 
-        // Refresh token is invalid, logout user
+        // Refresh token is invalid, prompt re-login
         this.clearAuthData();
-
         loggingService.logAuthEvent('token_refresh', false, {
           userId: user?.id,
           statusCode: response.status,
           responseTime
         });
-
+        sessionStorage.setItem('makrx_redirect_url', window.location.href);
+        window.alert('Session expired. Please log in again.');
+        redirectToSSO();
         throw new Error('Token refresh failed');
       }
 
@@ -734,6 +690,9 @@ class AuthService {
 
       console.error('Token refresh error:', error);
       this.clearAuthData();
+      sessionStorage.setItem('makrx_redirect_url', window.location.href);
+      window.alert('Session expired. Please log in again.');
+      redirectToSSO();
       return null;
     }
   }

@@ -25,6 +25,7 @@ import TermsOfService from "./pages/TermsOfService";
 import NotFound from "./pages/NotFound";
 import ThemeDemo from "./pages/ThemeDemo";
 import { Helmet } from "react-helmet-async";
+import IdleTimeoutBanner from "./components/IdleTimeoutBanner";
 
 const App = () => {
   return (
@@ -86,6 +87,7 @@ const App = () => {
       </Helmet>
 
       <BrowserRouter>
+        <IdleTimeoutBanner />
         <div className="min-h-screen flex flex-col">
           {/* Skip Link for Accessibility */}
           <a

@@ -16,12 +16,14 @@ MakrX uses Keycloak for single sign-on across all applications. This policy defi
 - Sessions become idle after **30 minutes** of inactivity and require re-authentication.
 - Active sessions end after **8 hours** regardless of activity.
 - **Remember me** restores sessions after browser restarts until the extended refresh or offline token expires.
+- All frontends show a banner one minute before token expiry so users can renew their session.
 
 ## Global Logout
 
 - Logging out from any MakrX application triggers a Keycloak global logout.
 - All access, refresh, remember-me, and offline tokens are revoked.
 - Users must authenticate again to regain access to any MakrX service.
+- Local storage and session storage entries for all MakrX apps are cleared before redirecting to Keycloak's end-session endpoint.
 
 ## SSO Cookie Scope
 
@@ -61,3 +63,4 @@ These claims allow downstream services to perform authorization decisions based 
 
 - **JWKS Endpoint**: Services retrieve signing keys from `https://auth.makrx.org/realms/makrx/protocol/openid-connect/certs` (or the configured Keycloak issuer).
 - **Audience Enforcement**: Every backend validates that the JWT `aud` claim matches its own Keycloak client ID, rejecting tokens meant for other services.
+- When refresh tokens expire, applications prompt the user to re-authenticate and preserve their current page so work can resume after login.

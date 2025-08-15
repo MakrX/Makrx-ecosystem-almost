@@ -7,6 +7,7 @@ import { ThemeProvider } from "@/contexts/SharedThemeProvider";
 import { Header } from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import ToastNotifications from "@/components/ToastNotifications";
+import IdleTimeoutBanner from "@/components/IdleTimeoutBanner";
 import { HydrationFix } from "@/components/HydrationFix";
 import DevErrorHandler from "@/components/DevErrorHandler";
 import ErrorBoundary from "@/components/ErrorBoundary";
@@ -296,6 +297,7 @@ export default function RootLayout({
                   <Footer />
                 </div>
                 <ToastNotifications />
+                <IdleTimeoutBanner />
               </ErrorBoundary>
             </NotificationProvider>
           </AuthProvider>
