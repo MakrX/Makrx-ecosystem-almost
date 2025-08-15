@@ -1,6 +1,7 @@
-import { Outlet, Navigate } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import authService from '../services/authService';
 import RoleBasedSidebar from './RoleBasedSidebar';
 import Header from './Header';
 
@@ -49,7 +50,8 @@ export default function Layout() {
   }
 
   if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
+    authService.login();
+    return null;
   }
 
   return (

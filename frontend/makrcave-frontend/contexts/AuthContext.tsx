@@ -12,7 +12,7 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { UserRole, RolePermissions } from '@makrx/types';
 import { getRolePermissions, hasPermission, UI_ACCESS } from '../config/rolePermissions';
-import authService, { User as AuthUser, LoginCredentials } from '../services/authService';
+import authService, { User as AuthUser } from '../services/authService';
 
 interface User {
   id: string;
@@ -33,9 +33,9 @@ interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  login: (credentials: LoginCredentials) => Promise<void>;
+  login: () => Promise<void>;
   logout: () => Promise<void>;
-  register: (data: any) => Promise<void>;
+  register: () => Promise<void>;
   getCurrentRole: () => UserRole;
   getRolePermissions: () => RolePermissions;
   hasPermission: (area: keyof RolePermissions, action: string, context?: any) => boolean;
@@ -70,28 +70,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // Runs on app startup to check for existing authentication
   const initializeAuth = async () => {
     try {
-      // Check if user has valid token and restore session
-      if (authService.isAuthenticated()) {
-        const currentUser = await authService.getCurrentUser();
-        setUser(currentUser);
+      const authenticated = await authService.init();
+      if (authenticated) {
+        const currentUser = authService.getUser();
+        if (currentUser) setUser(currentUser);
       }
     } catch (error) {
       console.error('Failed to initialize auth:', error);
       // Clear invalid auth data
-      authService.clearAuthData();
+      // Session not valid
     } finally {
       setIsLoading(false);
     }
   };
 
-  const login = async (credentials: LoginCredentials) => {
-    try {
-      const response = await authService.login(credentials);
-      setUser(response.user);
-    } catch (error) {
-      console.error('Login failed:', error);
-      throw error;
-    }
+  const login = async () => {
+    authService.login();
   };
 
   const logout = async () => {
@@ -103,19 +97,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const register = async (data: any) => {
-    try {
-      const response = await authService.register(data);
-      setUser(response.user);
-    } catch (error) {
-      console.error('Registration failed:', error);
-      throw error;
-    }
+  const register = async () => {
+    authService.register();
   };
 
   const refreshUser = async () => {
     try {
-      const currentUser = await authService.getCurrentUser();
+      const currentUser = authService.getUser();
       setUser(currentUser);
     } catch (error) {
       console.error('Failed to refresh user:', error);

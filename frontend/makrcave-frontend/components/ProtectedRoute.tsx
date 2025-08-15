@@ -7,6 +7,7 @@ import { ReactNode } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { hasPermission } from '../config/rolePermissions';
+import authService from '../services/authService';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Shield, AlertTriangle } from 'lucide-react';
 import loggingService from '../services/loggingService';
@@ -34,6 +35,7 @@ export default function ProtectedRoute({
   showAccessDenied = true
 }: ProtectedRouteProps) {
   const { user, isAuthenticated } = useAuth();
+  const roles = authService.getRoles();
 
   // Check if user is authenticated
   if (!isAuthenticated || !user) {
@@ -42,21 +44,22 @@ export default function ProtectedRoute({
       hasUser: !!user,
       isAuthenticated
     });
-    return <Navigate to="/login" replace />;
+    authService.login();
+    return null;
   }
 
   // Check role-based access
   let hasAccess = true;
   let reason = '';
 
-  if (requiredRole && user.role !== requiredRole) {
+  if (requiredRole && !roles.includes(requiredRole)) {
     hasAccess = false;
-    reason = `Required role: ${requiredRole}, current role: ${user.role}`;
+    reason = `Required role: ${requiredRole}, current roles: ${roles.join(', ')}`;
   }
 
-  if (allowedRoles && !allowedRoles.includes(user.role)) {
+  if (allowedRoles && !allowedRoles.some(r => roles.includes(r))) {
     hasAccess = false;
-    reason = `Allowed roles: ${allowedRoles.join(', ')}, current role: ${user.role}`;
+    reason = `Allowed roles: ${allowedRoles.join(', ')}, current roles: ${roles.join(', ')}`;
   }
 
   if (requiredPermission) {

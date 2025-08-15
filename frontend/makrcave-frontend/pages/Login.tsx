@@ -6,25 +6,11 @@
 import { useEffect } from 'react';
 import { Building2 } from 'lucide-react';
 import { ThemeToggle } from '../../../packages/ui/components/ThemeToggle';
+import authService from '../services/authService';
 
 export default function Login() {
-  // ========================================
-  // SSO REDIRECT
-  // ========================================
   useEffect(() => {
-    // Store current page for redirect after login
-    sessionStorage.setItem('makrx_redirect_url', window.location.origin + '/portal/dashboard');
-    
-    // Redirect to auth.makrx.org
-    const params = new URLSearchParams({
-      client_id: 'makrx-cave',
-      redirect_uri: window.location.origin + '/auth/callback',
-      response_type: 'code',
-      scope: 'openid email profile',
-      state: Math.random().toString(36).substring(2)
-    });
-    
-    window.location.href = `https://auth.makrx.org/realms/makrx/protocol/openid-connect/auth?${params}`;
+    authService.login();
   }, []);
 
   return (

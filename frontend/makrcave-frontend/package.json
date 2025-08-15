@@ -6,8 +6,6 @@
   "description": "MakrCave - Makerspace Management Portal",
   "scripts": {
     "dev": "vite --port 3001",
-    "dev:with-api": "node dev-with-api.js",
-    "mock-api": "node mocks/mock-api-server.js",
     "build": "vite build",
     "preview": "vite preview",
     "start": "npm run preview",
@@ -49,7 +47,8 @@
     "recharts": "^2.15.4",
     "tailwind-merge": "^2.5.2",
     "tailwindcss-animate": "^1.0.7",
-    "zod": "^3.23.8"
+    "zod": "^3.23.8",
+    "keycloak-js": "^23.0.0"
   },
   "devDependencies": {
     "@types/react": "^18.3.3",

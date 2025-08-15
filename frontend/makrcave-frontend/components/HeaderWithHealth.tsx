@@ -51,7 +51,6 @@ export default function HeaderWithHealth({
 
   const handleLogout = async () => {
     await logout();
-    navigate('/login');
   };
 
   const handleProfileClick = () => {

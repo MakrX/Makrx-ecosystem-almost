@@ -76,7 +76,7 @@ The MakrX ecosystem consists of a **public gateway** connecting to external ecos
 
 4. **Access the applications**
    - Gateway: `http://localhost:3000`
-   - MakrCave: `http://localhost:3001` 
+   - MakrCave: `http://localhost:3001` (post-login default route: `/portal`)
    - Store: `http://localhost:3002`
    - API Documentation: `http://localhost:8000/docs`
 
