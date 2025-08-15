@@ -34,6 +34,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     // Initialize auth state
     const initAuth = async () => {
       try {
+        await auth.init();
         const currentUser = auth.getCurrentUser();
         setUser(currentUser);
       } catch (error) {

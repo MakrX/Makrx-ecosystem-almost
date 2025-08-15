@@ -1,15 +1,16 @@
 /**
- * Authentication integration with Keycloak
- * JWT token management and user authentication
+ * Authentication utilities using the official Keycloak JS adapter
+ * Implements PKCE, silent refresh and user role helpers
  */
 
-import { jwtDecode } from "jwt-decode";
+import Keycloak, { KeycloakInstance } from "keycloak-js";
 
 // Configuration
 const KEYCLOAK_URL =
   process.env.NEXT_PUBLIC_KEYCLOAK_URL || "https://auth.makrx.org";
 const REALM = process.env.NEXT_PUBLIC_KEYCLOAK_REALM || "makrx";
-const CLIENT_ID = process.env.NEXT_PUBLIC_KEYCLOAK_CLIENT_ID || "makrx-store";
+const CLIENT_ID =
+  process.env.NEXT_PUBLIC_KEYCLOAK_CLIENT_ID || "makrx-store";
 
 // Types
 export interface User {
@@ -22,182 +23,85 @@ export interface User {
   scopes: string[];
 }
 
-export interface AuthTokens {
-  access_token: string;
-  refresh_token: string;
-  expires_in: number;
-  refresh_expires_in: number;
-  token_type: string;
-}
-
-// Token storage keys
-const ACCESS_TOKEN_KEY = "makrx_access_token";
-const REFRESH_TOKEN_KEY = "makrx_refresh_token";
-const TOKEN_EXPIRES_KEY = "makrx_token_expires";
-const USER_INFO_KEY = "makrx_user_info";
+// Keycloak instance
+const keycloak: KeycloakInstance = new Keycloak({
+  url: KEYCLOAK_URL,
+  realm: REALM,
+  clientId: CLIENT_ID,
+});
 
 // Auth state management
-let currentUser: User | null = null;
 let authListeners: Array<(user: User | null) => void> = [];
+let initPromise: Promise<boolean> | null = null;
 
-// Utility functions
 const isClient = typeof window !== "undefined";
 
-const getStoredItem = (key: string): string | null => {
-  if (!isClient) return null;
-  return localStorage.getItem(key);
-};
+// Initialize Keycloak and enable silent SSO
+export const init = async (): Promise<boolean> => {
+  if (!isClient) return false;
+  if (!initPromise) {
+    initPromise = keycloak
+      .init({
+        onLoad: "check-sso",
+        pkceMethod: "S256",
+        silentCheckSsoRedirectUri:
+          window.location.origin + "/silent-check-sso.html",
+      })
+      .then((authenticated) => {
+        if (authenticated) {
+          notifyAuthListeners(getCurrentUser());
+        }
+        return authenticated;
+      });
 
-const setStoredItem = (key: string, value: string): void => {
-  if (!isClient) return;
-  localStorage.setItem(key, value);
-};
-
-const removeStoredItem = (key: string): void => {
-  if (!isClient) return;
-  localStorage.removeItem(key);
+    // Automatic token refresh
+    keycloak.onTokenExpired = async () => {
+      try {
+        await keycloak.updateToken(60);
+        notifyAuthListeners(getCurrentUser());
+      } catch {
+        keycloak.clearToken();
+        notifyAuthListeners(null);
+      }
+    };
+  }
+  return initPromise;
 };
 
 // Token management
 export const getToken = async (): Promise<string | null> => {
-  const token = getStoredItem(ACCESS_TOKEN_KEY);
-  const expiresAt = getStoredItem(TOKEN_EXPIRES_KEY);
-
-  if (!token || !expiresAt) {
+  await init();
+  if (!keycloak.authenticated) return null;
+  try {
+    await keycloak.updateToken(60);
+    return keycloak.token ?? null;
+  } catch {
     return null;
   }
-
-  // Check if token is expired
-  const now = Date.now();
-  const expires = parseInt(expiresAt, 10);
-
-  if (now >= expires) {
-    // Try to refresh token
-    const refreshed = await refreshToken();
-    if (refreshed) {
-      return getStoredItem(ACCESS_TOKEN_KEY);
-    }
-    return null;
-  }
-
-  return token;
 };
 
-export const setTokens = (tokens: AuthTokens): void => {
-  const expiresAt = Date.now() + tokens.expires_in * 1000;
-
-  setStoredItem(ACCESS_TOKEN_KEY, tokens.access_token);
-  setStoredItem(REFRESH_TOKEN_KEY, tokens.refresh_token);
-  setStoredItem(TOKEN_EXPIRES_KEY, expiresAt.toString());
-
-  // Decode and store user info
-  try {
-    const decoded = jwtDecode<any>(tokens.access_token);
-    const user: User = {
-      sub: decoded.sub,
-      email: decoded.email,
-      name: decoded.name,
-      preferred_username: decoded.preferred_username,
-      email_verified: decoded.email_verified || false,
-      roles: decoded.realm_access?.roles || [],
-      scopes: (decoded.scope || "").split(" "),
-    };
-
-    setStoredItem(USER_INFO_KEY, JSON.stringify(user));
-    currentUser = user;
-    notifyAuthListeners(user);
-  } catch (error) {
-    console.error("Failed to decode token:", error);
-  }
-};
-
-export const clearTokens = (): void => {
-  removeStoredItem(ACCESS_TOKEN_KEY);
-  removeStoredItem(REFRESH_TOKEN_KEY);
-  removeStoredItem(TOKEN_EXPIRES_KEY);
-  removeStoredItem(USER_INFO_KEY);
-
-  currentUser = null;
-  notifyAuthListeners(null);
-};
-
-// Token refresh
-export const refreshToken = async (): Promise<boolean> => {
-  const refreshTokenValue = getStoredItem(REFRESH_TOKEN_KEY);
-
-  if (!refreshTokenValue) {
-    return false;
-  }
-
-  try {
-    const response = await fetch(
-      `${KEYCLOAK_URL}/realms/${REALM}/protocol/openid-connect/token`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-        body: new URLSearchParams({
-          grant_type: "refresh_token",
-          client_id: CLIENT_ID,
-          refresh_token: refreshTokenValue,
-        }),
-      },
-    );
-
-    if (!response.ok) {
-      clearTokens();
-      return false;
-    }
-
-    const tokens: AuthTokens = await response.json();
-    setTokens(tokens);
-    return true;
-  } catch (error) {
-    // In development, silently handle auth errors
-    if (process.env.NODE_ENV === "development") {
-      console.warn("Auth service unavailable in development mode");
-    } else {
-      console.error("Token refresh failed:", error);
-    }
-    clearTokens();
-    return false;
-  }
-};
-
-// User management
+// User helpers
 export const getCurrentUser = (): User | null => {
-  if (currentUser) {
-    return currentUser;
-  }
-
-  // Try to load from storage
-  const userInfo = getStoredItem(USER_INFO_KEY);
-  if (userInfo) {
-    try {
-      currentUser = JSON.parse(userInfo);
-      return currentUser;
-    } catch (error) {
-      console.error("Failed to parse stored user info:", error);
-    }
-  }
-
-  return null;
+  const parsed = keycloak.tokenParsed as Record<string, any> | undefined;
+  if (!parsed) return null;
+  return {
+    sub: parsed.sub,
+    email: parsed.email,
+    name: parsed.name,
+    preferred_username: parsed.preferred_username,
+    email_verified: parsed.email_verified || false,
+    roles: parsed.realm_access?.roles || [],
+    scopes: (parsed.scope || "").split(" "),
+  };
 };
 
-export const isAuthenticated = (): boolean => {
-  return getCurrentUser() !== null && getToken() !== null;
-};
+export const isAuthenticated = (): boolean => !!keycloak.authenticated;
 
-export const hasRole = (role: string): boolean => {
-  const user = getCurrentUser();
-  return user?.roles.includes(role) || false;
-};
+export const hasRole = (role: string): boolean =>
+  keycloak.hasRealmRole ? keycloak.hasRealmRole(role) : false;
 
-export const hasAnyRole = (roles: string[]): boolean => {
-  const user = getCurrentUser();
-  return roles.some((role) => user?.roles.includes(role)) || false;
-};
+export const hasAnyRole = (roles: string[]): boolean =>
+  roles.some((r) => hasRole(r));
 
 export const hasScope = (scope: string): boolean => {
   const user = getCurrentUser();
@@ -208,105 +112,33 @@ export const hasScope = (scope: string): boolean => {
 export const login = (redirectUri?: string): void => {
   if (!isClient) return;
 
-  // Store the current location for post-login redirect
-  setStoredItem(
-    "makrx_pre_login_url",
-    window.location.pathname + window.location.search,
-  );
-
-  // Store original URL in session storage for SSO consistency
-  sessionStorage.setItem('makrx_redirect_url', window.location.href);
-
-  const params = new URLSearchParams({
-    client_id: CLIENT_ID,
-    redirect_uri: redirectUri || window.location.origin + "/auth/callback",
-    response_type: "code",
-    scope: "openid email profile",
-    state: generateState(),
+  // Store original URL for redirect after login
+  sessionStorage.setItem("makrx_redirect_url", window.location.href);
+  if (typeof window !== "undefined") {
+    localStorage.setItem(
+      "makrx_pre_login_url",
+      window.location.pathname + window.location.search,
+    );
+  }
+  keycloak.login({
+    redirectUri: redirectUri || window.location.origin + "/auth/callback",
   });
-
-  // Redirect to auth.makrx.org (centralized SSO)
-  window.location.href = `${KEYCLOAK_URL}/realms/${REALM}/protocol/openid-connect/auth?${params}`;
 };
 
 export const logout = async (): Promise<void> => {
-  const token = await getToken();
-
-  // Clear local tokens
-  clearTokens();
-
-  // Redirect to Keycloak logout
-  if (isClient && token) {
-    const params = new URLSearchParams({
-      client_id: CLIENT_ID,
-      post_logout_redirect_uri: window.location.origin,
-    });
-
-    window.location.href = `${KEYCLOAK_URL}/realms/${REALM}/protocol/openid-connect/logout?${params}`;
-  }
+  if (!isClient) return;
+  await keycloak.logout({ redirectUri: window.location.origin });
+  notifyAuthListeners(null);
 };
 
-// Handle auth callback
-export const handleAuthCallback = async (
-  code: string,
-  state: string,
-): Promise<boolean> => {
-  if (!isClient) return false;
-
+// Handle auth callback after redirect from Keycloak
+export const handleAuthCallback = async (): Promise<boolean> => {
   try {
-    // Verify state parameter (basic CSRF protection)
-    const storedState = getStoredItem("makrx_auth_state");
-    if (state !== storedState) {
-      throw new Error("Invalid state parameter");
-    }
-
-    // Exchange code for tokens
-    const response = await fetch(
-      `${KEYCLOAK_URL}/realms/${REALM}/protocol/openid-connect/token`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-        body: new URLSearchParams({
-          grant_type: "authorization_code",
-          client_id: CLIENT_ID,
-          code,
-          redirect_uri: window.location.origin + "/auth/callback",
-        }),
-      },
-    );
-
-    if (!response.ok) {
-      throw new Error("Token exchange failed");
-    }
-
-    const tokens: AuthTokens = await response.json();
-    setTokens(tokens);
-
-    // Clean up state
-    removeStoredItem("makrx_auth_state");
-
-    return true;
-  } catch (error) {
-    // In development, silently handle auth errors
-    if (process.env.NODE_ENV === "development") {
-      console.warn("Auth service unavailable in development mode");
-    } else {
-      console.error("Auth callback failed:", error);
-    }
-    clearTokens();
+    const authenticated = await init();
+    return authenticated;
+  } catch {
     return false;
   }
-};
-
-// Utility functions
-const generateState = (): string => {
-  const state =
-    Math.random().toString(36).substring(2, 15) +
-    Math.random().toString(36).substring(2, 15);
-  setStoredItem("makrx_auth_state", state);
-  return state;
 };
 
 // Auth listeners
@@ -332,50 +164,27 @@ const notifyAuthListeners = (user: User | null): void => {
   });
 };
 
-// Initialize auth state on load
+// Periodic silent refresh as fallback
 if (isClient) {
-  // Check if we have valid tokens and user info
-  const token = getStoredItem(ACCESS_TOKEN_KEY);
-  const userInfo = getStoredItem(USER_INFO_KEY);
-
-  if (token && userInfo) {
-    try {
-      currentUser = JSON.parse(userInfo);
-
-      // Verify token is still valid
-      getToken().then((validToken) => {
-        if (!validToken) {
-          clearTokens();
-        }
-      });
-    } catch (error) {
-      console.error("Failed to initialize auth state:", error);
-      clearTokens();
-    }
-  }
-}
-
-// Auto-refresh token before expiry
-if (isClient) {
+  init();
   setInterval(async () => {
-    const token = getStoredItem(ACCESS_TOKEN_KEY);
-    const expiresAt = getStoredItem(TOKEN_EXPIRES_KEY);
-
-    if (token && expiresAt) {
-      const expires = parseInt(expiresAt, 10);
-      const now = Date.now();
-      const timeUntilExpiry = expires - now;
-
-      // Refresh if token expires in less than 5 minutes
-      if (timeUntilExpiry < 5 * 60 * 1000 && timeUntilExpiry > 0) {
-        await refreshToken();
+    if (keycloak.authenticated) {
+      try {
+        const refreshed = await keycloak.updateToken(60);
+        if (refreshed) {
+          notifyAuthListeners(getCurrentUser());
+        }
+      } catch {
+        keycloak.clearToken();
+        notifyAuthListeners(null);
       }
     }
-  }, 60 * 1000); // Check every minute
+  }, 60 * 1000);
 }
 
 // Export auth utilities
 export const auth = {
+  init,
   login,
   logout,
   getToken,
@@ -389,3 +198,4 @@ export const auth = {
 };
 
 export default auth;
+
