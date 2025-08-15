@@ -2,6 +2,7 @@
 // Connects to FastAPI backend with proper JWT authentication
 
 import loggingService from './loggingService';
+import auth from '../lib/auth';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
 
@@ -230,7 +231,7 @@ async function apiCall<T>(
   });
 
   try {
-    const token = localStorage.getItem('auth_token') || localStorage.getItem('authToken');
+    const token = await auth.getToken();
 
     loggingService.debug('api', 'ApiService.apiCall', 'Making API call with authentication', {
       endpoint,

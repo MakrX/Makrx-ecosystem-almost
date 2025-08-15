@@ -1,18 +1,12 @@
 // ========================================
 // AUTHENTICATION CONTEXT
 // ========================================
-// Provides authentication state and methods throughout the React app
-// Handles:
-// - User state management
-// - Login/logout operations
-// - Role-based permissions
-// - Authentication initialization
-// - User session management
+// Provides authentication state and methods using Keycloak JS adapter
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { UserRole, RolePermissions } from '@makrx/types';
 import { getRolePermissions, hasPermission, UI_ACCESS } from '../config/rolePermissions';
-import authService, { User as AuthUser, LoginCredentials } from '../services/authService';
+import auth, { User as AuthUser } from '../lib/auth';
 
 interface User {
   id: string;
@@ -21,6 +15,7 @@ interface User {
   firstName?: string;
   lastName?: string;
   role: UserRole;
+  roles: string[];
   assignedMakerspaces?: string[];
   membershipTier?: string;
   subscriptionStatus?: 'active' | 'inactive' | 'expired';
@@ -33,9 +28,9 @@ interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  login: (credentials: LoginCredentials) => Promise<void>;
+  login: () => Promise<void>;
   logout: () => Promise<void>;
-  register: (data: any) => Promise<void>;
+  register: () => Promise<void>;
   getCurrentRole: () => UserRole;
   getRolePermissions: () => RolePermissions;
   hasPermission: (area: keyof RolePermissions, action: string, context?: any) => boolean;
@@ -53,74 +48,59 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+const KNOWN_ROLES: UserRole[] = ['super_admin', 'admin', 'makerspace_admin', 'service_provider', 'user'];
+
+function mapUser(authUser: AuthUser): User {
+  const primaryRole = (authUser.roles.find(r => KNOWN_ROLES.includes(r as UserRole)) as UserRole) || 'user';
+  return {
+    id: authUser.sub,
+    email: authUser.email,
+    username: authUser.preferred_username,
+    firstName: authUser.name,
+    role: primaryRole,
+    roles: authUser.roles,
+    createdAt: new Date().toISOString(),
+    isActive: true
+  };
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
-  // ========================================
-  // STATE MANAGEMENT
-  // ========================================
-  const [user, setUser] = useState<User | null>(null);    // Current authenticated user
-  const [isLoading, setIsLoading] = useState(true);       // Loading state during auth initialization
+  const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    initializeAuth();
+    const handle = (u: AuthUser | null) => setUser(u ? mapUser(u) : null);
+    auth.addAuthListener(handle);
+
+    const initialize = async () => {
+      await auth.init();
+      const current = auth.getCurrentUser();
+      if (current) {
+        setUser(mapUser(current));
+      }
+      setIsLoading(false);
+    };
+    initialize();
+
+    return () => auth.removeAuthListener(handle);
   }, []);
 
-  // ========================================
-  // AUTHENTICATION INITIALIZATION
-  // ========================================
-  // Runs on app startup to check for existing authentication
-  const initializeAuth = async () => {
-    try {
-      // Check if user has valid token and restore session
-      if (authService.isAuthenticated()) {
-        const currentUser = await authService.getCurrentUser();
-        setUser(currentUser);
-      }
-    } catch (error) {
-      console.error('Failed to initialize auth:', error);
-      // Clear invalid auth data
-      authService.clearAuthData();
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const login = async (credentials: LoginCredentials) => {
-    try {
-      const response = await authService.login(credentials);
-      setUser(response.user);
-    } catch (error) {
-      console.error('Login failed:', error);
-      throw error;
-    }
+  const login = async () => {
+    auth.login();
   };
 
   const logout = async () => {
-    try {
-      await authService.logout();
-      setUser(null);
-    } catch (error) {
-      console.error('Logout failed:', error);
-    }
+    await auth.logout();
+    setUser(null);
   };
 
-  const register = async (data: any) => {
-    try {
-      const response = await authService.register(data);
-      setUser(response.user);
-    } catch (error) {
-      console.error('Registration failed:', error);
-      throw error;
-    }
+  const register = async () => {
+    auth.register();
   };
 
   const refreshUser = async () => {
-    try {
-      const currentUser = await authService.getCurrentUser();
-      setUser(currentUser);
-    } catch (error) {
-      console.error('Failed to refresh user:', error);
-      setUser(null);
-    }
+    const current = auth.getCurrentUser();
+    setUser(current ? mapUser(current) : null);
   };
 
   const getCurrentRole = (): UserRole => {
@@ -139,17 +119,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return user ? UI_ACCESS[user.role] : UI_ACCESS.user;
   };
 
-  // ========================================
-  // ROLE CHECK HELPERS
-  // ========================================
-  // Convenient boolean flags for role-based UI rendering
-  const isSuperAdmin = user?.role === 'super_admin';         // Highest privilege level
-  const isAdmin = user?.role === 'admin';                    // Administrative access
-  const isMakerspaceAdmin = user?.role === 'makerspace_admin'; // Makerspace management
-  const isServiceProvider = user?.role === 'service_provider'; // Service provider access
-  const isUser = user?.role === 'user';                       // Regular member access
-  const isMakrcaveManager = isMakerspaceAdmin;                // For backward compatibility
-  const isAuthenticated = !!user && authService.isAuthenticated(); // Combined auth check
+  // Role check helpers
+  const isSuperAdmin = user?.roles.includes('super_admin') || false;
+  const isAdmin = user?.roles.includes('admin') || false;
+  const isMakerspaceAdmin = user?.roles.includes('makerspace_admin') || false;
+  const isServiceProvider = user?.roles.includes('service_provider') || false;
+  const isUser = user?.roles.includes('user') || false;
+  const isMakrcaveManager = isMakerspaceAdmin; // For backward compatibility
+  const isAuthenticated = !!user && auth.isAuthenticated();
 
   return (
     <AuthContext.Provider value={{
@@ -183,3 +160,4 @@ export function useAuth() {
   }
   return context;
 }
+
