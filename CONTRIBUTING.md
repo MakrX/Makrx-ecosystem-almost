@@ -86,7 +86,7 @@ We maintain a root [`CHANGELOG.md`](CHANGELOG.md) using the [Keep a Changelog](h
 Include an entry under the **Unreleased** section for any user-facing change in your pull request. During release tagging, entries are moved to a new version heading.
 
 ## Coding Standards
-- **TypeScript/JavaScript**: ESLint + Prettier; 2‑space indent
+- **TypeScript/JavaScript**: ESLint + Prettier; 4-space indent
 - **Python**: Black + flake8; 4‑space indent
 
 ## Testing & Migrations
