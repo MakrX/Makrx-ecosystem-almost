@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { useAuth } from "./AuthContext";
+import { auth } from "@/lib/auth";
 
 interface PortalAuthContextValue {
   handlePortalAuth: () => void;
@@ -41,8 +42,8 @@ export function PortalAuthProvider({
         const cleanUrl = window.location.pathname;
         window.history.replaceState({}, "", cleanUrl);
 
-        // Trigger login with portal token
-        login(authToken);
+        // Trigger login via Keycloak
+        login();
       } else {
         // Check for existing portal token
         const storedToken = localStorage.getItem("portal_auth_token");
@@ -95,7 +96,7 @@ export function PortalAuthProvider({
       if (authToken) {
         localStorage.setItem("portal_auth_token", authToken);
         setIsPortalAuthenticated(true);
-        login(authToken);
+        login();
       }
     },
     isPortalAuthenticated,
@@ -139,7 +140,7 @@ export async function portalAwareApiRequest(
   }
 
   // Add standard auth token if available
-  const authToken = localStorage.getItem("auth_token");
+  const authToken = await auth.getToken();
   if (authToken) {
     headers.set("Authorization", `Bearer ${authToken}`);
   }

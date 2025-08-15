@@ -14,20 +14,13 @@ export default function AuthCallbackPage() {
   useEffect(() => {
     const processCallback = async () => {
       try {
-        const code = searchParams.get('code');
-        const state = searchParams.get('state');
         const error = searchParams.get('error');
-
         if (error) {
           throw new Error(error);
         }
 
-        if (!code || !state) {
-          throw new Error('Missing authentication parameters');
-        }
-
-        // Process the auth callback
-        const success = await handleAuthCallback(code, state);
+        // Process the auth callback via Keycloak adapter
+        const success = await handleAuthCallback();
         
         if (success) {
           setStatus('success');
