@@ -22,7 +22,6 @@ logger = logging.getLogger(__name__)
 
 # Configuration
 STORE_API_URL = os.getenv("STORE_API_URL", "http://makrx-store-backend:8000")
-AUTH_SERVICE_URL = os.getenv("AUTH_SERVICE_URL", "http://auth-service:8000")
 
 router = APIRouter(prefix="/api/v1/projects", tags=["BOM Export"])
 
@@ -63,23 +62,6 @@ async def get_store_client() -> httpx.AsyncClient:
         headers={"Content-Type": "application/json"}
     )
 
-async def get_user_auth_token(user_email: str) -> Optional[str]:
-    """Get user authentication token from auth service"""
-    try:
-        async with httpx.AsyncClient() as client:
-            response = await client.post(
-                f"{AUTH_SERVICE_URL}/auth/token/exchange",
-                json={
-                    "portal": "store",
-                    "user_email": user_email
-                }
-            )
-            if response.status_code == 200:
-                data = response.json()
-                return data.get("access_token")
-    except Exception as e:
-        logger.error(f"Failed to get auth token: {e}")
-    return None
 
 @router.post("/{project_id}/bom/export", response_model=BOMExportResponse)
 async def export_bom_to_cart(

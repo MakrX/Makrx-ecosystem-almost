@@ -57,7 +57,7 @@ cp .env.production.template .env
 # Edit .env with your configuration
 
 # Generate secrets
-openssl rand -base64 32  # For JWT_SECRET
+openssl rand -base64 32  # For SECRET_KEY
 openssl rand -base64 32  # For DATABASE_PASSWORD
 ```
 
@@ -85,9 +85,6 @@ cd ../makrx-store-backend
 poetry install  
 poetry run uvicorn app.main:app --reload --port 8001 &
 
-cd ../experimental/auth-service
-poetry install
-poetry run uvicorn main:app --reload --port 8002 &
 ```
 
 #### 4. Start Frontend Applications
@@ -157,7 +154,6 @@ services:
     depends_on:
       - makrcave-api
       - store-api
-      - auth-service
     restart: unless-stopped
 
   # Backend Services
@@ -168,7 +164,7 @@ services:
     environment:
       - DATABASE_URL=postgresql://makrx:${DATABASE_PASSWORD}@postgres:5432/makrcave
       - REDIS_URL=redis://redis:6379
-      - SECRET_KEY=${JWT_SECRET}
+      - SECRET_KEY=${SECRET_KEY}
     depends_on:
       - postgres
       - redis
@@ -183,7 +179,7 @@ services:
     environment:
       - DATABASE_URL=postgresql://makrx:${DATABASE_PASSWORD}@postgres:5432/store
       - REDIS_URL=redis://redis:6379
-      - SECRET_KEY=${JWT_SECRET}
+      - SECRET_KEY=${SECRET_KEY}
       - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
     depends_on:
       - postgres
@@ -191,17 +187,6 @@ services:
     restart: unless-stopped
     deploy:
       replicas: 2
-
-  auth-service:
-    build:
-      context:../experimental/auth-service
-      dockerfile: Dockerfile
-    environment:
-      - KEYCLOAK_URL=http://keycloak:8080
-      - SECRET_KEY=${JWT_SECRET}
-    depends_on:
-      - keycloak
-    restart: unless-stopped
 
   # Infrastructure Services
   postgres:
@@ -298,7 +283,7 @@ metadata:
 type: Opaque
 data:
   database-password: <base64-encoded-password>
-  jwt-secret: <base64-encoded-secret>
+  secret-key: <base64-encoded-secret>
   stripe-secret-key: <base64-encoded-key>
   minio-access-key: <base64-encoded-key>
   minio-secret-key: <base64-encoded-key>
@@ -388,7 +373,7 @@ spec:
           valueFrom:
             secretKeyRef:
               name: makrx-secrets
-              key: jwt-secret
+              key: secret-key
         - name: DATABASE_PASSWORD
           valueFrom:
             secretKeyRef:
@@ -444,13 +429,6 @@ spec:
   - host: makrx.org
     http:
       paths:
-      - path: /api/
-        pathType: Prefix
-        backend:
-          service:
-            name: auth-service
-            port:
-              number: 8000
       - path: /
         pathType: Prefix
         backend:
@@ -646,7 +624,6 @@ POSTGRES_PASSWORD=secure_password
 REDIS_URL=redis://localhost:6379
 
 # Authentication
-JWT_SECRET=your-super-secure-jwt-secret-key
 KEYCLOAK_URL=http://localhost:8080
 KEYCLOAK_ADMIN_PASSWORD=admin_password
 
@@ -684,7 +661,7 @@ LOG_LEVEL=INFO
 ### Production Security
 ```bash
 # Generate secure secrets
-openssl rand -base64 32  # JWT_SECRET
+openssl rand -base64 32  # SECRET_KEY
 openssl rand -base64 32  # DATABASE_PASSWORD
 openssl rand -base64 32  # MINIO_SECRET_KEY
 

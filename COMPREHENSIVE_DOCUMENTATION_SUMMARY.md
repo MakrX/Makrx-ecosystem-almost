@@ -41,7 +41,6 @@ MakrX-Ecosystem/
 ├── 🔧 Backend Services
 │   ├── makrcave-backend/             # MakrCave FastAPI backend
 │   ├── makrx-store-backend/          # Store FastAPI backend
-│   ├── experimental/auth-service/    # Archived authentication microservice
 │   └── experimental/event-service/   # Archived event processing service
 ├── 📚 Shared Packages
 │   ├── packages/ui/                  # Shared UI components
@@ -144,10 +143,6 @@ MakrX-Ecosystem/
 - Project management and collaboration
 - Analytics and reporting APIs
 
-#### Authentication Service (Archived)
-**Location**: `experimental/auth-service/`
-**Purpose**: Centralized authentication microservice
-
 ### Shared Packages Analysis
 
 #### UI Package (`@makrx/ui`)
@@ -246,7 +241,6 @@ colors: {
 ```bash
 # Backend service URLs
 NEXT_PUBLIC_API_URL=http://localhost:8003           # Store API
-NEXT_PUBLIC_AUTH_SERVICE_URL=http://localhost:8001  # Auth service
 NEXT_PUBLIC_MAKRCAVE_API_URL=http://localhost:8002  # MakrCave API
 ```
 

@@ -13,14 +13,13 @@ Backend Services:
 └── makrx-store-backend/   # E-commerce & store API (production)
 
 Archived services (not production-critical) are kept in `experimental/`:
-├── experimental/auth-service/   # Deprecated authentication service
 └── experimental/event-service/  # Deprecated event handling service
 ```
 
 ### Technology Stack
 - **Framework**: FastAPI (Python 3.11+)
 - **Database**: PostgreSQL with SQLAlchemy ORM
-- **Authentication**: JWT tokens with Keycloak integration
+- **Authentication**: Keycloak (OpenID Connect)
 - **Validation**: Pydantic models
 - **Documentation**: Auto-generated OpenAPI/Swagger
 - **Testing**: pytest with fixtures

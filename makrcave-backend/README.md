@@ -126,7 +126,6 @@ The API will be available at:
 DATABASE_URL=sqlite:///./makrcave_dev.db
 
 # Authentication
-JWT_SECRET_KEY=your-secret-key
 JWT_ALGORITHM=HS256
 
 # MakrX Store Integration

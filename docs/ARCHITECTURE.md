@@ -301,7 +301,6 @@ services:
   # Backend services
   makrcave-api:      # FastAPI with hot reload
   store-api:         # FastAPI with hot reload
-  auth-service:      # FastAPI with hot reload
   
   # Infrastructure
   postgres:          # Database
@@ -320,7 +319,6 @@ services:
   # Backend services (clustered)
   makrcave-api:      # Multiple instances
   store-api:         # Multiple instances
-  auth-service:      # Multiple instances
   
   # Infrastructure (managed)
   postgres:          # Managed database

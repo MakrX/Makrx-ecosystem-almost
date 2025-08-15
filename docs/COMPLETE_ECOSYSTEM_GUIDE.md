@@ -21,77 +21,6 @@ backend-service/
 └── .env.example       # Environment template
 ```
 
-### Auth Service (Archived, Port 8001)
-
-*This service is archived and not used in production.*
-
-
-#### Folder Structure
-```
-experimental/auth-service/
-├── app/
-│   ├── core/
-│   │   ├── config.py      # JWT settings, Keycloak config
-│   │   ├── security.py    # Token validation, encryption
-│   │   └── database.py    # User session storage
-│   ├── models/
-│   │   ├── user.py        # User model and roles
-│   │   └── session.py     # Active session tracking
-│   ├── routes/
-│   │   ├── auth.py        # Login, logout, token refresh
-│   │   ├── users.py       # User management
-│   │   └── admin.py       # Administrative functions
-│   └── main.py
-├── requirements.txt
-└── Dockerfile
-```
-
-#### Main Dependencies
-- `fastapi` - Web framework
-- `python-keycloak` - Keycloak integration
-- `pyjwt` - JWT token handling
-- `asyncpg` - PostgreSQL async driver
-- `redis` - Session caching
-
-#### Environment Variables
-```bash
-# Keycloak Configuration
-KEYCLOAK_URL=http://localhost:8080
-KEYCLOAK_REALM=makrx
-KEYCLOAK_CLIENT_ID=auth-service
-KEYCLOAK_CLIENT_SECRET=your-secret
-
-# Database
-DATABASE_URL=postgresql://user:pass@localhost:5432/makrx
-
-# JWT Settings
-JWT_SECRET_KEY=your-jwt-secret
-JWT_ALGORITHM=HS256
-JWT_EXPIRATION_HOURS=24
-
-# Redis Cache
-REDIS_URL=redis://localhost:6379/0
-```
-
-#### Setup Steps
-1. Install dependencies: `pip install -r requirements.txt`
-2. Configure environment variables
-3. Initialize database: `python -m alembic upgrade head`
-4. Start service: `uvicorn app.main:app --port 8001 --reload`
-
-#### API Endpoints
-
-| Method | URL | Required Role | Purpose | Response |
-|--------|-----|---------------|---------|----------|
-| POST | `/auth/login` | None | Authenticate user | `{access_token, refresh_token, user_info}` |
-| POST | `/auth/refresh` | None | Refresh access token | `{access_token}` |
-| POST | `/auth/logout` | User | Invalidate tokens | `{message: "Logged out"}` |
-| GET | `/auth/me` | User | Get current user info | `{user_id, email, roles, permissions}` |
-| GET | `/users` | Admin | List all users | `{users: [...], total, page}` |
-| POST | `/users` | Super Admin | Create new user | `{user_id, email, created_at}` |
-| PUT | `/users/{id}/roles` | Admin | Update user roles | `{user_id, roles, updated_at}` |
-| DELETE | `/users/{id}` | Super Admin | Delete user account | `{message: "User deleted"}` |
-
 ### MakrCave Backend (Port 8002)
 
 #### Folder Structure
@@ -138,7 +67,6 @@ makrcave-backend/
 DATABASE_URL=postgresql://user:pass@localhost:5432/makrx
 
 # Authentication
-AUTH_SERVICE_URL=http://localhost:8001
 KEYCLOAK_URL=http://localhost:8080
 
 # External Integrations
@@ -292,7 +220,6 @@ VITE_KEYCLOAK_REALM=makrx
 VITE_KEYCLOAK_CLIENT_ID=makrx-org-frontend
 
 # API Endpoints
-VITE_AUTH_SERVICE_URL=http://localhost:8001
 VITE_MAKRCAVE_API_URL=http://localhost:8002
 VITE_STORE_API_URL=http://localhost:8003
 
@@ -424,7 +351,6 @@ NEXT_PUBLIC_KEYCLOAK_CLIENT_ID=makrx-store-frontend
 
 # API Configuration
 NEXT_PUBLIC_API_URL=http://localhost:8003
-NEXT_PUBLIC_AUTH_SERVICE_URL=http://localhost:8001
 
 # Cross-Domain Integration
 NEXT_PUBLIC_MAKRCAVE_URL=http://localhost:3001
