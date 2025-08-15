@@ -1,12 +1,12 @@
 import logging
 import os
+from datetime import datetime, timedelta
 
 import httpx
-import jwt
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
-
-from .services.keycloak_client import get_service_token
+from jose import jwt
+from jose.exceptions import ExpiredSignatureError, JWTClaimsError, JWTError
 
 # Configure logging
 logger = logging.getLogger(__name__)
@@ -15,14 +15,13 @@ logger = logging.getLogger(__name__)
 KEYCLOAK_URL = os.getenv("KEYCLOAK_URL", "http://keycloak:8080")
 KEYCLOAK_REALM = os.getenv("KEYCLOAK_REALM", "makrx")
 KEYCLOAK_CLIENT_ID = os.getenv("KEYCLOAK_CLIENT_ID", "makrcave-frontend")
-
-# JWT verification settings
-JWT_SECRET = os.getenv("JWT_SECRET")
-if not JWT_SECRET:
-    logger.warning("JWT_SECRET not set - using fallback validation")
+KEYCLOAK_ISSUER = f"{KEYCLOAK_URL}/realms/{KEYCLOAK_REALM}"
+JWKS_URL = f"{KEYCLOAK_ISSUER}/protocol/openid-connect/certs"
 
 # Global HTTP client for token validation
 http_client = None
+jwks_cache = None
+jwks_cache_expiry = None
 
 async def get_http_client():
     global http_client
@@ -40,60 +39,50 @@ class CurrentUser:
         self.role = role
         self.makerspace_id = makerspace_id
 
-async def validate_token_with_auth_service(token: str) -> dict:
-    """Validate token using the auth service"""
+async def get_jwks() -> dict:
+    """Fetch and cache JWKS from Keycloak"""
+    global jwks_cache, jwks_cache_expiry
+    if jwks_cache and jwks_cache_expiry and datetime.utcnow() < jwks_cache_expiry:
+        return jwks_cache
+    client = await get_http_client()
+    response = await client.get(JWKS_URL)
+    response.raise_for_status()
+    jwks_cache = response.json()
+    jwks_cache_expiry = datetime.utcnow() + timedelta(hours=1)
+    return jwks_cache
+
+async def validate_token(token: str) -> dict:
+    """Validate token using Keycloak JWKS"""
     try:
-        client = await get_http_client()
-
-        # Call auth service to validate token
-        auth_service_url = os.getenv("AUTH_SERVICE_URL", "http://auth-service:8000")
-
-        service_token = await get_service_token()
-        response = await client.get(
-            f"{auth_service_url}/auth/profile",
-            headers={
-                "Authorization": f"Bearer {token}",
-                "X-Service-Token": f"Bearer {service_token}"
-            }
-        )
-
-        if response.status_code == 200:
-            return response.json()
-        else:
+        header = jwt.get_unverified_header(token)
+        kid = header.get("kid")
+        jwks = await get_jwks()
+        key = next((k for k in jwks.get("keys", []) if k.get("kid") == kid), None)
+        if not key:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Token validation failed",
+                detail="Invalid token",
                 headers={"WWW-Authenticate": "Bearer"},
             )
-
-    except httpx.RequestError:
-        # Fallback to local JWT validation if auth service is unavailable
-        logger.warning("Auth service unavailable, falling back to local validation")
-        return await validate_token_locally(token)
-
-async def validate_token_locally(token: str) -> dict:
-    """Fallback local token validation"""
-    try:
-        if JWT_SECRET:
-            # Validate service-generated tokens
-            payload = jwt.decode(token, JWT_SECRET, algorithms=["HS256"])
-            return payload
-        else:
-            # If no JWT_SECRET, decode without verification (development only)
-            logger.warning("No JWT_SECRET set - token validation disabled for development")
-            payload = jwt.decode(token, options={"verify_signature": False})
-            return payload
-
-    except jwt.ExpiredSignatureError:
+        payload = jwt.decode(
+            token,
+            key,
+            algorithms=["RS256"],
+            audience=KEYCLOAK_CLIENT_ID,
+            issuer=KEYCLOAK_ISSUER,
+        )
+        return payload
+    except ExpiredSignatureError:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Token has expired",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    except jwt.InvalidTokenError:
+    except (JWTClaimsError, JWTError) as exc:
+        logger.error(f"Token validation error: {exc}")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid token",
+            detail="Token validation failed",
             headers={"WWW-Authenticate": "Bearer"},
         )
 
@@ -115,27 +104,23 @@ def map_keycloak_roles_to_makrcave(keycloak_roles: list) -> str:
     # Default to user role
     return "user"
 
-async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)) -> CurrentUser:
+async def get_current_user(
+    credentials: HTTPAuthorizationCredentials = Depends(security),
+) -> CurrentUser:
     """Extract and validate current user from JWT token"""
     try:
         token = credentials.credentials
 
         # Validate token and get user data
-        user_data = await validate_token_with_auth_service(token)
+        user_data = await validate_token(token)
 
         # Extract user information
-        user_id = user_data.get("sub") or user_data.get("id")
+        user_id = user_data.get("sub")
         email = user_data.get("email", "")
-        username = user_data.get("preferred_username") or user_data.get("username") or email
+        username = user_data.get("preferred_username") or email
 
-        # Extract and map roles
-        keycloak_roles = []
-        if "realm_access" in user_data:
-            keycloak_roles.extend(user_data["realm_access"].get("roles", []))
-        if "resource_access" in user_data:
-            for client, access in user_data["resource_access"].items():
-                keycloak_roles.extend(access.get("roles", []))
-
+        # Extract roles from realm_access only
+        keycloak_roles = user_data.get("realm_access", {}).get("roles", [])
         makrcave_role = map_keycloak_roles_to_makrcave(keycloak_roles)
 
         # Extract makerspace information (from token claims or default)
@@ -147,7 +132,7 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
             name=username,
             email=email,
             role=makrcave_role,
-            makerspace_id=makerspace_id
+            makerspace_id=makerspace_id,
         )
 
     except HTTPException:
@@ -273,7 +258,9 @@ def require_role(required_roles: list):
         return current_user
     return role_checker
 
-def require_makerspace_access(item_makerspace_id: str, current_user: CurrentUser) -> bool:
+def require_makerspace_access(
+    item_makerspace_id: str, current_user: CurrentUser
+) -> bool:
     """Check if user has access to specific makerspace items"""
     # Super admin has access to all makerspaces
     if current_user.role == "super_admin":
@@ -317,7 +304,9 @@ class PermissionChecker:
         # Check item access level restriction
         if hasattr(item, 'restricted_access_level') and item.restricted_access_level:
             from .utils.inventory_tools import validate_item_access_level
-            return validate_item_access_level(self.user.role, item.restricted_access_level)
+            return validate_item_access_level(
+                self.user.role, item.restricted_access_level
+            )
         
         return True
     
@@ -350,6 +339,8 @@ class PermissionChecker:
         return True
 
 # Utility function to get permission checker
-def get_permission_checker(current_user: CurrentUser = Depends(get_current_user)) -> PermissionChecker:
+def get_permission_checker(
+    current_user: CurrentUser = Depends(get_current_user),
+) -> PermissionChecker:
     """Get permission checker instance for current user"""
     return PermissionChecker(current_user)
