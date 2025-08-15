@@ -42,8 +42,8 @@ export function PortalAuthProvider({
         const cleanUrl = window.location.pathname;
         window.history.replaceState({}, "", cleanUrl);
 
-        // Trigger login with portal token
-        login(authToken);
+        // Trigger standard login flow
+        login();
       } else {
         // Check for existing portal token
         const storedToken = localStorage.getItem("portal_auth_token");
@@ -103,7 +103,7 @@ export function PortalAuthProvider({
       if (authToken) {
         localStorage.setItem("portal_auth_token", authToken);
         setIsPortalAuthenticated(true);
-        login(authToken);
+        login();
       }
     },
     isPortalAuthenticated,

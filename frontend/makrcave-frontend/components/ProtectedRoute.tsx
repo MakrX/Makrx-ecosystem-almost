@@ -34,6 +34,7 @@ export default function ProtectedRoute({
   showAccessDenied = true
 }: ProtectedRouteProps) {
   const { user, isAuthenticated } = useAuth();
+  const userRoles = user?.roles || [];
 
   // Check if user is authenticated
   if (!isAuthenticated || !user) {
@@ -49,14 +50,14 @@ export default function ProtectedRoute({
   let hasAccess = true;
   let reason = '';
 
-  if (requiredRole && user.role !== requiredRole) {
+  if (requiredRole && !userRoles.includes(requiredRole)) {
     hasAccess = false;
-    reason = `Required role: ${requiredRole}, current role: ${user.role}`;
+    reason = `Required role: ${requiredRole}, current roles: ${userRoles.join(', ')}`;
   }
 
-  if (allowedRoles && !allowedRoles.includes(user.role)) {
+  if (allowedRoles && !allowedRoles.some(r => userRoles.includes(r))) {
     hasAccess = false;
-    reason = `Allowed roles: ${allowedRoles.join(', ')}, current role: ${user.role}`;
+    reason = `Allowed roles: ${allowedRoles.join(', ')}, current roles: ${userRoles.join(', ')}`;
   }
 
   if (requiredPermission) {
@@ -83,7 +84,7 @@ export default function ProtectedRoute({
   if (hasAccess) {
     loggingService.info('auth', 'ProtectedRoute', 'Access granted to protected route', {
       userId: user.id,
-      userRole: user.role,
+      userRoles,
       path: window.location.pathname,
       requiredRole,
       allowedRoles,
@@ -93,7 +94,7 @@ export default function ProtectedRoute({
   } else {
     loggingService.warn('auth', 'ProtectedRoute', 'Access denied to protected route', {
       userId: user.id,
-      userRole: user.role,
+      userRoles,
       path: window.location.pathname,
       reason,
       requiredRole,
@@ -104,7 +105,7 @@ export default function ProtectedRoute({
 
     loggingService.logUserAction('unauthorized_access_attempt', {
       userId: user.id,
-      userRole: user.role,
+      userRoles,
       path: window.location.pathname,
       reason
     });
@@ -139,7 +140,7 @@ export default function ProtectedRoute({
             </p>
             
             <div className="text-xs text-muted-foreground space-y-1">
-              <div>Your role: <span className="font-medium">{user.role}</span></div>
+              <div>Your role: <span className="font-medium">{userRoles.join(', ')}</span></div>
               {requiredRole && (
                 <div>Required role: <span className="font-medium">{requiredRole}</span></div>
               )}
@@ -188,7 +189,7 @@ export function AdminOnly({
     if (!hasAccess) return <>{fallback}</>;
   } else {
     // Check if user is admin-level
-    if (!['super_admin', 'admin'].includes(user.role)) {
+    if (!user.roles.some(r => ['super_admin', 'admin'].includes(r))) {
       return <>{fallback}</>;
     }
   }
@@ -205,8 +206,8 @@ export function SuperAdminOnly({
   fallback?: ReactNode;
 }) {
   const { user } = useAuth();
-  
-  if (!user || user.role !== 'super_admin') {
+
+  if (!user || !user.roles.includes('super_admin')) {
     return <>{fallback}</>;
   }
 
