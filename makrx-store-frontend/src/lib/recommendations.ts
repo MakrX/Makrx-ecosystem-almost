@@ -4,7 +4,7 @@
  * product relationships, and purchase patterns
  */
 
-import { Product } from "./api";
+import type { Product } from "@/data/products";
 
 export interface RecommendationOptions {
   baseProduct?: Product;
@@ -155,7 +155,7 @@ export class SmartRecommendationEngine implements RecommendationEngine {
       }
 
       // Accessory detection
-      if (this.isAccessory(product, baseProduct)) {
+      if (this.isAccessory(product)) {
         score += 60;
         reasons.push('Compatible accessory');
       }
@@ -279,7 +279,7 @@ export class SmartRecommendationEngine implements RecommendationEngine {
     return complementaryMap[category] || [];
   }
 
-  private isAccessory(product: Product, baseProduct: Product): boolean {
+  private isAccessory(product: Product): boolean {
     const accessoryKeywords = [
       'cable', 'wire', 'connector', 'adapter', 'case', 'cover',
       'mount', 'bracket', 'holder', 'stand', 'screw', 'bolt'
