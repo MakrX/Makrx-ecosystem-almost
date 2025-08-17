@@ -385,16 +385,16 @@
           }
         },
         {
-          "name": "service_provider_id",
+          "name": "provider_id",
           "protocol": "openid-connect",
           "protocolMapper": "oidc-usermodel-attribute-mapper",
           "consentRequired": false,
           "config": {
-            "user.attribute": "service_provider_id",
+            "user.attribute": "provider_id",
             "id.token.claim": "true",
             "access.token.claim": "true",
             "userinfo.token.claim": "true",
-            "claim.name": "service_provider_id",
+            "claim.name": "provider_id",
             "jsonType.label": "String"
           }
         }
@@ -615,16 +615,16 @@
           }
         },
         {
-          "name": "service_provider_id",
+          "name": "provider_id",
           "protocol": "openid-connect",
           "protocolMapper": "oidc-usermodel-attribute-mapper",
           "consentRequired": false,
           "config": {
-            "user.attribute": "service_provider_id",
+            "user.attribute": "provider_id",
             "id.token.claim": "true",
             "access.token.claim": "true",
             "userinfo.token.claim": "true",
-            "claim.name": "service_provider_id",
+            "claim.name": "provider_id",
             "jsonType.label": "String"
           }
         }
