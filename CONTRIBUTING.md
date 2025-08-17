@@ -34,6 +34,14 @@ Prototype or archived services belong in [/experimental/](experimental/). Each e
 - JavaScript package manager: `npm`
 - Environment template: `.env.production.template` in repo root (service-specific `.env.example` files live in each app)
 
+| Service | Node version | Python version | Selection command |
+| --- | --- | --- | --- |
+| Gateway Frontend | 20 | - | `nvm use` |
+| Makrcave Frontend | 20 | - | `nvm use` |
+| MakrX Store Frontend | 20 | - | `nvm use` |
+| Makrcave Backend | - | 3.11 | `pyenv local 3.11` |
+| MakrX Store Backend | - | 3.11 | `pyenv local 3.11` |
+
 ## Local Development
 1. `cp .env.production.template .env`
 2. `docker-compose up -d postgres keycloak`
