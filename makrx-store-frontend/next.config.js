@@ -1,14 +1,24 @@
 const path = require("path");
 
+const isProduction = process.env.NODE_ENV === "production";
+const experimentalDemosPath = path.join(
+  "..",
+  "experimental",
+  "makrx-store-demos",
+  "**"
+);
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
   // Suppress hydration warnings caused by browser extensions
   compiler: {
-    removeConsole: process.env.NODE_ENV === "production" ? {
-      exclude: ["error"]
-    } : false,
+    removeConsole: isProduction
+      ? {
+          exclude: ["error"],
+        }
+      : false,
   },
   // Add development server configuration to fix RSC payload issues
   devIndicators: {
@@ -36,9 +46,13 @@ const nextConfig = {
   },
   experimental: {
     externalDir: true,
-    outputFileTracingExcludes: {
-      '*': ['../experimental/makrx-store-demos/**'],
-    },
+    ...(isProduction
+      ? {
+          outputFileTracingExcludes: {
+            "*": [experimentalDemosPath],
+          },
+        }
+      : {}),
   },
   webpack: (config) => {
     config.resolve.alias = {
