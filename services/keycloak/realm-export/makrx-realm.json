@@ -115,34 +115,6 @@
           }
         },
         {
-          "name": "email",
-          "protocol": "openid-connect",
-          "protocolMapper": "oidc-usermodel-property-mapper",
-          "consentRequired": false,
-          "config": {
-            "user.attribute": "email",
-            "id.token.claim": "true",
-            "access.token.claim": "true",
-            "userinfo.token.claim": "true",
-            "claim.name": "email",
-            "jsonType.label": "String"
-          }
-        },
-        {
-          "name": "email_verified",
-          "protocol": "openid-connect",
-          "protocolMapper": "oidc-usermodel-property-mapper",
-          "consentRequired": false,
-          "config": {
-            "user.attribute": "emailVerified",
-            "id.token.claim": "true",
-            "access.token.claim": "true",
-            "userinfo.token.claim": "true",
-            "claim.name": "email_verified",
-            "jsonType.label": "boolean"
-          }
-        },
-        {
           "name": "preferred_username",
           "protocol": "openid-connect",
           "protocolMapper": "oidc-usermodel-property-mapper",
@@ -222,34 +194,6 @@
           }
         },
         {
-          "name": "email",
-          "protocol": "openid-connect",
-          "protocolMapper": "oidc-usermodel-property-mapper",
-          "consentRequired": false,
-          "config": {
-            "user.attribute": "email",
-            "id.token.claim": "true",
-            "access.token.claim": "true",
-            "userinfo.token.claim": "true",
-            "claim.name": "email",
-            "jsonType.label": "String"
-          }
-        },
-        {
-          "name": "email_verified",
-          "protocol": "openid-connect",
-          "protocolMapper": "oidc-usermodel-property-mapper",
-          "consentRequired": false,
-          "config": {
-            "user.attribute": "emailVerified",
-            "id.token.claim": "true",
-            "access.token.claim": "true",
-            "userinfo.token.claim": "true",
-            "claim.name": "email_verified",
-            "jsonType.label": "boolean"
-          }
-        },
-        {
           "name": "preferred_username",
           "protocol": "openid-connect",
           "protocolMapper": "oidc-usermodel-property-mapper",
@@ -260,20 +204,6 @@
             "access.token.claim": "true",
             "userinfo.token.claim": "true",
             "claim.name": "preferred_username",
-            "jsonType.label": "String"
-          }
-        },
-        {
-          "name": "makerspace_id",
-          "protocol": "openid-connect",
-          "protocolMapper": "oidc-usermodel-attribute-mapper",
-          "consentRequired": false,
-          "config": {
-            "user.attribute": "makerspace_id",
-            "id.token.claim": "true",
-            "access.token.claim": "true",
-            "userinfo.token.claim": "true",
-            "claim.name": "makerspace_id",
             "jsonType.label": "String"
           }
         }
@@ -343,34 +273,6 @@
           }
         },
         {
-          "name": "email",
-          "protocol": "openid-connect",
-          "protocolMapper": "oidc-usermodel-property-mapper",
-          "consentRequired": false,
-          "config": {
-            "user.attribute": "email",
-            "id.token.claim": "true",
-            "access.token.claim": "true",
-            "userinfo.token.claim": "true",
-            "claim.name": "email",
-            "jsonType.label": "String"
-          }
-        },
-        {
-          "name": "email_verified",
-          "protocol": "openid-connect",
-          "protocolMapper": "oidc-usermodel-property-mapper",
-          "consentRequired": false,
-          "config": {
-            "user.attribute": "emailVerified",
-            "id.token.claim": "true",
-            "access.token.claim": "true",
-            "userinfo.token.claim": "true",
-            "claim.name": "email_verified",
-            "jsonType.label": "boolean"
-          }
-        },
-        {
           "name": "preferred_username",
           "protocol": "openid-connect",
           "protocolMapper": "oidc-usermodel-property-mapper",
@@ -381,20 +283,6 @@
             "access.token.claim": "true",
             "userinfo.token.claim": "true",
             "claim.name": "preferred_username",
-            "jsonType.label": "String"
-          }
-        },
-        {
-          "name": "provider_id",
-          "protocol": "openid-connect",
-          "protocolMapper": "oidc-usermodel-attribute-mapper",
-          "consentRequired": false,
-          "config": {
-            "user.attribute": "provider_id",
-            "id.token.claim": "true",
-            "access.token.claim": "true",
-            "userinfo.token.claim": "true",
-            "claim.name": "provider_id",
             "jsonType.label": "String"
           }
         }
@@ -455,34 +343,6 @@
             "userinfo.token.claim": "true",
             "claim.name": "sub",
             "jsonType.label": "String"
-          }
-        },
-        {
-          "name": "email",
-          "protocol": "openid-connect",
-          "protocolMapper": "oidc-usermodel-property-mapper",
-          "consentRequired": false,
-          "config": {
-            "user.attribute": "email",
-            "id.token.claim": "true",
-            "access.token.claim": "true",
-            "userinfo.token.claim": "true",
-            "claim.name": "email",
-            "jsonType.label": "String"
-          }
-        },
-        {
-          "name": "email_verified",
-          "protocol": "openid-connect",
-          "protocolMapper": "oidc-usermodel-property-mapper",
-          "consentRequired": false,
-          "config": {
-            "user.attribute": "emailVerified",
-            "id.token.claim": "true",
-            "access.token.claim": "true",
-            "userinfo.token.claim": "true",
-            "claim.name": "email_verified",
-            "jsonType.label": "boolean"
           }
         },
         {
@@ -573,34 +433,6 @@
           }
         },
         {
-          "name": "email",
-          "protocol": "openid-connect",
-          "protocolMapper": "oidc-usermodel-property-mapper",
-          "consentRequired": false,
-          "config": {
-            "user.attribute": "email",
-            "id.token.claim": "true",
-            "access.token.claim": "true",
-            "userinfo.token.claim": "true",
-            "claim.name": "email",
-            "jsonType.label": "String"
-          }
-        },
-        {
-          "name": "email_verified",
-          "protocol": "openid-connect",
-          "protocolMapper": "oidc-usermodel-property-mapper",
-          "consentRequired": false,
-          "config": {
-            "user.attribute": "emailVerified",
-            "id.token.claim": "true",
-            "access.token.claim": "true",
-            "userinfo.token.claim": "true",
-            "claim.name": "email_verified",
-            "jsonType.label": "boolean"
-          }
-        },
-        {
           "name": "preferred_username",
           "protocol": "openid-connect",
           "protocolMapper": "oidc-usermodel-property-mapper",
@@ -651,8 +483,8 @@
             "id.token.claim": "false",
             "access.token.claim": "true"
           }
-      }
-    ],
+        }
+      ],
       "composite": true,
       "composites": {
         "realm": [
@@ -757,8 +589,12 @@
       "name": "makerspace:example",
       "path": "/makerspace:example",
       "attributes": {
-        "makerspace_id": ["453d2948-0be2-48b6-8a77-b21001693c6a"],
-        "display_name": ["Example Makerspace"]
+        "makerspace_id": [
+          "453d2948-0be2-48b6-8a77-b21001693c6a"
+        ],
+        "display_name": [
+          "Example Makerspace"
+        ]
       },
       "realmRoles": [
         "makerspace_admin"
@@ -768,8 +604,12 @@
       "name": "provider:example",
       "path": "/provider:example",
       "attributes": {
-        "provider_id": ["87ad974e-c442-4d9b-b205-3a48f61b6bec"],
-        "display_name": ["Example Provider"]
+        "provider_id": [
+          "87ad974e-c442-4d9b-b205-3a48f61b6bec"
+        ],
+        "display_name": [
+          "Example Provider"
+        ]
       },
       "realmRoles": [
         "service_provider"
@@ -779,8 +619,12 @@
       "name": "org:example",
       "path": "/org:example",
       "attributes": {
-        "org_id": ["3b1a3feb-1026-48e2-8b1c-97f521cb66b8"],
-        "display_name": ["Example Organization"]
+        "org_id": [
+          "3b1a3feb-1026-48e2-8b1c-97f521cb66b8"
+        ],
+        "display_name": [
+          "Example Organization"
+        ]
       },
       "realmRoles": []
     }
