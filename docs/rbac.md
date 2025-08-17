@@ -44,34 +44,40 @@ These roles determine the actions a user can perform:
 
 ## Gateway
 
-| Feature | Super Admin | Admin | Makerspace Admin | Service Provider | User |
-| --- | --- | --- | --- | --- | --- |
-| View public content | Can | Can | Can | Can | Can |
-| Manage gateway settings | Can | Can | Cannot | Cannot | Cannot |
-| Manage user accounts | Can | Can | Cannot | Cannot | Cannot |
-| Access analytics | Can | Can | Cannot | Cannot | Cannot |
-| Manage makerspace directory | Can | Can | Cannot | Cannot | Cannot |
+| Role | Create | Read | Update | Delete |
+| --- | --- | --- | --- | --- |
+| super_admin | Can | Can | Can | Can |
+| admin | Can | Can | Can | Cannot |
+| makerspace_admin* | Cannot | Can | Cannot | Cannot |
+| service_provider | Cannot | Can | Cannot | Cannot |
+| user | Cannot | Can | Cannot | Cannot |
+
+\*Limited to their makerspace membership.
 
 ## MakrCave
 
-| Feature | Super Admin | Admin | Makerspace Admin | Service Provider | User |
-| --- | --- | --- | --- | --- | --- |
-| Create makerspaces | Can | Can | Cannot | Cannot | Cannot |
-| Manage equipment | Can | Can | Can | Cannot | Cannot |
-| Manage inventory | Can | Can | Can | Cannot | Cannot |
-| View analytics | Can | Can | Can | Cannot | Cannot |
-| Manage users | Can | Can | Can | Cannot | Cannot |
-| Fulfill service orders | Can | Can | Can | Can | Cannot |
+| Role | Create | Read | Update | Delete |
+| --- | --- | --- | --- | --- |
+| super_admin | Can | Can | Can | Can |
+| admin | Can | Can | Can | Can |
+| makerspace_admin* | Can | Can | Can | Can |
+| service_provider | Can | Can | Can¹ | Cannot |
+| user | Cannot | Can | Cannot | Cannot |
 
-## Store
+\*Limited to their makerspace membership.  
+¹ May update only their own jobs.
 
-| Feature | Super Admin | Admin | Makerspace Admin | Service Provider | User |
-| --- | --- | --- | --- | --- | --- |
-| Browse catalog | Can | Can | Can | Can | Can |
-| Purchase items | Can | Can | Can | Can | Can |
-| Manage store settings | Can | Can | Cannot | Cannot | Cannot |
-| Manage orders | Can | Can | Cannot | Can | Cannot |
-| View store analytics | Can | Can | Cannot | Cannot | Cannot |
+## MakrX Store
+
+| Role | Create | Read | Update | Delete |
+| --- | --- | --- | --- | --- |
+| super_admin | Can | Can | Can | Can |
+| admin | Can | Can | Can | Cannot |
+| makerspace_admin* | Can | Can | Cannot | Cannot |
+| service_provider | Can | Can | Can | Cannot |
+| user | Can | Can | Cannot | Cannot |
+
+\*Limited to their makerspace membership.
 
 ---
 
