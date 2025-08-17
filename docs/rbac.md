@@ -7,6 +7,18 @@
 - Users may hold multiple roles/groups; effective access is role ∩ group scope.
 - Default role assignment on registration is `user`.
 
+## Group Taxonomy
+
+Groups define the scope of a user's permissions:
+
+- `makerspace:{slug}`
+- `provider:{slug}`
+- `org:{slug}` *(optional)*
+
+Each group must provide an `id` and a human-readable `display_name`.
+
+Slugs are lowercase and may include hyphens (e.g., `makerspace:central-lab`).
+
 ## Role Definitions
 
 - `super_admin` – Full system control across all applications including configuration, makerspaces, and users.
