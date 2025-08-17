@@ -9,17 +9,32 @@
 
 ## Group Taxonomy
 
-Groups define the scope of a user's permissions:
+Groups define the scope of a user's permissions. All slugs are lowercase and use hyphens to separate words (e.g., `makerspace:central-lab`).
 
-- `makerspace:{slug}`
-- `provider:{slug}`
-- `org:{slug}` *(optional)*
+### makerspace:{slug}
 
-Each group must provide an `id` and a human-readable `display_name`.
+Attributes:
 
-Slugs are lowercase and may include hyphens (e.g., `makerspace:central-lab`).
+- `makerspace_id`
+- `display_name`
+
+### provider:{slug}
+
+Attributes:
+
+- `provider_id`
+- `display_name`
+
+### org:{slug} *(optional)*
+
+Attributes:
+
+- `org_id`
+- `display_name`
 
 ## Role Definitions
+
+These roles determine the actions a user can perform:
 
 - `super_admin` – Full system control across all applications including configuration, makerspaces, and users.
 - `admin` – Global administrative access for managing users and analytics without system-level actions.
