@@ -1,6 +1,12 @@
 # Ignore virtual environments
 .venv/
 
+# Node and build artifacts
+node_modules/
+dist/
+.next/
+build/
+
 # Python artifacts
 __pycache__/
 *.pyc
@@ -11,7 +17,9 @@ coverage/
 
 # Logs and databases
 *.log
+logs/
 *.sqlite*
+*.db
 
 # Uploaded and temporary files
 uploads/

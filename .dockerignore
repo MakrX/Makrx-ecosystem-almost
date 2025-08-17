@@ -3,6 +3,8 @@
 # Dependencies
 **/node_modules/
 **/dist/
+**/.next/
+**/build/
 
 # Git
 .git
@@ -23,12 +25,23 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+**/logs/
 *.log
 
 # Caches
-coverage
+**/coverage/
 .nyc_output
 .eslintcache
+
+# Python
+**/.venv/
+**/venv/
+**/__pycache__/
+**/*.py[cod]
+
+# Local databases
+**/*.db
+**/*.sqlite*
 
 # Temporary files
 *.tmp

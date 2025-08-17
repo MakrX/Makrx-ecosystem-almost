@@ -1,6 +1,27 @@
 Dockerfile
 .dockerignore
 
+# Dependencies and builds
+node_modules
+dist
+.next
+build
+
+# Logs and coverage
+logs/
+*.log
+coverage/
+
+# Python artifacts
+venv/
+.venv/
+__pycache__/
+*.py[cod]
+
+# Local databases
+*.db
+*.sqlite*
+
 # Environment files
 .env
 .env.*

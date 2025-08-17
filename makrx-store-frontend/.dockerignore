@@ -4,6 +4,13 @@ dist
 coverage
 cypress
 *.log
+logs/
+venv/
+.venv/
+__pycache__/
+*.py[cod]
+*.db
+*.sqlite*
 # Environment files
 .env
 .env.*
