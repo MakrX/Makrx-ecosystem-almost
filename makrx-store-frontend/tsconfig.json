@@ -1,13 +1,14 @@
 {
   "extends": "../tsconfig.base.json",
   "compilerOptions": {
+    "baseUrl": ".",
     "paths": {
-      "@/*": ["makrx-store-frontend/src/*"],
-      "@/components/*": ["makrx-store-frontend/src/components/*"],
-      "@/lib/*": ["makrx-store-frontend/src/lib/*"],
-      "@/types/*": ["makrx-store-frontend/src/types/*"],
-      "@/store/*": ["makrx-store-frontend/src/store/*"],
-      "@/utils/*": ["makrx-store-frontend/src/utils/*"]
+      "@/*": ["src/*"],
+      "@/components/*": ["src/components/*"],
+      "@/lib/*": ["src/lib/*"],
+      "@/types/*": ["src/types/*"],
+      "@/store/*": ["src/store/*"],
+      "@/utils/*": ["src/utils/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
