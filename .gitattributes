@@ -1,8 +1,38 @@
 # Force LF line endings for all text files
 * text eol=lf
 
-# Treat image, font, 3D model, and PDF files as binary
-*.{png,jpg,jpeg,gif,svg,ico} binary
-*.{ttf,otf,woff,woff2} binary
-*.{stl,step} binary
+# Treat image, font, 3D model, archive, and media files as binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.svg binary
+*.ico binary
+*.ttf binary
+*.otf binary
+*.woff binary
+*.woff2 binary
+*.stl binary
+*.step binary
+*.obj binary
+*.fbx binary
+*.gltf binary
+*.glb binary
+*.3ds binary
+*.ply binary
+*.dae binary
+*.mp4 binary
+*.mp3 binary
+*.wav binary
+*.flac binary
+*.ogg binary
+*.webm binary
+*.mov binary
+*.avi binary
+*.zip binary
+*.tar binary
+*.gz binary
+*.rar binary
+*.7z binary
+*.tgz binary
 *.pdf binary
