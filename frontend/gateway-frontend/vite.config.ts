@@ -31,7 +31,7 @@ export default defineConfig({
           // Router chunk
           router: ['react-router-dom'],
           // Utils chunk for utility libraries
-          utils: ['lucide-react', '@tanstack/react-query'],
+          utils: ['lucide-react'],
         },
         // Optimize chunk file names
         chunkFileNames: (chunkInfo) => {
@@ -73,7 +73,6 @@ export default defineConfig({
       'react-dom',
       'react-router-dom',
       'lucide-react',
-      '@tanstack/react-query',
     ],
     exclude: [
       // Exclude any problematic dependencies
