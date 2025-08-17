@@ -3,7 +3,7 @@
   "displayName": "MakrX Ecosystem",
   "displayNameHtml": "<strong>Makr</strong><span style=\"color: #FFC107;\">X</span> Ecosystem",
   "enabled": true,
-  "registrationAllowed": true,
+  "registrationAllowed": false,
   "registrationEmailAsUsername": true,
   "rememberMe": true,
   "verifyEmail": true,

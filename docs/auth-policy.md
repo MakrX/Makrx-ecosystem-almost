@@ -64,3 +64,9 @@ These claims allow downstream services to perform authorization decisions based 
 - **JWKS Endpoint**: Services retrieve signing keys from `https://auth.makrx.org/realms/makrx/protocol/openid-connect/certs` (or the configured Keycloak issuer).
 - **Audience Enforcement**: Every backend validates that the JWT `aud` claim matches its own Keycloak client ID, rejecting tokens meant for other services.
 - When refresh tokens expire, applications prompt the user to re-authenticate and preserve their current page so work can resume after login.
+## Realm Security
+
+- **Verify Email**: Users must validate their email address before accessing services.
+- **Brute Force Detection**: Accounts lock after five failed attempts, with 60-second wait increments.
+- **Registration policy (dev/staging vs prod)**: Self-registration is enabled in development and staging but disabled in production.
+- **SSL required**: All external requests must use HTTPS.
