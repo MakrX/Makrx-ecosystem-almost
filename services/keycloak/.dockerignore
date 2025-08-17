@@ -1,5 +1,17 @@
 # Ignore node modules
 node_modules
+dist
+.next
+build
+
+# Python and build artifacts
+coverage
+venv/
+.venv/
+__pycache__/
+*.py[cod]
+*.db
+*.sqlite*
 
 # Environment files
 .env
