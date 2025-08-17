@@ -9,11 +9,11 @@
 
 ## Role Definitions
 
-- **Super Admin** – Full system control across all applications including configuration, makerspaces, and users.
-- **Admin** – Global administrative access for managing users and analytics without system-level actions.
-- **Makerspace Admin** – Manages resources within their assigned makerspace such as equipment and inventory.
-- **Service Provider** – Handles service orders and provider-specific tasks.
-- **User** – Regular participant with access to basic features and self-service capabilities.
+- `super_admin` – Full system control across all applications including configuration, makerspaces, and users.
+- `admin` – Global administrative access for managing users and analytics without system-level actions.
+- `makerspace_admin` – Manages resources within their assigned makerspace such as equipment and inventory.
+- `service_provider` – Handles service orders and provider-specific tasks.
+- `user` – Regular participant with access to basic features and self-service capabilities.
 
 ## Gateway
 
