@@ -31,6 +31,7 @@
 
 ## Hardening Expectations
 - Never commit secrets; use environment variables or secure secret managers.
+- Rotate any credential immediately if repository exposure is suspected; no real secrets are stored in git.
 - Validate and sanitize all user input.
 - Enforce proper authentication and authorization for every endpoint.
 - Apply rate limiting and comprehensive logging to detect abuse.
