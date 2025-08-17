@@ -1,5 +1,12 @@
 # Role-Based Access Control (RBAC)
 
+## Principles
+
+- Least-privilege, deny on uncertainty.
+- Roles describe capabilities; groups describe scope.
+- Users may hold multiple roles/groups; effective access is role ∩ group scope.
+- Default role assignment on registration is `user`.
+
 ## Role Definitions
 
 - **Super Admin** – Full system control across all applications including configuration, makerspaces, and users.
