@@ -79,6 +79,60 @@ These roles determine the actions a user can perform:
 
 \*Limited to their makerspace membership.
 
+## Evaluation Semantics
+
+- A user's effective permissions are the union of all roles they hold.
+- A resource operation must target at least one of the user's groups.
+- Requests are denied when the requested scope does not match any group.
+
+## Post-login Routing
+
+| Role | Dev URL | Staging URL | Prod URL |
+| --- | --- | --- | --- |
+| super_admin | https://dev.gateway.makrx.org/admin | https://staging.gateway.makrx.org/admin | https://gateway.makrx.org/admin |
+| admin | https://dev.gateway.makrx.org/admin | https://staging.gateway.makrx.org/admin | https://gateway.makrx.org/admin |
+| makerspace_admin | https://dev.makrcave.makrx.org | https://staging.makrcave.makrx.org | https://makrcave.makrx.org |
+| service_provider | https://dev.store.makrx.org/provider | https://staging.store.makrx.org/provider | https://store.makrx.org/provider |
+| user | https://dev.makrcave.makrx.org | https://staging.makrcave.makrx.org | https://makrcave.makrx.org |
+
+## Token Contents
+
+Mandatory claims:
+
+- `sub`
+- `email`
+- `roles`
+- `groups`
+- Standard JWT fields (`iat`, `exp`, `iss`, `aud`)
+
+Optional claims:
+
+- `makerspace_id`
+- `provider_id`
+
+PII limited to email.
+
+## Governance
+
+- **Group creation:** Identity team creates groups and slugs.
+- **Membership management:** Makerspace or provider admins manage membership within their scope.
+- **Role grants:** Super admins or automated workflows assign roles upon approved requests.
+
+## Migration
+
+Checklist for renaming roles/groups or backfilling attributes:
+
+- [ ] Update role and group slugs in the identity provider.
+- [ ] Adjust application role mappings.
+- [ ] Backfill `makerspace_id` and `provider_id` claims.
+- [ ] Notify affected teams of the changes.
+
+Current migrations: N/A
+
+## RBAC v1 (Frozen)
+
+This document defines RBAC v1. Future changes require an Architecture Decision Record (ADR) and sign-off from Frontend, Backend, and Identity owners before the document is marked frozen.
+
 ---
 
 **Review Sign-off**
