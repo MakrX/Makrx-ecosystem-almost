@@ -6,5 +6,53 @@
   "bruteForceProtected": true,
   "failureFactor": 5,
   "permanentLockout": false,
-  "sslRequired": "external"
+  "sslRequired": "external",
+  "passwordPolicy": "length(12) and lowerCase(1) and upperCase(1) and digits(1) and specialChars(1) and passwordHistory(5)",
+  "accessTokenLifespan": 600,
+  "accessTokenLifespanForImplicitFlow": 600,
+  "refreshTokenLifespan": 2700,
+  "refreshTokenLifespanRememberMe": 2592000,
+  "ssoSessionIdleTimeout": 2700,
+  "ssoSessionMaxLifespan": 28800,
+  "ssoSessionIdleTimeoutRememberMe": 2592000,
+  "ssoSessionMaxLifespanRememberMe": 2592000,
+  "offlineSessionIdleTimeout": 2592000,
+  "offlineSessionMaxLifespan": 0,
+  "roles": {
+    "realm": [
+      {
+        "name": "super_admin",
+        "description": "full, cross-tenant control.",
+        "composite": true,
+        "composites": {
+          "realm": [
+            "offline_access"
+          ]
+        }
+      },
+      {
+        "name": "admin",
+        "description": "organization/tenant admin (not global).",
+        "composite": true,
+        "composites": {
+          "realm": [
+            "offline_access"
+          ]
+        }
+      },
+      {
+        "name": "makerspace_admin",
+        "description": "manages a single makerspace."
+      },
+      {
+        "name": "service_provider",
+        "description": "manages own jobs/materials; no makerspace governance."
+      },
+      {
+        "name": "user",
+        "description": "end-user privileges."
+      }
+    ]
+  }
 }
+
