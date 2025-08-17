@@ -4,6 +4,9 @@
   "description": "MakrX Shared TypeScript Types",
   "main": "index.ts",
   "types": "index.ts",
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "dev": "tsc --watch",
     "build": "tsc",
