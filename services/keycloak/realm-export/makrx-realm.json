@@ -525,23 +525,23 @@
     "realm": [
       {
         "name": "super_admin",
-        "description": "Super administrator with full system access"
+        "description": "full, cross-tenant control."
       },
       {
         "name": "admin",
-        "description": "Administrator with elevated permissions"
+        "description": "organization/tenant admin (not global)."
       },
       {
         "name": "makerspace_admin",
-        "description": "Makerspace administrator"
-      },
-      {
-        "name": "user",
-        "description": "Standard user"
+        "description": "manages a single makerspace."
       },
       {
         "name": "service_provider",
-        "description": "Service provider for manufacturing and fulfillment"
+        "description": "manages own jobs/materials; no makerspace governance."
+      },
+      {
+        "name": "user",
+        "description": "end-user privileges."
       }
     ]
   },
