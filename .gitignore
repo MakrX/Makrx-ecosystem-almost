@@ -38,3 +38,4 @@ env/
 .env*
 !.env.example
 !.env.production.template
+!.env.production.example
