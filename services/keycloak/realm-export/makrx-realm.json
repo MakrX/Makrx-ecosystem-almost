@@ -627,10 +627,11 @@
             "claim.name": "service_provider_id",
             "jsonType.label": "String"
           }
-        ]
-      }
-    ],
-    "clientScopes": [
+        }
+      ]
+    }
+  ],
+  "clientScopes": [
     {
       "name": "makrcave-backend-scope",
       "description": "Service scope for MakrCave backend",
@@ -753,25 +754,10 @@
   ],
   "groups": [
     {
-      "name": "Administrators",
-      "path": "/Administrators",
-      "realmRoles": [
-        "admin",
-        "super_admin"
-      ]
-    },
-    {
-      "name": "Service Providers",
-      "path": "/Service Providers",
-      "realmRoles": [
-        "service_provider"
-      ]
-    },
-    {
       "name": "makerspace:example",
       "path": "/makerspace:example",
       "attributes": {
-        "id": ["makerspace-example"],
+        "makerspace_id": ["453d2948-0be2-48b6-8a77-b21001693c6a"],
         "display_name": ["Example Makerspace"]
       },
       "realmRoles": [
@@ -782,7 +768,7 @@
       "name": "provider:example",
       "path": "/provider:example",
       "attributes": {
-        "id": ["provider-example"],
+        "provider_id": ["87ad974e-c442-4d9b-b205-3a48f61b6bec"],
         "display_name": ["Example Provider"]
       },
       "realmRoles": [
@@ -793,7 +779,7 @@
       "name": "org:example",
       "path": "/org:example",
       "attributes": {
-        "id": ["org-example"],
+        "org_id": ["3b1a3feb-1026-48e2-8b1c-97f521cb66b8"],
         "display_name": ["Example Organization"]
       },
       "realmRoles": []
