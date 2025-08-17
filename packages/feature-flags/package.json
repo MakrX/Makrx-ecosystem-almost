@@ -4,6 +4,9 @@
   "description": "Comprehensive feature flag system for MakrX ecosystem",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "dev": "tsc --watch",
     "build": "tsc",

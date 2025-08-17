@@ -4,6 +4,9 @@
   "description": "MakrX Shared UI Components",
   "main": "index.ts",
   "types": "index.ts",
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "dev": "tsc --watch",
     "build": "tsc",
