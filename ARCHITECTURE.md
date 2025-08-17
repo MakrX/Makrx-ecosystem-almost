@@ -1,5 +1,7 @@
 # MakrX Architecture Overview
 
+**Supported in Production:** services outside `/experimental/`; **Experiments (not shipped):** everything under `/experimental/`.
+
 This document provides a quick reference for how the ecosystem fits together so a new engineer can trace a request and know where to add features.
 
 ## System Map
