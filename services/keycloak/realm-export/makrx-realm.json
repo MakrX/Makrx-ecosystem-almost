@@ -770,6 +770,10 @@
     {
       "name": "makerspace:example",
       "path": "/makerspace:example",
+      "attributes": {
+        "id": ["makerspace-example"],
+        "display_name": ["Example Makerspace"]
+      },
       "realmRoles": [
         "makerspace_admin"
       ]
@@ -777,9 +781,22 @@
     {
       "name": "provider:example",
       "path": "/provider:example",
+      "attributes": {
+        "id": ["provider-example"],
+        "display_name": ["Example Provider"]
+      },
       "realmRoles": [
         "service_provider"
       ]
+    },
+    {
+      "name": "org:example",
+      "path": "/org:example",
+      "attributes": {
+        "id": ["org-example"],
+        "display_name": ["Example Organization"]
+      },
+      "realmRoles": []
     }
   ]
 }
