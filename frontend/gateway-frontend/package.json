@@ -24,7 +24,7 @@
     "format": "prettier --config ../../.prettierrc --ignore-path ../../.prettierignore --write ."
   },
   "dependencies": {
-    "@tanstack/react-query": "^5.0.0",
+    "@tanstack/react-query": "^5.56.2",
     "@vitejs/plugin-react": "^5.0.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
