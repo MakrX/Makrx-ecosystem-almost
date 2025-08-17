@@ -33,6 +33,6 @@
     "pydantic": "^2.5.0"
   },
   "python": {
-    "version": ">=3.8"
+    "version": ">=3.11"
   }
 }

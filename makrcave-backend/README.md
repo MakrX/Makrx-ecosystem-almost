@@ -17,7 +17,7 @@ For an overview of how this service fits into the ecosystem, see the [MakrX arch
 
 ## 📋 Prerequisites
 
-- Python 3.8 or higher
+- Python 3.11
 - pip (Python package installer)
 
 ## 🛠️ Installation
