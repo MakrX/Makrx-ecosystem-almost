@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { handleAuthCallback } from "@/lib/auth";
+import { handleAuthCallback, getCurrentUser } from "@/lib/auth";
+import { getRoleRedirect } from "@/lib/roleRedirect";
 import { Loader2, CheckCircle, XCircle } from "lucide-react";
 
 export default function AuthCallbackPage() {
@@ -21,19 +22,20 @@ export default function AuthCallbackPage() {
 
         // Process the auth callback via Keycloak adapter
         const success = await handleAuthCallback();
-        
+
         if (success) {
           setStatus('success');
-          
-          // Get stored redirect URL or default to home
-          const redirectUrl = sessionStorage.getItem('makrx_redirect_url') || 
-                            localStorage.getItem('makrx_pre_login_url') || 
-                            '/';
-          
+          const user = getCurrentUser();
+          const defaultUrl = getRoleRedirect(user?.roles);
+          const redirectUrl =
+            sessionStorage.getItem('makrx_redirect_url') ||
+            localStorage.getItem('makrx_pre_login_url') ||
+            defaultUrl;
+
           // Clear stored URLs
           sessionStorage.removeItem('makrx_redirect_url');
           localStorage.removeItem('makrx_pre_login_url');
-          
+
           // Small delay for better UX
           setTimeout(() => {
             router.push(redirectUrl);
