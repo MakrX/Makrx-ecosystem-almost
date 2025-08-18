@@ -27,3 +27,11 @@
 ### Notes
 - Rotate the default `admin` credentials after deployment and on a regular schedule.
 - Create a 2FA-enabled break-glass account and store its credentials securely for emergency use only.
+
+## Frontend Clients
+
+| Client ID | standardFlowEnabled | implicitFlowEnabled | directAccessGrantsEnabled | pkce.code.challenge.method | Redirect URIs | Web Origins | Post-logout Redirect URIs |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| makrx-gateway-frontend | true | false | false | S256 | Localhost: `http://localhost:3000/auth/callback`<br>Staging: `https://staging.gateway.makrx.org/auth/callback`<br>Prod: `https://gateway.makrx.org/auth/callback` | Localhost: `http://localhost:3000`<br>Staging: `https://staging.gateway.makrx.org`<br>Prod: `https://gateway.makrx.org` | Localhost: `http://localhost:3000/`<br>Staging: `https://staging.gateway.makrx.org/`<br>Prod: `https://gateway.makrx.org/` |
+| makrcave-frontend | true | false | false | S256 | Localhost: `http://localhost:3001/auth/callback`<br>Staging: `https://staging.makrcave.makrx.org/auth/callback`<br>Prod: `https://makrcave.makrx.org/auth/callback` | Localhost: `http://localhost:3001`<br>Staging: `https://staging.makrcave.makrx.org`<br>Prod: `https://makrcave.makrx.org` | Localhost: `http://localhost:3001/`<br>Staging: `https://staging.makrcave.makrx.org/`<br>Prod: `https://makrcave.makrx.org/` |
+| makrx-store-frontend | true | false | false | S256 | Localhost: `http://localhost:3002/auth/callback`<br>Staging: `https://staging.store.makrx.org/auth/callback`<br>Prod: `https://store.makrx.org/auth/callback` | Localhost: `http://localhost:3002`<br>Staging: `https://staging.store.makrx.org`<br>Prod: `https://store.makrx.org` | Localhost: `http://localhost:3002/`<br>Staging: `https://staging.store.makrx.org/`<br>Prod: `https://store.makrx.org/` |
