@@ -71,3 +71,9 @@ These claims allow downstream services to perform authorization decisions based 
 - Brute-force detection locks accounts after 5 failed attempts.
 - Registration is disabled in production; other environments may enable it as needed.
 - SSL is required for staging and production environments.
+
+## UX
+
+- MakrX login theme applied across login, verify, reset, consent, error flows.
+- ToS/Privacy links validated.
+- Internationalization disabled unless translations available.
