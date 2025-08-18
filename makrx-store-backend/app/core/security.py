@@ -53,7 +53,7 @@ async def decode_token(token: str) -> dict:
             token,
             key,
             algorithms=["RS256"],
-            audience=settings.KEYCLOAK_AUDIENCE,
+            audience=settings.KEYCLOAK_CLIENT_ID,
             issuer=settings.KEYCLOAK_ISSUER,
         )
 
@@ -141,4 +141,3 @@ def require_role(required_roles: List[str]):
 # Convenience dependencies
 require_admin = require_role(["admin", "super_admin"])
 require_super_admin = require_role(["super_admin"])
-
