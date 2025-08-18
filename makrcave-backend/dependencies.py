@@ -68,6 +68,13 @@ async def validate_token(token: str) -> dict:
     """Validate token using Keycloak JWKS"""
     try:
         header = jwt.get_unverified_header(token)
+        alg = header.get("alg")
+        if alg != "RS256":
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid token algorithm",
+                headers={"WWW-Authenticate": "Bearer"},
+            )
         kid = header.get("kid")
         jwks = await get_jwks()
         key = next((k for k in jwks.get("keys", []) if k.get("kid") == kid), None)
@@ -81,9 +88,51 @@ async def validate_token(token: str) -> dict:
             token,
             key,
             algorithms=["RS256"],
-            audience=KEYCLOAK_AUDIENCE,
-            issuer=KEYCLOAK_ISSUER,
+            options={
+                "verify_aud": False,
+                "verify_iss": False,
+                "verify_iat": True,
+                "verify_nbf": True,
+                "verify_exp": True,
+                "leeway": 60,
+            },
         )
+        if payload.get("iss") != KEYCLOAK_ISSUER:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid token issuer",
+                headers={"WWW-Authenticate": "Bearer"},
+            )
+        aud_claim = payload.get("aud", [])
+        if isinstance(aud_claim, str):
+            aud_claim = [aud_claim]
+        if KEYCLOAK_AUDIENCE not in aud_claim:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid token audience",
+                headers={"WWW-Authenticate": "Bearer"},
+            )
+        current_ts = datetime.utcnow().timestamp()
+        nbf = payload.get("nbf")
+        if nbf and nbf > current_ts + 60:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Token not yet valid",
+                headers={"WWW-Authenticate": "Bearer"},
+            )
+        iat = payload.get("iat")
+        if iat and iat > current_ts + 60:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid token issued-at",
+                headers={"WWW-Authenticate": "Bearer"},
+            )
+        if payload.get("typ") != "Bearer":
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid token type",
+                headers={"WWW-Authenticate": "Bearer"},
+            )
         filtered_payload = {
             "sub": payload.get("sub"),
             "email": payload.get("email"),
