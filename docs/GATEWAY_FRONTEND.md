@@ -96,7 +96,7 @@ export const makrxTheme = {
 const keycloakConfig = {
   url: process.env.VITE_KEYCLOAK_URL,
   realm: "makrx",
-  clientId: "makrx-gateway",
+  clientId: "makrx-gateway-frontend",
 };
 ```
 
@@ -151,11 +151,11 @@ VITE_NODE_ENV=production
 # Authentication (Keycloak SSO)
 VITE_KEYCLOAK_URL=https://auth.makrx.org
 VITE_KEYCLOAK_REALM=makrx
-VITE_KEYCLOAK_CLIENT_ID=makrx-gateway
+VITE_KEYCLOAK_CLIENT_ID=makrx-gateway-frontend
 
 # Portal Integration
-VITE_MAKRCAVE_URL=https://makrcave.makrx.org
-VITE_STORE_URL=https://store.makrx.org
+VITE_MAKRCAVE_URL=https://makrcave.com
+VITE_STORE_URL=https://makrx.store
 VITE_LEARN_URL=https://learn.makrx.org
 
 # API Configuration
@@ -526,15 +526,16 @@ Create client for the Gateway Frontend:
 
 ```json
 {
-  "clientId": "makrx-gateway",
+  "clientId": "makrx-gateway-frontend",
   "enabled": true,
   "protocol": "openid-connect",
   "publicClient": true,
-  "redirectUris": ["https://makrx.org/*", "http://localhost:5173/*"],
-  "webOrigins": ["https://makrx.org", "http://localhost:5173"],
+  "redirectUris": ["https://makrx.org/*", "http://localhost:3000/*"],
+  "webOrigins": ["https://makrx.org", "http://localhost:3000"],
   "attributes": {
     "pkce.code.challenge.method": "S256"
-  }
+  },
+  "postLogoutRedirectUris": ["https://makrx.org/", "http://localhost:3000/"]
 }
 ```
 
@@ -577,13 +578,13 @@ const crossPortalConfig = {
   portals: [
     {
       name: "makrcave",
-      url: "https://makrcave.makrx.org",
-      clientId: "makrx-makrcave",
+      url: "https://makrcave.com",
+      clientId: "makrcave-frontend",
     },
     {
       name: "store",
-      url: "https://store.makrx.org",
-      clientId: "makrx-store",
+      url: "https://makrx.store",
+      clientId: "makrx-store-frontend",
     },
     {
       name: "learn",

@@ -32,9 +32,9 @@
 
 | Client ID | standardFlowEnabled | implicitFlowEnabled | directAccessGrantsEnabled | pkce.code.challenge.method | Redirect URIs | Web Origins | Post-logout Redirect URIs |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| makrx-gateway-frontend | true | false | false | S256 | Localhost: `http://localhost:3000/auth/callback`<br>Staging: `https://staging.gateway.makrx.org/auth/callback`<br>Prod: `https://gateway.makrx.org/auth/callback` | Localhost: `http://localhost:3000`<br>Staging: `https://staging.gateway.makrx.org`<br>Prod: `https://gateway.makrx.org` | Localhost: `http://localhost:3000/`<br>Staging: `https://staging.gateway.makrx.org/`<br>Prod: `https://gateway.makrx.org/` |
-| makrcave-frontend | true | false | false | S256 | Localhost: `http://localhost:3001/auth/callback`<br>Staging: `https://staging.makrcave.makrx.org/auth/callback`<br>Prod: `https://makrcave.makrx.org/auth/callback` | Localhost: `http://localhost:3001`<br>Staging: `https://staging.makrcave.makrx.org`<br>Prod: `https://makrcave.makrx.org` | Localhost: `http://localhost:3001/`<br>Staging: `https://staging.makrcave.makrx.org/`<br>Prod: `https://makrcave.makrx.org/` |
-| makrx-store-frontend | true | false | false | S256 | Localhost: `http://localhost:3002/auth/callback`<br>Staging: `https://staging.store.makrx.org/auth/callback`<br>Prod: `https://store.makrx.org/auth/callback` | Localhost: `http://localhost:3002`<br>Staging: `https://staging.store.makrx.org`<br>Prod: `https://store.makrx.org` | Localhost: `http://localhost:3002/`<br>Staging: `https://staging.store.makrx.org/`<br>Prod: `https://store.makrx.org/` |
+| makrx-gateway-frontend | true | false | false | S256 | Dev: `http://localhost:3000/*`<br>Staging/Prod: `https://makrx.org/*` | Dev: `http://localhost:3000`<br>Staging/Prod: `https://makrx.org` | Dev: `http://localhost:3000/`<br>Staging/Prod: `https://makrx.org/` |
+| makrcave-frontend | true | false | false | S256 | Dev: `http://localhost:3001/*`<br>Staging/Prod: `https://makrcave.com/*` | Dev: `http://localhost:3001`<br>Staging/Prod: `https://makrcave.com` | Dev: `http://localhost:3001/`<br>Staging/Prod: `https://makrcave.com/` |
+| makrx-store-frontend | true | false | false | S256 | Dev: `http://localhost:3002/*`<br>Staging/Prod: `https://makrx.store/*` | Dev: `http://localhost:3002`<br>Staging/Prod: `https://makrx.store` | Dev: `http://localhost:3002/`<br>Staging/Prod: `https://makrx.store/` |
 
 ## Backend Clients and Service Accounts
 
