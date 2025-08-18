@@ -5,6 +5,18 @@
 2. Navigate to **Realm Settings → Security** and enable **Brute Force Detection**. Set thresholds such as **5 failed attempts** leading to a temporary lockout.
 3. In **Realm Settings → Login**, disable **User registration** in production. Enable it only in development or staging if self-service sign-up is required.
 4. Under **Realm Settings → General**, enable **Require SSL for external requests** in staging and production realms.
+5. In **Realm Settings → Password Policy**, enforce strong credentials:
+   - Minimum length 12 characters
+   - Require lower-case, upper-case, digit and special character
+   - Disallow reuse of the last 5 passwords
+
+## Token and Session Settings
+1. In **Realm Settings → Tokens**, set:
+   - **Access token lifespan** to 10 minutes
+   - **Refresh token lifespan** to 45 minutes
+2. Under **Realm Settings → Sessions**, set **SSO Session Idle** to 45 minutes (30–60 minute range) and **SSO Session Max** to 8 hours.
+3. Disable **Offline tokens** entirely or grant the `offline_access` role only to administrator groups.
+4. Enable **Remember Me** only on non-shared devices when longer SSO sessions are required.
 
 ## Service Account Clients
 1. In the admin console, go to **Clients → Create** and add two confidential clients:
