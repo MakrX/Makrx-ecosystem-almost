@@ -1,5 +1,11 @@
 # Keycloak Operations Runbook
 
+## Realm Security Settings
+1. In the admin console, go to **Realm Settings → Login** and enable **Verify Email**.
+2. Navigate to **Realm Settings → Security** and enable **Brute Force Detection**. Set thresholds such as **5 failed attempts** leading to a temporary lockout.
+3. In **Realm Settings → Login**, disable **User registration** in production. Enable it only in development or staging if self-service sign-up is required.
+4. Under **Realm Settings → General**, enable **Require SSL for external requests** in staging and production realms.
+
 ## Service Account Clients
 1. In the admin console, go to **Clients → Create** and add two confidential clients:
    - `makrcave-backend`
