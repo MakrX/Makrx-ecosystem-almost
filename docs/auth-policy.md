@@ -1,6 +1,14 @@
 # Authentication Policy
 
-MakrX uses Keycloak for single sign-on across all applications. This policy defines token lifetimes, session limits and logout behavior.
+MakrX uses Keycloak for single sign-on across all applications. This policy defines password requirements, token lifetimes, session limits and logout behavior.
+
+## Password Policy
+
+The realm enforces a length + history + character variety policy:
+
+- Minimum length **12** characters
+- Must include at least one lowercase, one uppercase, one digit and one special character
+- Users cannot reuse their last **5** passwords
 
 ## Token Lifetimes
 
@@ -15,7 +23,7 @@ MakrX uses Keycloak for single sign-on across all applications. This policy defi
 
 - Sessions become idle after **45 minutes** of inactivity and require re-authentication.
 - Active sessions end after **8 hours** regardless of activity.
-- **Remember me** restores sessions after browser restarts until the extended refresh or offline token expires.
+- **Remember me** restores sessions after browser restarts until the extended refresh or offline token expires; enable this only on non-shared devices when longer SSO sessions are desired.
 - All frontends show a banner one minute before token expiry so users can renew their session.
 
 ## Global Logout
