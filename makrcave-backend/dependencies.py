@@ -1,13 +1,13 @@
 import logging
 import os
-from datetime import datetime, timedelta
+from datetime import datetime
 from typing import Optional
 
-import httpx
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from jose import jwt
-from jose.exceptions import ExpiredSignatureError, JWTClaimsError, JWTError
+from jose.exceptions import JWTError
+from security import jwks
 
 # Configure logging
 logger = logging.getLogger(__name__)
@@ -19,18 +19,7 @@ KEYCLOAK_AUDIENCE = os.getenv("KEYCLOAK_AUDIENCE", "makrcave-backend")
 KEYCLOAK_ISSUER = f"{KEYCLOAK_URL}/realms/{KEYCLOAK_REALM}"
 JWKS_URL = f"{KEYCLOAK_ISSUER}/protocol/openid-connect/certs"
 
-# Global HTTP client for token validation
-http_client = None
-jwks_cache = None
-jwks_cache_expiry = None
-
-
-async def get_http_client():
-    global http_client
-    if http_client is None:
-        http_client = httpx.AsyncClient(timeout=30.0)
-    return http_client
-
+ALLOWED_ALGS = {"RS256"}
 
 security = HTTPBearer()
 
@@ -51,58 +40,35 @@ class CurrentUser:
         self.makerspace_id = makerspace_id
 
 
-async def get_jwks() -> dict:
-    """Fetch and cache JWKS from Keycloak"""
-    global jwks_cache, jwks_cache_expiry
-    if jwks_cache and jwks_cache_expiry and datetime.utcnow() < jwks_cache_expiry:
-        return jwks_cache
-    client = await get_http_client()
-    response = await client.get(JWKS_URL)
-    response.raise_for_status()
-    jwks_cache = response.json()
-    jwks_cache_expiry = datetime.utcnow() + timedelta(hours=1)
-    return jwks_cache
-
-
 async def validate_token(token: str) -> dict:
     """Validate token using Keycloak JWKS"""
     try:
         header = jwt.get_unverified_header(token)
-        alg = header.get("alg")
-        if alg != "RS256":
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Invalid token algorithm",
-                headers={"WWW-Authenticate": "Bearer"},
-            )
         kid = header.get("kid")
-        jwks = await get_jwks()
-        key = next((k for k in jwks.get("keys", []) if k.get("kid") == kid), None)
-        if not key:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Invalid token",
-                headers={"WWW-Authenticate": "Bearer"},
-            )
+        alg = header.get("alg")
+
+        key = await jwks.get_jwk(kid, JWKS_URL)
+
         payload = jwt.decode(
             token,
             key,
-            algorithms=["RS256"],
+            algorithms=[alg],
             options={
                 "verify_aud": False,
                 "verify_iss": False,
-                "verify_iat": True,
-                "verify_nbf": True,
-                "verify_exp": True,
-                "leeway": 60,
+                "verify_iat": False,
+                "verify_nbf": False,
+                "verify_exp": False,
             },
         )
+
         if payload.get("iss") != KEYCLOAK_ISSUER:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Invalid token issuer",
                 headers={"WWW-Authenticate": "Bearer"},
             )
+
         aud_claim = payload.get("aud", [])
         if isinstance(aud_claim, str):
             aud_claim = [aud_claim]
@@ -112,32 +78,48 @@ async def validate_token(token: str) -> dict:
                 detail="Invalid token audience",
                 headers={"WWW-Authenticate": "Bearer"},
             )
+
         current_ts = datetime.utcnow().timestamp()
+        leeway = 60
+        exp = payload.get("exp")
+        if exp and exp < current_ts - leeway:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Token has expired",
+                headers={"WWW-Authenticate": "Bearer"},
+            )
         nbf = payload.get("nbf")
-        if nbf and nbf > current_ts + 60:
+        if nbf and nbf > current_ts + leeway:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Token not yet valid",
                 headers={"WWW-Authenticate": "Bearer"},
             )
         iat = payload.get("iat")
-        if iat and iat > current_ts + 60:
+        if iat and iat > current_ts + leeway:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Invalid token issued-at",
                 headers={"WWW-Authenticate": "Bearer"},
             )
+
+        if alg not in ALLOWED_ALGS:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid token algorithm",
+                headers={"WWW-Authenticate": "Bearer"},
+            )
+
         if payload.get("typ") != "Bearer":
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Invalid token type",
                 headers={"WWW-Authenticate": "Bearer"},
             )
+
         filtered_payload = {
             "sub": payload.get("sub"),
             "email": payload.get("email"),
-            "email_verified": payload.get("email_verified"),
-            "preferred_username": payload.get("preferred_username"),
             "realm_access": {"roles": payload.get("realm_access", {}).get("roles", [])},
             "groups": payload.get("groups", []),
         }
@@ -146,13 +128,9 @@ async def validate_token(token: str) -> dict:
         if "provider_id" in payload:
             filtered_payload["provider_id"] = payload["provider_id"]
         return filtered_payload
-    except ExpiredSignatureError:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Token has expired",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
-    except (JWTClaimsError, JWTError) as exc:
+    except HTTPException:
+        raise
+    except JWTError as exc:
         logger.error(f"Token validation error: {exc}")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -193,7 +171,7 @@ async def get_current_user(
         # Extract user information
         user_id = user_data.get("sub")
         email = user_data.get("email", "")
-        username = user_data.get("preferred_username") or email
+        username = email
 
         # Extract roles from realm_access only
         keycloak_roles = user_data.get("realm_access", {}).get("roles", [])
