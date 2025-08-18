@@ -345,20 +345,66 @@ def require_roles(roles: list[str]):
 
 
 def require_scope(scopes: list[str] | str):
-    """Require that the JWT contains one of the specified scopes."""
+    """Require that the JWT contains one of the specified scopes and verify
+    group ownership."""
 
     required_scopes = [scopes] if isinstance(scopes, str) else scopes
 
-    def scope_checker(token: dict = Depends(get_current_token)):
+    def scope_checker(request: Request, token: dict = Depends(get_current_token)):
         token_scopes = token.get("scope", "").split()
+        token_roles = token.get("realm_access", {}).get("roles", [])
+        token_groups = token.get("groups", [])
+
+        # Allow makerspace and super admins to bypass scope restrictions
+        if any(role in token_roles for role in ["makerspace_admin", "super_admin"]):
+            return token
+
         if not any(scope in token_scopes for scope in required_scopes):
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail=(
-                    "Insufficient scope. Required scopes: "
-                    + ", ".join(required_scopes)
+                    "Insufficient scope. Required scopes: " + ", ".join(required_scopes)
                 ),
             )
+
+        for required in required_scopes:
+            if required == "makerspace":
+                makerspace_id = (
+                    request.path_params.get("makerspace_id")
+                    or request.query_params.get("makerspace_id")
+                    or token.get("makerspace_id")
+                )
+                if makerspace_id and f"makerspace:{makerspace_id}" not in token_groups:
+                    raise HTTPException(
+                        status_code=status.HTTP_403_FORBIDDEN,
+                        detail="Insufficient makerspace scope",
+                    )
+
+            if required == "provider":
+                provider_id = (
+                    request.path_params.get("provider_id")
+                    or request.query_params.get("provider_id")
+                    or token.get("provider_id")
+                )
+                if provider_id and f"provider:{provider_id}" not in token_groups:
+                    raise HTTPException(
+                        status_code=status.HTTP_403_FORBIDDEN,
+                        detail="Insufficient provider scope",
+                    )
+
+            if required == "self":
+                owner_id = (
+                    request.path_params.get("user_id")
+                    or request.path_params.get("owner_id")
+                    or request.query_params.get("user_id")
+                    or request.query_params.get("owner_id")
+                )
+                if owner_id and owner_id != token.get("sub"):
+                    raise HTTPException(
+                        status_code=status.HTTP_403_FORBIDDEN,
+                        detail="Access denied. Resource ownership mismatch",
+                    )
+
         return token
 
     return scope_checker
