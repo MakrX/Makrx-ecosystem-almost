@@ -1,17 +1,19 @@
+import datetime
 import os
 import sys
-import datetime
+from unittest.mock import AsyncMock
+
 import pytest
+from cryptography.hazmat.primitives import serialization
+from cryptography.hazmat.primitives.asymmetric import rsa
 from fastapi import HTTPException
 from jose import jwt
 from jose.utils import base64url_encode
-from cryptography.hazmat.primitives.asymmetric import rsa
-from cryptography.hazmat.primitives import serialization
-from unittest.mock import AsyncMock
 
 # Allow importing dependencies module
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 import dependencies  # noqa: E402
+from security import jwks as jwks_module  # noqa: E402
 
 # Generate RSA key pair for tests
 _private_key = rsa.generate_private_key(public_exponent=65537, key_size=2048)
@@ -39,8 +41,8 @@ JWKS = {
 def patch_env(monkeypatch):
     monkeypatch.setattr(dependencies, "KEYCLOAK_AUDIENCE", "makrcave-backend")
     monkeypatch.setattr(dependencies, "KEYCLOAK_ISSUER", "http://keycloak/realms/makrx")
-    monkeypatch.setattr(dependencies, "get_jwks", AsyncMock(return_value=JWKS))
-    dependencies.jwks_cache = None
+    monkeypatch.setattr(jwks_module, "get_jwk", AsyncMock(return_value=JWKS["keys"][0]))
+    jwks_module._jwks_cache.clear()
     yield
 
 
@@ -58,7 +60,7 @@ def make_token(overrides=None, *, alg="RS256"):
     if overrides:
         payload.update(overrides)
     headers = {"kid": "test-key", "alg": alg}
-    key = PRIVATE_PEM if alg == "RS256" else "secret"
+    key = PRIVATE_PEM if alg.startswith("RS") else "secret"
     return jwt.encode(payload, key, algorithm=alg, headers=headers)
 
 
@@ -78,7 +80,7 @@ async def test_rejects_wrong_audience():
 
 @pytest.mark.asyncio
 async def test_rejects_wrong_algorithm():
-    token = make_token({}, alg="HS256")
+    token = make_token({}, alg="RS384")
     with pytest.raises(HTTPException):
         await dependencies.validate_token(token)
 
