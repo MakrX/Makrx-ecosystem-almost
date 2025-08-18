@@ -87,6 +87,16 @@ These roles determine the actions a user can perform:
 
 ## Post-login Routing
 
+Role routing resolves in the following priority order. The first matching role wins:
+
+1. `super_admin`
+2. `admin`
+3. `makerspace_admin`
+4. `service_provider`
+5. `user`
+
+If a user has no recognized role, they fall back to the `user` dashboard.
+
 | Role | Dev URL | Staging URL | Prod URL |
 | --- | --- | --- | --- |
 | super_admin | https://dev.gateway.makrx.org/admin | https://staging.gateway.makrx.org/admin | https://gateway.makrx.org/admin |
@@ -94,6 +104,7 @@ These roles determine the actions a user can perform:
 | makerspace_admin | https://dev.makrcave.makrx.org | https://staging.makrcave.makrx.org | https://makrcave.makrx.org |
 | service_provider | https://dev.store.makrx.org/provider | https://staging.store.makrx.org/provider | https://store.makrx.org/provider |
 | user | https://dev.makrcave.makrx.org | https://staging.makrcave.makrx.org | https://makrcave.makrx.org |
+
 
 ## Token Contents
 
