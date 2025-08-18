@@ -22,7 +22,7 @@ The Gateway Frontend is designed to be highly configurable and customizable whil
 # Keycloak SSO Configuration
 VITE_KEYCLOAK_URL=https://auth.yourdomain.com
 VITE_KEYCLOAK_REALM=makrx
-VITE_KEYCLOAK_CLIENT_ID=makrx-gateway
+VITE_KEYCLOAK_CLIENT_ID=makrx-gateway-frontend
 
 # Authentication behavior
 VITE_AUTH_AUTO_LOGIN=false
@@ -33,8 +33,8 @@ VITE_AUTH_SESSION_TIMEOUT=28800
 #### Portal Integration
 ```env
 # MakrX Ecosystem URLs
-VITE_MAKRCAVE_URL=https://makrcave.yourdomain.com
-VITE_STORE_URL=https://store.yourdomain.com
+VITE_MAKRCAVE_URL=https://makrcave.com
+VITE_STORE_URL=https://makrx.store
 VITE_LEARN_URL=https://learn.yourdomain.com
 
 # API Endpoints

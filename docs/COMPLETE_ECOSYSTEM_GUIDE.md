@@ -217,7 +217,7 @@ frontend-app/
 # Authentication
 VITE_KEYCLOAK_URL=http://localhost:8080
 VITE_KEYCLOAK_REALM=makrx
-VITE_KEYCLOAK_CLIENT_ID=makrx-org-frontend
+VITE_KEYCLOAK_CLIENT_ID=makrx-gateway-frontend
 
 # API Endpoints
 VITE_MAKRCAVE_API_URL=http://localhost:8002

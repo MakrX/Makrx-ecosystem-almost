@@ -116,11 +116,11 @@ For production deployment, follow the comprehensive guides:
 # Authentication
 VITE_KEYCLOAK_URL=https://auth.yourdomain.com
 VITE_KEYCLOAK_REALM=makrx
-VITE_KEYCLOAK_CLIENT_ID=makrx-gateway
+VITE_KEYCLOAK_CLIENT_ID=makrx-gateway-frontend
 
 # Portal Integration
-VITE_MAKRCAVE_URL=https://makrcave.yourdomain.com
-VITE_STORE_URL=https://store.yourdomain.com
+VITE_MAKRCAVE_URL=https://makrcave.com
+VITE_STORE_URL=https://makrx.store
 VITE_LEARN_URL=https://learn.yourdomain.com
 
 # Company Information (MUST UPDATE FOR PRODUCTION)
