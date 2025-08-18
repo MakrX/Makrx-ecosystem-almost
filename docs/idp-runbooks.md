@@ -15,13 +15,14 @@
 
 ### Enable login and admin events
 1. In the identity provider admin console, open **Realm Settings** → **Events**.
-2. Under **Login Events**, enable **Save Events**.
-3. Under **Admin Events**, enable **Save Events** and include representations if needed.
-4. Save the settings.
+2. Under **Login Events**, toggle **Save Events**.
+3. Under **Admin Events**, toggle **Save Events** and, if required, **Include representation**.
+4. Click **Save** to apply.
 
 ### View events
-- Login events: **Events** → **View**.
-- Admin events: **Events** → **Admin Events**.
+1. From the left-hand menu, open **Events**.
+2. To review login activity, select **View**.
+3. To review administrative changes, select **Admin Events**.
 
 ### Notes
 - Rotate the default `admin` credentials after deployment and on a regular schedule.
