@@ -7,7 +7,9 @@ from typing import List, Optional
 
 import httpx
 from app.core.config import settings
-from fastapi import Depends, HTTPException, status
+from app.core.unified_auth import get_request_id
+from app.schemas.auth_error import AuthError
+from fastapi import Depends, HTTPException, Request, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from jose import jwt
 from jose.exceptions import ExpiredSignatureError, JWTClaimsError, JWTError
@@ -35,7 +37,7 @@ async def get_jwks() -> dict:
         return jwks_cache
 
 
-async def decode_token(token: str) -> dict:
+async def decode_token(token: str, request_id: Optional[str] = None) -> dict:
     """Decode and verify a JWT using the realm's JWKS."""
     try:
         header = jwt.get_unverified_header(token)
@@ -45,7 +47,12 @@ async def decode_token(token: str) -> dict:
         if not key:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Invalid token",
+                detail=AuthError(
+                    error="Unauthorized",
+                    message="Invalid token",
+                    code="invalid_token",
+                    request_id=request_id,
+                ).model_dump(),
                 headers={"WWW-Authenticate": "Bearer"},
             )
 
@@ -60,14 +67,24 @@ async def decode_token(token: str) -> dict:
     except ExpiredSignatureError:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Token expired",
+            detail=AuthError(
+                error="Unauthorized",
+                message="Token expired",
+                code="token_expired",
+                request_id=request_id,
+            ).model_dump(),
             headers={"WWW-Authenticate": "Bearer"},
         )
     except (JWTClaimsError, JWTError) as exc:
         logger.error(f"JWT verification failed: {exc}")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid token",
+            detail=AuthError(
+                error="Unauthorized",
+                message="Invalid token",
+                code="invalid_token",
+                request_id=request_id,
+            ).model_dump(),
             headers={"WWW-Authenticate": "Bearer"},
         )
 
@@ -87,6 +104,7 @@ class AuthUser:
 
 
 async def get_current_user(
+    request: Request,
     credentials: Optional[HTTPAuthorizationCredentials] = Depends(security),
 ) -> Optional[AuthUser]:
     """Extract and verify the current user from Authorization header."""
@@ -94,7 +112,8 @@ async def get_current_user(
         return None
 
     try:
-        payload = await decode_token(credentials.credentials)
+        request_id = get_request_id(request)
+        payload = await decode_token(credentials.credentials, request_id=request_id)
         roles = payload.get("realm_access", {}).get("roles", [])
         return AuthUser(
             user_id=payload.get("sub"),
@@ -111,14 +130,21 @@ async def get_current_user(
 
 
 async def require_auth(
+    request: Request,
     credentials: Optional[HTTPAuthorizationCredentials] = Depends(security),
 ) -> AuthUser:
     """Ensure a valid JWT is present."""
-    user = await get_current_user(credentials)
+    user = await get_current_user(request, credentials)
     if not user:
+        request_id = get_request_id(request)
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Authentication required",
+            detail=AuthError(
+                error="Unauthorized",
+                message="Authentication required",
+                code="authentication_required",
+                request_id=request_id,
+            ).model_dump(),
             headers={"WWW-Authenticate": "Bearer"},
         )
     return user
@@ -127,11 +153,18 @@ async def require_auth(
 def require_role(required_roles: List[str]):
     """Create a dependency that checks for required roles."""
 
-    async def role_checker(user: AuthUser = Depends(require_auth)) -> AuthUser:
+    async def role_checker(
+        request: Request, user: AuthUser = Depends(require_auth)
+    ) -> AuthUser:
         if not any(role in user.roles for role in required_roles):
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
-                detail=f"Insufficient permissions. Required: {required_roles}",
+                detail=AuthError(
+                    error="Forbidden",
+                    message=f"Insufficient permissions. Required: {required_roles}",
+                    code="insufficient_permissions",
+                    request_id=get_request_id(request),
+                ).model_dump(),
             )
         return user
 

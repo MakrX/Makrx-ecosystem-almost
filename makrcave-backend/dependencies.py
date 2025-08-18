@@ -10,6 +10,7 @@ from fastapi import Depends, HTTPException, Request, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from jose import jwt
 from jose.exceptions import JWTError
+from schemas.auth_error import AuthError
 from security import jwks
 from security.helpers import set_request_context
 
@@ -44,7 +45,7 @@ class CurrentUser:
         self.makerspace_id = makerspace_id
 
 
-async def validate_token(token: str) -> dict:
+async def validate_token(token: str, request_id: Optional[str] = None) -> dict:
     """Validate token using Keycloak JWKS"""
     try:
         header = jwt.get_unverified_header(token)
@@ -69,7 +70,12 @@ async def validate_token(token: str) -> dict:
         if payload.get("iss") != KEYCLOAK_ISSUER:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Invalid token issuer",
+                detail=AuthError(
+                    error="Unauthorized",
+                    message="Invalid token issuer",
+                    code="invalid_issuer",
+                    request_id=request_id,
+                ).model_dump(),
                 headers={"WWW-Authenticate": "Bearer"},
             )
 
@@ -79,7 +85,12 @@ async def validate_token(token: str) -> dict:
         if KEYCLOAK_AUDIENCE not in aud_claim:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Invalid token audience",
+                detail=AuthError(
+                    error="Unauthorized",
+                    message="Invalid token audience",
+                    code="invalid_audience",
+                    request_id=request_id,
+                ).model_dump(),
                 headers={"WWW-Authenticate": "Bearer"},
             )
 
@@ -89,35 +100,60 @@ async def validate_token(token: str) -> dict:
         if exp and exp < current_ts - leeway:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Token has expired",
+                detail=AuthError(
+                    error="Unauthorized",
+                    message="Token has expired",
+                    code="token_expired",
+                    request_id=request_id,
+                ).model_dump(),
                 headers={"WWW-Authenticate": "Bearer"},
             )
         nbf = payload.get("nbf")
         if nbf and nbf >= current_ts + leeway:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Token not yet valid",
+                detail=AuthError(
+                    error="Unauthorized",
+                    message="Token not yet valid",
+                    code="token_not_yet_valid",
+                    request_id=request_id,
+                ).model_dump(),
                 headers={"WWW-Authenticate": "Bearer"},
             )
         iat = payload.get("iat")
         if iat and iat > current_ts + leeway:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Invalid token issued-at",
+                detail=AuthError(
+                    error="Unauthorized",
+                    message="Invalid token issued-at",
+                    code="invalid_iat",
+                    request_id=request_id,
+                ).model_dump(),
                 headers={"WWW-Authenticate": "Bearer"},
             )
 
         if alg not in ALLOWED_ALGS:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Invalid token algorithm",
+                detail=AuthError(
+                    error="Unauthorized",
+                    message="Invalid token algorithm",
+                    code="invalid_algorithm",
+                    request_id=request_id,
+                ).model_dump(),
                 headers={"WWW-Authenticate": "Bearer"},
             )
 
         if payload.get("typ") != "Bearer":
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Invalid token type",
+                detail=AuthError(
+                    error="Unauthorized",
+                    message="Invalid token type",
+                    code="invalid_token_type",
+                    request_id=request_id,
+                ).model_dump(),
                 headers={"WWW-Authenticate": "Bearer"},
             )
 
@@ -138,7 +174,12 @@ async def validate_token(token: str) -> dict:
         logger.error(f"Token validation error: {exc}")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Token validation failed",
+            detail=AuthError(
+                error="Unauthorized",
+                message="Token validation failed",
+                code="token_validation_failed",
+                request_id=request_id,
+            ).model_dump(),
             headers={"WWW-Authenticate": "Bearer"},
         )
 
@@ -167,10 +208,9 @@ async def get_current_token(
 ) -> dict:
     """Validate the incoming JWT and populate request context."""
 
-    token = credentials.credentials
-    payload = await validate_token(token)
-
     request_id = request.headers.get("X-Request-ID") or str(uuid.uuid4())
+    token = credentials.credentials
+    payload = await validate_token(token, request_id=request_id)
     set_request_context(
         request_id=request_id,
         sub=payload.get("sub"),
@@ -181,7 +221,9 @@ async def get_current_token(
     return payload
 
 
-async def get_current_user(token: dict = Depends(get_current_token)) -> CurrentUser:
+async def get_current_user(
+    request: Request, token: dict = Depends(get_current_token)
+) -> CurrentUser:
     """Return the authenticated user object from the validated token."""
     try:
         user_id = token.get("sub")
@@ -203,9 +245,15 @@ async def get_current_user(token: dict = Depends(get_current_token)) -> CurrentU
         raise
     except Exception as e:
         logger.error(f"Authentication failed: {e}")
+        request_id = getattr(request.state, "request_id", None)
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Authentication failed",
+            detail=AuthError(
+                error="Unauthorized",
+                message="Authentication failed",
+                code="authentication_failed",
+                request_id=request_id,
+            ).model_dump(),
             headers={"WWW-Authenticate": "Bearer"},
         )
 
@@ -354,6 +402,7 @@ def require_scope(scopes: list[str] | str):
         token_scopes = token.get("scope", "").split()
         token_roles = token.get("realm_access", {}).get("roles", [])
         token_groups = token.get("groups", [])
+        request_id = getattr(request.state, "request_id", None)
 
         # Allow makerspace and super admins to bypass scope restrictions
         if any(role in token_roles for role in ["makerspace_admin", "super_admin"]):
@@ -362,9 +411,15 @@ def require_scope(scopes: list[str] | str):
         if not any(scope in token_scopes for scope in required_scopes):
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
-                detail=(
-                    "Insufficient scope. Required scopes: " + ", ".join(required_scopes)
-                ),
+                detail=AuthError(
+                    error="Forbidden",
+                    message=(
+                        "Insufficient scope. Required scopes: "
+                        + ", ".join(required_scopes)
+                    ),
+                    code="insufficient_scope",
+                    request_id=request_id,
+                ).model_dump(),
             )
 
         for required in required_scopes:
@@ -377,7 +432,12 @@ def require_scope(scopes: list[str] | str):
                 if makerspace_id and f"makerspace:{makerspace_id}" not in token_groups:
                     raise HTTPException(
                         status_code=status.HTTP_403_FORBIDDEN,
-                        detail="Insufficient makerspace scope",
+                        detail=AuthError(
+                            error="Forbidden",
+                            message="Insufficient makerspace scope",
+                            code="insufficient_makerspace_scope",
+                            request_id=request_id,
+                        ).model_dump(),
                     )
 
             if required == "provider":
@@ -389,7 +449,12 @@ def require_scope(scopes: list[str] | str):
                 if provider_id and f"provider:{provider_id}" not in token_groups:
                     raise HTTPException(
                         status_code=status.HTTP_403_FORBIDDEN,
-                        detail="Insufficient provider scope",
+                        detail=AuthError(
+                            error="Forbidden",
+                            message="Insufficient provider scope",
+                            code="insufficient_provider_scope",
+                            request_id=request_id,
+                        ).model_dump(),
                     )
 
             if required == "self":
@@ -402,7 +467,12 @@ def require_scope(scopes: list[str] | str):
                 if owner_id and owner_id != token.get("sub"):
                     raise HTTPException(
                         status_code=status.HTTP_403_FORBIDDEN,
-                        detail="Access denied. Resource ownership mismatch",
+                        detail=AuthError(
+                            error="Forbidden",
+                            message="Access denied. Resource ownership mismatch",
+                            code="access_denied",
+                            request_id=request_id,
+                        ).model_dump(),
                     )
 
         return token
