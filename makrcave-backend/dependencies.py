@@ -1,13 +1,17 @@
+from __future__ import annotations
+
 import logging
 import os
+import uuid
 from datetime import datetime
 from typing import Optional
 
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends, HTTPException, Request, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from jose import jwt
 from jose.exceptions import JWTError
 from security import jwks
+from security.helpers import set_request_context
 
 # Configure logging
 logger = logging.getLogger(__name__)
@@ -89,7 +93,7 @@ async def validate_token(token: str) -> dict:
                 headers={"WWW-Authenticate": "Bearer"},
             )
         nbf = payload.get("nbf")
-        if nbf and nbf > current_ts + leeway:
+        if nbf and nbf >= current_ts + leeway:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Token not yet valid",
@@ -158,29 +162,35 @@ def map_keycloak_roles_to_makrcave(keycloak_roles: list) -> str:
     return "user"
 
 
-async def get_current_user(
-    credentials: HTTPAuthorizationCredentials = Depends(security),
-) -> CurrentUser:
-    """Extract and validate current user from JWT token"""
+async def get_current_token(
+    request: Request, credentials: HTTPAuthorizationCredentials = Depends(security)
+) -> dict:
+    """Validate the incoming JWT and populate request context."""
+
+    token = credentials.credentials
+    payload = await validate_token(token)
+
+    request_id = request.headers.get("X-Request-ID") or str(uuid.uuid4())
+    set_request_context(
+        request_id=request_id,
+        sub=payload.get("sub"),
+        roles=payload.get("realm_access", {}).get("roles", []),
+        groups=payload.get("groups", []),
+    )
+    request.state.request_id = request_id
+    return payload
+
+
+async def get_current_user(token: dict = Depends(get_current_token)) -> CurrentUser:
+    """Return the authenticated user object from the validated token."""
     try:
-        token = credentials.credentials
-
-        # Validate token and get user data
-        user_data = await validate_token(token)
-
-        # Extract user information
-        user_id = user_data.get("sub")
-        email = user_data.get("email", "")
+        user_id = token.get("sub")
+        email = token.get("email", "")
         username = email
-
-        # Extract roles from realm_access only
-        keycloak_roles = user_data.get("realm_access", {}).get("roles", [])
+        keycloak_roles = token.get("realm_access", {}).get("roles", [])
         makrcave_role = map_keycloak_roles_to_makrcave(keycloak_roles)
+        makerspace_id = token.get("makerspace_id")
 
-        # Extract makerspace information if provided
-        makerspace_id = user_data.get("makerspace_id")
-
-        # Create user object
         return CurrentUser(
             id=user_id,
             name=username,
@@ -190,7 +200,6 @@ async def get_current_user(
         )
 
     except HTTPException:
-        # Re-raise HTTP exceptions
         raise
     except Exception as e:
         logger.error(f"Authentication failed: {e}")
@@ -318,6 +327,41 @@ def require_role(required_roles: list):
         return current_user
 
     return role_checker
+
+
+def require_roles(roles: list[str]):
+    """Require that the JWT contains at least one of the specified roles."""
+
+    def role_checker(token: dict = Depends(get_current_token)):
+        token_roles = token.get("realm_access", {}).get("roles", [])
+        if not any(role in token_roles for role in roles):
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail=f"Access denied. Required roles: {', '.join(roles)}",
+            )
+        return token
+
+    return role_checker
+
+
+def require_scope(scopes: list[str] | str):
+    """Require that the JWT contains one of the specified scopes."""
+
+    required_scopes = [scopes] if isinstance(scopes, str) else scopes
+
+    def scope_checker(token: dict = Depends(get_current_token)):
+        token_scopes = token.get("scope", "").split()
+        if not any(scope in token_scopes for scope in required_scopes):
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail=(
+                    "Insufficient scope. Required scopes: "
+                    + ", ".join(required_scopes)
+                ),
+            )
+        return token
+
+    return scope_checker
 
 
 def require_makerspace_access(

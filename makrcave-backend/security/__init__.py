@@ -12,11 +12,20 @@ from .input_validation import (
     validate_request_input
 )
 
+from .helpers import (
+    get_request_context,
+    set_request_context,
+    request_context,
+)
+
 __all__ = [
     "InputSanitizer",
     "SecureBaseModel", 
     "FileUploadValidator",
     "ValidationPatterns",
     "validate_input_security",
-    "validate_request_input"
+    "validate_request_input",
+    "get_request_context",
+    "set_request_context",
+    "request_context",
 ]
