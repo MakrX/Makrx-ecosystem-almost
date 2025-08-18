@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Building2, Loader2, CheckCircle, XCircle } from 'lucide-react';
 import { ThemeToggle } from '../../../packages/ui/components/ThemeToggle';
 import auth from '../lib/auth';
+import { getRoleRedirect } from '../lib/roleRedirect';
 
 export default function AuthCallback() {
   const navigate = useNavigate();
@@ -13,7 +14,10 @@ export default function AuthCallback() {
       const ok = await auth.handleAuthCallback();
       if (ok) {
         setStatus('success');
-        const redirectUrl = sessionStorage.getItem('makrx_redirect_url') || '/portal/dashboard';
+        const user = auth.getCurrentUser();
+        const defaultUrl = getRoleRedirect(user?.roles);
+        const redirectUrl =
+          sessionStorage.getItem('makrx_redirect_url') || defaultUrl;
         sessionStorage.removeItem('makrx_redirect_url');
         setTimeout(() => navigate(redirectUrl), 1500);
       } else {
