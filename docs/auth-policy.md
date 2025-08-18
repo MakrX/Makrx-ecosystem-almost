@@ -41,9 +41,9 @@ Only the following origins are authorized for browser clients and CORS requests:
 - `http://localhost:5174`
 - `http://localhost:5175`
 
-## Token Claims
+## Claims and Audience
 
-All MakrX clients are configured to expose the following OpenID Connect claims:
+All MakrX tokens must include these standard claims:
 
 - `sub`
 - `email`
@@ -52,17 +52,18 @@ All MakrX clients are configured to expose the following OpenID Connect claims:
 - `realm_access.roles`
 - `groups`
 
-Additional custom claims are included when required by specific services:
+Optional mappers may add the following claims when needed:
 
 - `makerspace_id`
-- `service_provider_id`
+- `provider_id`
+
+Each API must verify that the JWT `aud` claim equals its Keycloak client ID and reject tokens with mismatched audiences.
 
 These claims allow downstream services to perform authorization decisions based on user identity, realm roles and group membership.
 
 ## Token Verification
 
 - **JWKS Endpoint**: Services retrieve signing keys from `https://auth.makrx.org/realms/makrx/protocol/openid-connect/certs` (or the configured Keycloak issuer).
-- **Audience Enforcement**: Every backend validates that the JWT `aud` claim matches its own Keycloak client ID, rejecting tokens meant for other services.
 - When refresh tokens expire, applications prompt the user to re-authenticate and preserve their current page so work can resume after login.
 
 ## Realm Security
