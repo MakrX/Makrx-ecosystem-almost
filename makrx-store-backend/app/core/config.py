@@ -21,10 +21,9 @@ class Settings(BaseSettings):
     
     # CORS and security
     ALLOWED_ORIGINS: List[str] = [
-        "http://localhost:3000",
-        "http://localhost:3001", 
+        "https://makrx.org",
+        "https://makrcave.com",
         "https://makrx.store",
-        "https://*.makrx.store"
     ]
     ALLOWED_HOSTS: List[str] = [
         "localhost",

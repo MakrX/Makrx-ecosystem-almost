@@ -42,19 +42,19 @@ app = FastAPI(
 # CORS middleware configuration - Secure origins only
 allowed_origins = [
     "https://makrx.org",
-    "https://cave.makrx.org",
-    "https://store.makrx.org",
-    "http://localhost:5173",  # Gateway (development)
-    "http://localhost:5174",  # MakrCave (development)
-    "http://localhost:5175",  # Store (development)
+    "https://makrcave.com",
+    "https://makrx.store",
 ]
 
 # Add environment-specific origins
 if os.getenv("ENVIRONMENT") == "development":
     allowed_origins.extend([
+        "http://localhost:5173",  # Gateway (development)
+        "http://localhost:5174",  # MakrCave (development)
+        "http://localhost:5175",  # Store (development)
         "http://gateway-frontend:5173",
         "http://makrcave-frontend:5174",
-        "http://makrx-store-frontend:5175"
+        "http://makrx-store-frontend:5175",
     ])
 
 app.add_middleware(

@@ -46,6 +46,14 @@ The MakrX ecosystem consists of a **public gateway** connecting to external ecos
 | **3D.MakrX.Store** | `https://3d.makrx.store` | Custom fabrication services, upload & quote | Designers, makers |
 | **Provider Panel** | `https://providers.makrx.org` | Service provider portal, job management | Service providers |
 
+### Environment Host Lists
+
+| Environment | MakrX.org (Gateway) | MakrCave | MakrX Store |
+|-------------|---------------------|----------|--------------|
+| Development | `http://localhost:5173` | `http://localhost:5174` | `http://localhost:5175` |
+| Staging | `https://staging.makrx.org` | `https://staging.makrcave.com` | `https://staging.makrx.store` |
+| Production | `https://makrx.org` | `https://makrcave.com` | `https://makrx.store` |
+
 ## 🔧 Quick Start
 
 ### Prerequisites
@@ -75,9 +83,9 @@ The MakrX ecosystem consists of a **public gateway** connecting to external ecos
    ```
 
 4. **Access the applications**
-   - Gateway: `http://localhost:3000`
-   - MakrCave: `http://localhost:3001` 
-   - Store: `http://localhost:3002`
+   - Gateway: `http://localhost:5173`
+   - MakrCave: `http://localhost:5174`
+   - Store: `http://localhost:5175`
    - API Documentation: `http://localhost:8000/docs`
 
 ## 👥 User Roles & Permissions
