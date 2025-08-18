@@ -30,16 +30,20 @@ MakrX uses Keycloak for single sign-on across all applications. This policy defi
 - **Cookie Domain**: `.makrx.org`
 - **Hostnames**: `auth.makrx.org`, `makrx.org`, `cave.makrx.org`, `store.makrx.org`, `providers.makrx.org`
 
-## Approved Origins
+## Origins and CORS
 
-Only the following origins are authorized for browser clients and CORS requests:
+MakrX frontends run on fixed origins per environment. APIs must configure CORS
+to allow requests from these origins.
 
-- `https://makrx.org`
-- `https://cave.makrx.org`
-- `https://store.makrx.org`
-- `http://localhost:5173`
-- `http://localhost:5174`
-- `http://localhost:5175`
+| Environment | Gateway | MakrCave | Store |
+|-------------|---------|----------|-------|
+| Development | `http://localhost:5173` | `http://localhost:5174` | `http://localhost:5175` |
+| Staging | `https://staging.gateway.makrx.org` | `https://staging.makrcave.makrx.org` | `https://staging.store.makrx.org` |
+| Production | `https://makrx.org` | `https://cave.makrx.org` | `https://store.makrx.org` |
+
+MakrCave and Store APIs enforce these origins in their CORS configuration
+(`allow_origins`/`CORS_ORIGINS`). Ensure staging deployments include the staging
+subdomains in their settings.
 
 ## Claims and Audience
 
