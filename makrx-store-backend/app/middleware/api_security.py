@@ -34,15 +34,18 @@ class APISecurityConfig:
     # CORS Configuration - exact domains from specification
     ALLOWED_ORIGINS = [
         "https://makrx.org",
-        "https://cave.makrx.org",
-        "https://store.makrx.org"
+        "https://makrcave.com",
+        "https://makrx.store"
     ]
 
     # Development origins (only in development)
     DEV_ORIGINS = [
         "http://localhost:5173",
         "http://localhost:5174",
-        "http://localhost:5175"
+        "http://localhost:5175",
+        "http://gateway-frontend:5173",
+        "http://makrcave-frontend:5174",
+        "http://makrx-store-frontend:5175",
     ]
     
     # Rate limiting per specification (100 req/5 min per endpoint type)
