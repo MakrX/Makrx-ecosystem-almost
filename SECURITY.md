@@ -35,6 +35,8 @@
 - Validate and sanitize all user input.
 - Enforce proper authentication and authorization for every endpoint.
 - Apply rate limiting and comprehensive logging to detect abuse.
+- Request logs sampled via `REQUEST_LOG_SAMPLE_RATE` (default 100%) and retained 90 days.
+- Critical security events retained for 5 years.
 - Handle data securely, ensuring encryption in transit and at rest with least-privilege access.
 
 ## Reporting Template

@@ -1,21 +1,20 @@
-from fastapi import APIRouter, Depends, HTTPException, status, Query
-from sqlalchemy.orm import Session
-from sqlalchemy import and_, or_
-from typing import List, Optional, Dict, Any
 from datetime import datetime
-from uuid import UUID
+from typing import Any, Dict, List, Optional
+
+from fastapi import APIRouter, Depends, HTTPException, Query, status
+from pydantic import BaseModel, Field
+from sqlalchemy import and_
+from sqlalchemy.orm import Session
 
 from ..database import get_db
-from ..dependencies import get_current_user, get_current_admin_user
-from ..models.user import User
-from ..models.membership_plans import MembershipPlan, PlanType, BillingCycle, AccessType
+from ..dependencies import get_current_admin_user, get_current_user
 from ..models.member import Member
+from ..models.membership_plans import AccessType, BillingCycle, MembershipPlan, PlanType
+from ..models.user import User
+from ..security.events import SecurityEventType, log_security_event
 
 router = APIRouter(prefix="/api/v1/membership-plans", tags=["Membership Plans"])
 
-# Pydantic models for requests/responses
-from pydantic import BaseModel, Field
-from typing import Optional
 
 class MembershipPlanCreate(BaseModel):
     name: str = Field(..., min_length=1, max_length=255)
@@ -344,6 +343,11 @@ async def delete_membership_plan(
     
     # If forcing delete, update members to remove plan assignment
     if force and member_count > 0:
+        log_security_event(
+            SecurityEventType.ADMIN_OVERRIDE,
+            user_id=current_user.id,
+            details={"plan_id": plan_id, "member_count": member_count},
+        )
         db.query(Member).filter(Member.membership_plan_id == plan_id).update(
             {Member.membership_plan_id: None}
         )

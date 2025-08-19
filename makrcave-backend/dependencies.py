@@ -12,6 +12,7 @@ from jose import jwt
 from jose.exceptions import JWTError
 from schemas.auth_error import AuthError
 from security import jwks
+from security.events import SecurityEventType, log_security_event
 from security.helpers import set_request_context
 
 # Configure logging
@@ -354,6 +355,11 @@ def require_permission(permission: str):
 
     def permission_checker(current_user: CurrentUser = Depends(get_current_user)):
         if not check_permission(current_user.role, permission):
+            log_security_event(
+                SecurityEventType.PERMISSION_DENIED,
+                user_id=current_user.id,
+                details={"required": permission, "role": current_user.role},
+            )
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail=f"Insufficient permissions. Required: {permission}",

@@ -3,12 +3,16 @@ Security Middleware for MakrCave Backend
 Rate limiting, security headers, and request validation
 """
 
-import time
-from collections import defaultdict
-from typing import Dict, Any
-from fastapi import Request, Response, HTTPException, status
-from fastapi.middleware.base import BaseHTTPMiddleware
 import logging
+import os
+import random
+import time
+import uuid
+from collections import defaultdict
+
+from fastapi import HTTPException, Request, status
+from fastapi.middleware.base import BaseHTTPMiddleware
+from security import get_request_context
 
 logger = logging.getLogger(__name__)
 
@@ -119,54 +123,74 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
 
 class RequestLoggingMiddleware(BaseHTTPMiddleware):
     """Log security-relevant requests"""
-    
+
+    def __init__(self, app):
+        super().__init__(app)
+        self.sample_rate = float(os.environ.get("REQUEST_LOG_SAMPLE_RATE", "1.0"))
+
     async def dispatch(self, request: Request, call_next):
         start_time = time.time()
-        
+
+        request_id = getattr(
+            request.state,
+            "request_id",
+            request.headers.get("X-Request-ID", str(uuid.uuid4())),
+        )
+        request.state.request_id = request_id
+
         # Log request details
         client_ip = request.client.host
         method = request.method
         path = request.url.path
         user_agent = request.headers.get("user-agent", "")
-        
+
         logger.info(
-            f"Request: {method} {path} from {client_ip} "
+            f"[{request_id}] Request: {method} {path} from {client_ip} "
             f"UA: {user_agent[:50]}..."
         )
-        
+
         # Check for suspicious patterns
         suspicious_patterns = [
             "../", "..\\", "%2e%2e", "union select", "drop table",
             "<script", "javascript:", "onclick=", "onerror=",
             "/etc/passwd", "/proc/", "cmd.exe", "powershell"
         ]
-        
+
         path_lower = path.lower()
         query_lower = str(request.query_params).lower()
-        
+
         for pattern in suspicious_patterns:
             if pattern in path_lower or pattern in query_lower:
                 logger.warning(
-                    f"Suspicious request pattern detected: {pattern} "
+                    f"[{request_id}] Suspicious request pattern detected: {pattern} "
                     f"from {client_ip} - {method} {path}"
                 )
                 break
-        
+
         response = await call_next(request)
-        
-        # Log response
+
         process_time = time.time() - start_time
-        logger.info(
-            f"Response: {response.status_code} for {method} {path} "
-            f"in {process_time:.3f}s"
-        )
-        
-        # Log failed auth attempts
+        ctx = get_request_context()
+        if random.random() <= self.sample_rate:
+            sub = ctx.get("sub")
+            roles = ctx.get("roles", [])
+            groups = ctx.get("groups", [])
+            logger.info(
+                f"[{request_id}] Response: {response.status_code} for {method} {path} "
+                f"in {process_time:.3f}s sub={sub} roles={roles} groups={len(groups)}"
+            )
+
         if response.status_code == 401:
-            logger.warning(f"Authentication failure from {client_ip} - {method} {path}")
+            logger.warning(
+                f"[{request_id}] Authentication failure from {client_ip} - "
+                f"{method} {path}"
+            )
         elif response.status_code == 403:
-            logger.warning(f"Authorization failure from {client_ip} - {method} {path}")
-        
+            logger.warning(
+                f"[{request_id}] Authorization failure from {client_ip} - "
+                f"{method} {path}"
+            )
+
         return response
 
 def add_security_middleware(app):
