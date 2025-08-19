@@ -191,6 +191,8 @@ This document outlines the comprehensive security and compliance implementation 
 - **Request Correlation**: X-Request-ID header propagation
 - **Security Events**: Dedicated security event logging stream
 - **Performance Metrics**: API latency and error rate tracking
+- **Sampling**: Request logging sampled via `REQUEST_LOG_SAMPLE_RATE` (default 100%)
+- **Retention**: Request logs retained for 90 days; critical security events for 5 years
 
 #### Real-time Monitoring
 - **SLO Tracking**: 99.9% uptime, 500ms response time targets

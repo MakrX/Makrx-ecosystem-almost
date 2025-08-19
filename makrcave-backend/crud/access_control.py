@@ -1,21 +1,39 @@
-from sqlalchemy.orm import Session, joinedload
-from sqlalchemy import and_, or_, desc, func, text
-from typing import List, Optional, Dict, Any
-from datetime import datetime, timedelta
 import uuid
+from datetime import datetime, timedelta
+from typing import List, Optional
+
+from sqlalchemy import and_, desc, func, or_
+from sqlalchemy.orm import Session, joinedload
 
 from ..models.access_control import (
-    Permission, Role, UserSession, AccessLog, RoleAccessLog, 
-    PasswordPolicy, PermissionType, RoleType, AccessScope,
-    create_default_permissions, create_default_roles
+    AccessLog,
+    AccessScope,
+    PasswordPolicy,
+    Permission,
+    PermissionType,
+    Role,
+    RoleAccessLog,
+    RoleType,
+    UserSession,
+    create_default_permissions,
+    create_default_roles,
 )
 from ..models.enhanced_member import Member
 from ..schemas.access_control import (
-    PermissionCreate, PermissionUpdate, RoleCreate, RoleUpdate,
-    UserSessionCreate, AccessLogCreate, RoleAssignmentCreate,
-    PasswordPolicyCreate, PasswordPolicyUpdate, AccessControlFilter,
-    PasswordValidationRequest, BulkRoleAssignment, RoleExport, RoleImport
+    AccessControlFilter,
+    AccessLogCreate,
+    PasswordPolicyCreate,
+    PermissionCreate,
+    PermissionUpdate,
+    RoleAssignmentCreate,
+    RoleCreate,
+    RoleExport,
+    RoleImport,
+    RoleUpdate,
+    UserSessionCreate,
 )
+from ..security.events import SecurityEventType, log_security_event
+
 
 # Permission CRUD operations
 def create_permission(db: Session, permission: PermissionCreate, created_by: str) -> Permission:
@@ -204,6 +222,11 @@ def assign_role_to_user(db: Session, assignment: RoleAssignmentCreate, assigned_
     db.add(log_entry)
     db.commit()
     db.refresh(log_entry)
+    log_security_event(
+        SecurityEventType.ROLE_GRANT,
+        user_id=assigned_by,
+        details={"user": assignment.user_id, "role": assignment.role_id},
+    )
     return log_entry
 
 def revoke_role_from_user(db: Session, role_id: str, user_id: str, revoked_by: str, reason: str = None) -> bool:
